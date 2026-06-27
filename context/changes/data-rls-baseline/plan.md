@@ -245,25 +245,25 @@ No data migration. No schema change applied to the hosted DB in this change. The
 
 #### Automated
 
-- [x] 2.1 `npm run db:types` produces non-empty `src/db/database.types.ts`
-- [x] 2.2 `src/types.ts` exists
-- [x] 2.3 Type checking passes (`npm run build`)
-- [x] 2.4 Lint passes
+- [x] 2.1 `npm run db:types` produces non-empty `src/db/database.types.ts` — 72cca11
+- [x] 2.2 `src/types.ts` exists — 72cca11
+- [x] 2.3 Type checking passes (`npm run build`) — 72cca11
+- [x] 2.4 Lint passes — 72cca11
 
 #### Manual
 
-- [x] 2.5 `npm run db:types` is idempotent
-- [x] 2.6 `import type { Database } from "@/types"` resolves
+- [x] 2.5 `npm run db:types` is idempotent — 72cca11
+- [x] 2.6 `import type { Database } from "@/types"` resolves — 72cca11
 
 ### Phase 3: RLS convention artifact & docs
 
 #### Automated
 
-- [ ] 3.1 `supabase/migrations/README.md` exists
-- [ ] 3.2 CLAUDE.md references the template
-- [ ] 3.3 Lint/format pass on changed Markdown
+- [x] 3.1 `supabase/migrations/README.md` exists
+- [x] 3.2 CLAUDE.md references the template
+- [x] 3.3 Lint/format pass on changed Markdown
 
 #### Manual
 
-- [ ] 3.4 Template is copy-ready for a new per-user table
-- [ ] 3.5 Documented isolation check is runnable verbatim in S-01
+- [x] 3.4 Template is copy-ready for a new per-user table
+- [x] 3.5 Documented isolation check is runnable verbatim in S-01

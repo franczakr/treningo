@@ -71,7 +71,7 @@ Full server-side rendering (`output: "server"`). Pages are server-rendered by de
 - **Tailwind**: merge classes with the `cn()` helper from `@/lib/utils` (clsx + tailwind-merge) — never concatenate class strings by hand.
 - **shadcn/ui**: components in `src/components/ui/`; add new ones via `npx shadcn@latest add [name]`.
 - **API routes**: uppercase `GET` / `POST` exports; validate input with zod.
-- **Supabase migrations** (when you add tables): `supabase/migrations/` named `YYYYMMDDHHmmss_short_description.sql`; always enable RLS with granular per-operation, per-role policies.
+- **Supabase migrations** (when you add tables): `supabase/migrations/` named `YYYYMMDDHHmmss_short_description.sql` (via `npm run db:migration`). Every per-user table is **deny-by-default**: enable RLS, then grant granular per-operation policies (`select`/`insert`/`update`/`delete`) to the `authenticated` role only, filtered on `auth.uid() = user_id`. Copy the canonical template in `supabase/migrations/README.md` — do not hand-roll policies.
 - **Services/business logic** → `src/lib/` (or `src/lib/services/`); **shared types** (entities, DTOs) → `src/types.ts`.
 
 ### Environment & deploy
