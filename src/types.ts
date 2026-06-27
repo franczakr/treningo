@@ -8,13 +8,50 @@ import type { Database } from "@/db/database.types";
 
 export type { Database };
 
-// Convenience aliases over the generated schema. Usable once tables exist
-// (e.g. `Tables<"profiles">`); the `public.Tables` map is empty until S-01
-// adds the first migration, so these resolve to `never` for now.
+// Convenience aliases over the generated schema (e.g. `Tables<"profiles">`).
 export type Tables<T extends keyof Database["public"]["Tables"]> = Database["public"]["Tables"][T]["Row"];
 export type TablesInsert<T extends keyof Database["public"]["Tables"]> = Database["public"]["Tables"][T]["Insert"];
 export type TablesUpdate<T extends keyof Database["public"]["Tables"]> = Database["public"]["Tables"][T]["Update"];
 
+type Enums<T extends keyof Database["public"]["Enums"]> = Database["public"]["Enums"][T];
+
 // ── Entities & DTOs ──────────────────────────────────────────────────────────
-// Hand-authored domain entities and data-transfer objects go below.
-// S-01 (training-profile) adds the first entries (e.g. TrainingProfile, ProfileDto).
+
+// Training profile (S-01). One editable row per user; the inputs that drive
+// personalized plan generation (S-02).
+export type TrainingProfile = Tables<"profiles">;
+
+// API-boundary payload for creating/updating a profile. `user_id` is set by the
+// server from the authenticated session, never the client — so it is omitted
+// here along with the DB-managed columns.
+export type ProfileUpsertDto = Omit<TablesInsert<"profiles">, "id" | "user_id" | "created_at" | "updated_at">;
+
+// Bounded choice enums (mirrored from the generated schema for convenience).
+export type Goal = Enums<"goal">;
+export type ExperienceLevel = Enums<"experience_level">;
+export type EquipmentItem = Enums<"equipment_item">;
+
+// Canonical option lists shared by the form (UI) and validation. Keeping value +
+// label here means the select/checkbox options and the zod enums stay in sync.
+export const GOAL_OPTIONS: readonly { value: Goal; label: string }[] = [
+  { value: "strength", label: "Strength" },
+  { value: "muscle_gain", label: "Muscle gain" },
+  { value: "fat_loss", label: "Fat loss" },
+  { value: "general_fitness", label: "General fitness" },
+];
+
+export const EXPERIENCE_OPTIONS: readonly { value: ExperienceLevel; label: string }[] = [
+  { value: "beginner", label: "Beginner" },
+  { value: "intermediate", label: "Intermediate" },
+  { value: "advanced", label: "Advanced" },
+];
+
+export const EQUIPMENT_OPTIONS: readonly { value: EquipmentItem; label: string }[] = [
+  { value: "barbell", label: "Barbell" },
+  { value: "dumbbells", label: "Dumbbells" },
+  { value: "machines", label: "Machines" },
+  { value: "pull_up_bar", label: "Pull-up bar" },
+  { value: "kettlebell", label: "Kettlebell" },
+  { value: "resistance_bands", label: "Resistance bands" },
+  { value: "bodyweight_only", label: "Bodyweight only" },
+];

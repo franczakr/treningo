@@ -28,7 +28,7 @@ Gym beginners have personal goals but don't know how to build a sound workout pl
 | ID    | Change ID                      | Outcome (user can …)                                            | Prerequisites | PRD refs                  | Status   |
 | ----- | ------------------------------ | --------------------------------------------------------------- | ------------- | ------------------------- | -------- |
 | F-01  | data-rls-baseline              | (foundation) migration tooling + account-isolation RLS convention in place | —             | NFR (privacy), Access Control | done     |
-| S-01  | training-profile               | log in and fill in / save their training profile                | F-01          | FR-001, FR-002, US-01     | blocked  |
+| S-01  | training-profile               | log in and fill in / save their training profile                | F-01          | FR-001, FR-002, US-01     | planned  |
 | S-02  | personalized-plan-generation   | generate and view a plan tailored to their profile (north star) | S-01          | FR-003, FR-004, US-01     | proposed |
 | S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | proposed |
 | S-04  | browse-saved-plans             | browse their saved plans and reopen one                         | S-03          | FR-006, US-01             | proposed |
@@ -73,9 +73,9 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:**
-  - Which profile fields are required vs optional, so the form doesn't block a beginner who doesn't know their current lifts or plank time — Owner: user. Block: yes.
-- **Risk:** First user-facing data slice; applies the F-01 RLS convention to the profile table. Field-requiredness shapes the form's validation, so the open question gates a finalizable plan — hence blocked until resolved.
-- **Status:** blocked
+  - ~~Which profile fields are required vs optional~~ — resolved at `/10x-plan` (2026-06-27): required = goal, experience, training days, age, weight; optional = current lifts (squat/bench/deadlift/OHP) + plank time.
+- **Risk:** First user-facing data slice; applies the F-01 RLS convention to the profile table. Field-requiredness is now resolved (see plan), so the plan is finalizable.
+- **Status:** planned (plan: `context/changes/training-profile/plan.md`)
 
 ### S-02: Personalized plan generation (north star)
 
@@ -119,7 +119,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | Roadmap ID | Change ID                      | Suggested issue title                                  | Ready for `/10x-plan` | Notes |
 | ---------- | ------------------------------ | ------------------------------------------------------ | --------------------- | ----- |
 | F-01       | data-rls-baseline              | Data & account-isolation baseline (migrations + RLS)   | yes                   | Run `/10x-plan data-rls-baseline` |
-| S-01       | training-profile               | Training profile capture & save                        | no                    | Blocked: resolve required-vs-optional fields first |
+| S-01       | training-profile               | Training profile capture & save                        | yes                   | Planned: `context/changes/training-profile/plan.md` |
 | S-02       | personalized-plan-generation   | Personalized plan generation + soundness validation    | no                    | Prereq S-01; north star |
 | S-03       | save-plan                      | Save a generated plan                                  | no                    | Prereq S-02, F-01 |
 | S-04       | browse-saved-plans             | Browse saved plans                                     | no                    | Prereq S-03 |
@@ -128,7 +128,11 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
 ## Open Roadmap Questions
 
-1. **Which profile fields are required vs optional?** — so the input form doesn't block a true beginner who doesn't know their current lifts or plank time. Owner: user. Block: S-01 (and transitively the north star S-02). By: before plan-generation work starts.
+_None open._
+
+### Resolved
+
+1. ~~**Which profile fields are required vs optional?**~~ — Resolved 2026-06-27 (`/10x-plan training-profile`): required = goal, experience, training days, age, weight; optional = current lifts + plank time. Unblocked S-01.
 
 ## Parked
 

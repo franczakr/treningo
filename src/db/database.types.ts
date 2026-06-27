@@ -41,7 +41,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          age: number
+          bench_kg: number | null
+          created_at: string
+          deadlift_kg: number | null
+          equipment: Database["public"]["Enums"]["equipment_item"][]
+          experience_level: Database["public"]["Enums"]["experience_level"]
+          goal: Database["public"]["Enums"]["goal"]
+          id: string
+          ohp_kg: number | null
+          plank_seconds: number | null
+          squat_kg: number | null
+          training_days_per_week: number
+          updated_at: string
+          user_id: string
+          weight_kg: number
+        }
+        Insert: {
+          age: number
+          bench_kg?: number | null
+          created_at?: string
+          deadlift_kg?: number | null
+          equipment: Database["public"]["Enums"]["equipment_item"][]
+          experience_level: Database["public"]["Enums"]["experience_level"]
+          goal: Database["public"]["Enums"]["goal"]
+          id?: string
+          ohp_kg?: number | null
+          plank_seconds?: number | null
+          squat_kg?: number | null
+          training_days_per_week: number
+          updated_at?: string
+          user_id: string
+          weight_kg: number
+        }
+        Update: {
+          age?: number
+          bench_kg?: number | null
+          created_at?: string
+          deadlift_kg?: number | null
+          equipment?: Database["public"]["Enums"]["equipment_item"][]
+          experience_level?: Database["public"]["Enums"]["experience_level"]
+          goal?: Database["public"]["Enums"]["goal"]
+          id?: string
+          ohp_kg?: number | null
+          plank_seconds?: number | null
+          squat_kg?: number | null
+          training_days_per_week?: number
+          updated_at?: string
+          user_id?: string
+          weight_kg?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -50,7 +103,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      equipment_item:
+        | "barbell"
+        | "dumbbells"
+        | "machines"
+        | "pull_up_bar"
+        | "kettlebell"
+        | "resistance_bands"
+        | "bodyweight_only"
+      experience_level: "beginner" | "intermediate" | "advanced"
+      goal: "strength" | "muscle_gain" | "fat_loss" | "general_fitness"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -180,6 +242,18 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      equipment_item: [
+        "barbell",
+        "dumbbells",
+        "machines",
+        "pull_up_bar",
+        "kettlebell",
+        "resistance_bands",
+        "bodyweight_only",
+      ],
+      experience_level: ["beginner", "intermediate", "advanced"],
+      goal: ["strength", "muscle_gain", "fat_loss", "general_fitness"],
+    },
   },
 } as const
