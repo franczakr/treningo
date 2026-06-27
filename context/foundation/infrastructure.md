@@ -86,7 +86,7 @@ The solo dev deployed Treningo to Workers because the adapter was already in the
 | dev/prod parity gap masks workerd bugs | Unknown unknowns | M | H | Always smoke-test via `wrangler dev` (not just `astro dev`) before `wrangler deploy` |
 | `compatibility_date` bump changes Node-compat behavior | Devil's advocate | M | M | Pin `compatibility_date` in `wrangler` config; change deliberately and re-test |
 | Validation-retry loop hits 50-subrequest free-tier cap | Research finding | L | M | Cap retries (e.g. ≤3) in the validation layer; upgrade to paid ($5/mo) if needed |
-| Stale `tech-stack.md` says Pages, not Workers | Devil's advocate | L | L | Treat Workers as canonical; update `tech-stack.md` deployment_target |
+| Stale `tech-stack.md` says Pages, not Workers | Devil's advocate | L | L | ✅ Resolved 2026-06-27 — `tech-stack.md` `deployment_target` updated to `cloudflare-workers` |
 | Rollback blocked by binding changes | Unknown unknowns | L | M | Avoid coupling binding changes with risky deploys; keep migrations reversible/separate |
 
 ## Getting Started
@@ -98,6 +98,16 @@ The stack is already configured for Cloudflare; these steps assume `@astrojs/clo
 3. Smoke-test on the real runtime: `npm run build && npx wrangler dev` — exercise an auth-protected route to confirm no `[object Object]`.
 4. Deploy: `npm run build && npx wrangler deploy`.
 5. Verify live + tail logs: `npx wrangler tail`; confirm rollback works with `npx wrangler rollback`.
+
+## Deployment Outcome (first deploy — 2026-06-27)
+
+The first production deploy was executed and verified live.
+
+- **Live URL**: `https://treningo.franczakr066.workers.dev`
+- **`[object Object]` mitigation confirmed**: with `disable_nodejs_process_v2` in `compatibility_flags`, the top risk did **not** materialize — `/`, `/auth/signin` render correct SSR HTML (0 occurrences), `/dashboard` returns `302 → /auth/signin` when unauthenticated. Verified both on `wrangler dev` and on the live Worker.
+- **Supabase wired**: `SUPABASE_URL` + `SUPABASE_KEY` set via `wrangler secret put` (production); a bad-credential `POST /api/auth/signin` returns `Invalid login credentials` (not "Supabase is not configured"), confirming end-to-end connectivity. Secrets take effect on the live Worker with no redeploy.
+- **KV binding gotcha (not in the original research)**: the Worker's `SESSION` KV namespace was first created by auto-provisioning during a failed deploy attempt. The retry then failed with `code 10014: a namespace with this title already exists`, because auto-provisioning tried to recreate it. **Fix**: bind the existing namespace explicitly in `wrangler.jsonc` (`kv_namespaces: [{ binding: "SESSION", id: "…" }]`) and rebuild so the binding lands in `dist/server/wrangler.json`. Lesson: pin the KV binding by id rather than relying on auto-provisioning across deploys.
+- **One-time account setup encountered**: Cloudflare email verification (error `10034`) and `workers.dev` subdomain registration both had to be done once by the account owner before the first publish succeeded.
 
 ## Out of Scope
 

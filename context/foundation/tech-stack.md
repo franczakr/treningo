@@ -5,7 +5,7 @@ project_name: treningo
 hints:
   language_family: js
   team_size: solo
-  deployment_target: cloudflare-pages
+  deployment_target: cloudflare-workers
   ci_provider: github-actions
   ci_default_flow: auto-deploy-on-merge
   bootstrapper_confidence: first-class
@@ -34,5 +34,5 @@ Anthropic SDK with structured outputs, wrapped in a post-generation validation
 layer that enforces the FR-003 guardrails (available equipment, chosen training
 days, stated goal) and retries on violation; a rules/template engine remains a
 zero-per-request-cost fallback. CI runs on GitHub Actions with
-auto-deploy-on-merge to Cloudflare Pages — what the starter ships with.
+auto-deploy-on-merge to Cloudflare Workers — what the starter ships with.
 Bootstrapper confidence is first-class.
