@@ -1,9 +1,10 @@
 ---
 id: training-profile
 title: Training profile capture & save
-status: impl_reviewed
+status: archived
 created: 2026-06-27
 updated: 2026-06-28
+archived_at: 2026-06-27T22:08:38Z
 roadmap_ref: S-01
 ---
 

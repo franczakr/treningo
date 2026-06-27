@@ -3,7 +3,7 @@ project: Treningo
 version: 1
 status: draft
 created: 2026-06-27
-updated: 2026-06-27
+updated: 2026-06-28
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -28,7 +28,7 @@ Gym beginners have personal goals but don't know how to build a sound workout pl
 | ID    | Change ID                      | Outcome (user can …)                                            | Prerequisites | PRD refs                  | Status   |
 | ----- | ------------------------------ | --------------------------------------------------------------- | ------------- | ------------------------- | -------- |
 | F-01  | data-rls-baseline              | (foundation) migration tooling + account-isolation RLS convention in place | —             | NFR (privacy), Access Control | done     |
-| S-01  | training-profile               | log in and fill in / save their training profile                | F-01          | FR-001, FR-002, US-01     | planned  |
+| S-01  | training-profile               | log in and fill in / save their training profile                | F-01          | FR-001, FR-002, US-01     | done     |
 | S-02  | personalized-plan-generation   | generate and view a plan tailored to their profile (north star) | S-01          | FR-003, FR-004, US-01     | proposed |
 | S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | proposed |
 | S-04  | browse-saved-plans             | browse their saved plans and reopen one                         | S-03          | FR-006, US-01             | proposed |
@@ -75,7 +75,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - ~~Which profile fields are required vs optional~~ — resolved at `/10x-plan` (2026-06-27): required = goal, experience, training days, age, weight; optional = current lifts (squat/bench/deadlift/OHP) + plank time.
 - **Risk:** First user-facing data slice; applies the F-01 RLS convention to the profile table. Field-requiredness is now resolved (see plan), so the plan is finalizable.
-- **Status:** planned (plan: `context/changes/training-profile/plan.md`)
+- **Status:** done
 
 ### S-02: Personalized plan generation (north star)
 
@@ -144,3 +144,4 @@ _None open._
 ## Done
 
 - **F-01: (foundation) migration tooling + account-isolation RLS convention in place** — Archived 2026-06-27 → `context/archive/2026-06-27-data-rls-baseline/`. Lesson: —.
+- **S-01: A logged-in user can fill in and save their training profile (goal, experience level, age, weight, available equipment, training days per week, current lifts, optional endurance metric).** — Archived 2026-06-28 → `context/archive/2026-06-27-training-profile/`. Lesson: —.
