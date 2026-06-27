@@ -400,22 +400,22 @@ appended with `alter type ... add value`.
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `npm run db:push`
-- [x] 1.2 Types regenerate and include `profiles` + enums: `npm run db:types`
-- [x] 1.3 Type checking passes: `npm run build`
-- [x] 1.4 Linting passes: `npm run lint`
+- [x] 1.1 Migration applies cleanly: `npm run db:push` — 0d22254
+- [x] 1.2 Types regenerate and include `profiles` + enums: `npm run db:types` — 0d22254
+- [x] 1.3 Type checking passes: `npm run build` — 0d22254
+- [x] 1.4 Linting passes: `npm run lint` — 0d22254
 
 #### Manual
 
-- [x] 1.5 Two-session RLS test passes (user B and anon see zero of user A's rows)
-- [x] 1.6 `profiles` row visible in Supabase Studio with expected columns/enums
+- [x] 1.5 Two-session RLS test passes (user B and anon see zero of user A's rows) — 0d22254
+- [x] 1.6 `profiles` row visible in Supabase Studio with expected columns/enums — 0d22254
 
 ### Phase 2: Backend (schema, service, API route)
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run build`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Type checking passes: `npm run build`
+- [x] 2.2 Linting passes: `npm run lint`
 
 #### Manual
 
