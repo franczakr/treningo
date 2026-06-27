@@ -1,82 +1,73 @@
-# Rules for AI
+# CLAUDE.md
 
-This file provides guidance to AI Agent when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Commands
 
-- `npm run dev` — start dev server (Cloudflare workerd runtime)
-- `npm run build` — production build (SSR via `@astrojs/cloudflare`)
-- `npm run preview` — preview production build
-- `npm run lint` — ESLint with type-checked rules
-- `npm run lint:fix` — auto-fix lint issues
-- `npm run format` — Prettier (includes prettier-plugin-astro + prettier-plugin-tailwindcss)
+- `npm run dev` — start dev server (Cloudflare workerd runtime via `@astrojs/cloudflare`)
+- `npm run build` — production SSR build
+- `npm run preview` — preview the production build locally
+- `npm run lint` / `npm run lint:fix` — ESLint (type-checked rules); `:fix` auto-fixes
+- `npm run format` — Prettier (with `prettier-plugin-astro` + `prettier-plugin-tailwindcss`)
 
-Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.
+Pre-commit: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.
+
+**Tests:** no test runner is configured yet — there is no `test` script and no Playwright/Vitest install. E2E tests are introduced via the `/10x-e2e` skill, which scaffolds Playwright; until then there is no single-test command to run.
+
+## Local setup
+
+Environment variables are declared through Astro's `astro:env` schema as **server-only secrets** (`SUPABASE_URL`, `SUPABASE_KEY`) and are never exposed to the client. Two secret files are used: `.env` (Node) and `.dev.vars` (Cloudflare local dev, gitignored).
+
+Local Supabase (requires Docker, ~7 GB RAM):
+
+```bash
+cp .env.example .env          # and: cp .env.example .dev.vars
+npx supabase init             # creates supabase/ config
+npx supabase start            # prints SUPABASE_URL + anon key -> paste into .env and .dev.vars
+```
+
+Auth uses only Supabase's built-in `auth.users` table — no app tables or migrations exist yet. In local dev, disable **Authentication → Email → Confirm email** in Supabase Studio (`http://localhost:54323`) to sign in immediately after signup.
 
 ## Architecture
 
-**Astro 6 SSR app** with React 19 islands, Tailwind 4, Supabase auth, and shadcn/ui components. Deployed to Cloudflare Workers.
+**Astro 6 SSR app** — React 19 islands, Tailwind 4, Supabase auth, shadcn/ui ("new-york" variant). Deployed to Cloudflare Workers. Vite is pinned to ^7 via `overrides`; React Compiler is enabled through `eslint-plugin-react-compiler`.
 
-### Rendering mode
+### Rendering
 
-Full server-side rendering (`output: "server"` in astro.config.mjs). All pages are server-rendered by default. API routes must export `const prerender = false`.
+Full server-side rendering (`output: "server"`). Pages are server-rendered by default; API routes must export `const prerender = false`.
 
-### Auth flow
+### Auth flow (the part that spans files)
 
-- `src/lib/supabase.ts` — creates a Supabase SSR client using `@supabase/ssr` with cookie-based sessions. Uses `astro:env/server` for `SUPABASE_URL` and `SUPABASE_KEY` (server-only secrets declared in astro.config.mjs `env.schema`).
-- `src/middleware.ts` — runs on every request, resolves the current user, attaches to `context.locals.user`. Redirects unauthenticated users away from routes listed in `PROTECTED_ROUTES`.
-- API endpoints: `src/pages/api/auth/{signin,signup,signout}.ts`
-- Auth pages: `src/pages/auth/{signin,signup,confirm-email}.astro`
-- Protected page example: `src/pages/dashboard.astro`
+- `src/lib/supabase.ts` — Supabase SSR client (`@supabase/ssr`, cookie-based sessions); reads `SUPABASE_URL` / `SUPABASE_KEY` from `astro:env/server`.
+- `src/middleware.ts` — runs on every request, resolves the current user onto `context.locals.user`, and redirects unauthenticated requests away from paths in the `PROTECTED_ROUTES` array. **Add new protected paths there.**
+- Endpoints: `src/pages/api/auth/{signin,signup,signout}.ts`. Pages: `src/pages/auth/{signin,signup,confirm-email}.astro`. Protected example: `src/pages/dashboard.astro`.
+- `src/lib/config-status.ts` gates UI/behavior on whether Supabase env vars are configured.
 
-### Key conventions
+### Conventions
 
-- **Path alias**: `@/*` maps to `./src/*` (tsconfig paths).
-- **Astro components** for static content/layout; **React components** only when interactivity is needed.
-- **Tailwind class merging**: use the `cn()` helper from `@/lib/utils` (clsx + tailwind-merge) for conditional/merged class names. Do not concatenate class strings manually.
-- **shadcn/ui**: components live in `src/components/ui/`, "new-york" style variant. Install new ones with `npx shadcn@latest add [name]`.
-- **API routes**: use uppercase `GET`, `POST` exports; validate input with zod.
-- **Supabase migrations**: `supabase/migrations/` using naming format `YYYYMMDDHHmmss_short_description.sql`. Always enable RLS on new tables with granular per-operation, per-role policies.
-- **React**: no Next.js directives ("use client" etc.). Extract hooks to `src/components/hooks/`.
-- **Services/helpers** go in `src/lib/` (or `src/lib/services/` for extracted business logic).
-- **Shared types** (entities, DTOs) go in `src/types.ts`.
+- **Path alias** `@/*` → `./src/*`.
+- **Astro components** for static content/layout; **React components** only where interactivity is needed (no Next.js directives like `"use client"`). Extract React hooks to `src/components/hooks/`.
+- **Tailwind**: merge classes with the `cn()` helper from `@/lib/utils` (clsx + tailwind-merge) — never concatenate class strings by hand.
+- **shadcn/ui**: components in `src/components/ui/`; add new ones via `npx shadcn@latest add [name]`.
+- **API routes**: uppercase `GET` / `POST` exports; validate input with zod.
+- **Supabase migrations** (when you add tables): `supabase/migrations/` named `YYYYMMDDHHmmss_short_description.sql`; always enable RLS with granular per-operation, per-role policies.
+- **Services/business logic** → `src/lib/` (or `src/lib/services/`); **shared types** (entities, DTOs) → `src/types.ts`.
 
-### Environment
+### Environment & deploy
 
-- Node.js v22.14.0 (see `.nvmrc`)
-- Env vars: `SUPABASE_URL`, `SUPABASE_KEY` (copy `.env.example` to `.env` for Node, or `.dev.vars` for Cloudflare local dev)
-- Local Supabase: `npx supabase start` (requires Docker)
-- Cloudflare local dev: secrets go in `.dev.vars` (gitignored)
-- Deploy: `npx wrangler deploy` (requires Cloudflare account + `wrangler` auth)
+- Node v22.14.0 (`.nvmrc`).
+- Deploy to Cloudflare: `npm run build` then `npx wrangler deploy`; set `SUPABASE_URL` / `SUPABASE_KEY` via `npx wrangler secret put` (or the Cloudflare dashboard).
 
 ## CI
 
-GitHub Actions workflow (`.github/workflows/ci.yml`) runs lint + build on every push and PR to master. Requires `SUPABASE_URL` and `SUPABASE_KEY` repository secrets for the build step.
+GitHub Actions (`.github/workflows/ci.yml`) runs lint + build on every push and PR to `master`. Requires `SUPABASE_URL` and `SUPABASE_KEY` repository secrets for the build step.
 
-## E2E tests (10xDevs AI Toolkit — Module 3, Lesson 4)
+## Project context (Treningo)
 
-**For E2E tests, use the `/10x-e2e` skill.** It is the single source of truth
-for the workflow — risk → seed test + rules → generate → review against the five
-anti-patterns → re-prompt → verify. The skill's `references/` carry the full
-rules, anti-patterns, seed pattern, and prompt-template.
+This repository is **Treningo** — a personalized workout-plan generator — built on the 10x Astro Starter. The product spec and architecture decisions live under `context/foundation/`:
 
-A few hard rules that hold even before you invoke the skill:
+- `prd.md` — product requirements (auth, training profile, plan generation FR-003, persistence).
+- `tech-stack.md` — why this stack was chosen.
+- The plan generator (FR-003) is to be built with an LLM via the **Anthropic SDK** (structured outputs) plus a post-generation **validation layer** enforcing the plan-soundness guardrails (only available equipment, exactly the chosen training days, consistency with the stated goal), with retry on violation — not a hand-authored rules engine.
 
-- **Locators:** `getByRole` / `getByLabel` / `getByText` first; `getByTestId`
-  only when accessibility attributes are ambiguous. Never CSS selectors, XPath,
-  or DOM structure.
-- **Never `page.waitForTimeout()`.** Wait for state: `toBeVisible()`,
-  `waitForURL()`, `waitForResponse()`.
-- **Test independence + cleanup.** Each test runs standalone — its own setup,
-  action, assertion, and cleanup; unique ids (timestamp suffix) so parallel runs
-  and re-runs don't collide.
-
-Two boundaries to keep straight:
-
-- **DOM (snapshot) is the default.** Vision (`--caps=vision`) is a supplement for
-  visual-only risks (layout, z-index, animation); for pixel regression prefer
-  deterministic tools (`toMatchSnapshot`, Argos, Lost Pixel). VLM model
-  selection/cost is a debugging topic (Lesson 5), not testing.
-- **Healer helps on selectors, harms on logic.** A changed selector → healer
-  re-finds it (route through PR review). A changed business behavior → healer
-  masks the bug; that failing-test-to-fix case is Lesson 5.
+The `context/` directory is the 10x toolkit's working trail (changes, plans, foundation docs) — preserve it; do not treat it as application source.
