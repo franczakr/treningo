@@ -248,7 +248,7 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
         {errors.equipment ? (
           <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
             <CircleAlert className="size-3" />
-            Wybierz co najmniej jeden element sprzętu.
+            {errors.equipment}
           </p>
         ) : null}
       </fieldset>

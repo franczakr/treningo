@@ -1,4 +1,4 @@
-import type { APIRoute } from "astro";
+import type { APIRoute, APIContext } from "astro";
 import { createClient } from "@/lib/supabase";
 import { profileSchema } from "@/lib/schemas/profile";
 import { upsertProfile } from "@/lib/services/profile";
@@ -7,7 +7,7 @@ export const prerender = false;
 
 const PROFILE_PATH = "/training-profile";
 
-function redirectWithError(context: Parameters<APIRoute>[0], message: string) {
+function redirectWithError(context: APIContext, message: string) {
   return context.redirect(`${PROFILE_PATH}?error=${encodeURIComponent(message)}`);
 }
 
@@ -49,7 +49,10 @@ export const POST: APIRoute = async (context) => {
 
   const { error } = await upsertProfile(supabase, user.id, parsed.data);
   if (error) {
-    return redirectWithError(context, error.message);
+    // Keep the raw DB detail server-side; show the user a friendly message.
+    // eslint-disable-next-line no-console -- deliberate server-side error log
+    console.error("Profile upsert failed:", error);
+    return redirectWithError(context, "Nie udało się zapisać profilu. Spróbuj ponownie.");
   }
 
   return context.redirect(`${PROFILE_PATH}?saved=1`);

@@ -9,12 +9,19 @@ import type { TrainingProfile } from "@/types";
 const { user } = Astro.locals;
 
 let profile: TrainingProfile | null = null;
+let loadError: string | null = null;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 if (supabase && user) {
-  profile = await getProfile(supabase, user.id);
+  try {
+    profile = await getProfile(supabase, user.id);
+  } catch {
+    // Degrade gracefully: still render the form so the user can retry,
+    // rather than a hard 500 on a transient read error.
+    loadError = "Nie udało się wczytać profilu. Spróbuj ponownie.";
+  }
 }
 
-const error = Astro.url.searchParams.get("error");
+const error = Astro.url.searchParams.get("error") ?? loadError;
 const saved = Astro.url.searchParams.get("saved") === "1";
 ---
 

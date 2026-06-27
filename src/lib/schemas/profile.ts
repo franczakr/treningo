@@ -23,7 +23,7 @@ const optionalLiftKg = z.preprocess(
 
 const optionalPlankSeconds = z.preprocess(
   (v) => (v === "" || v === undefined ? null : v),
-  z.coerce.number().int().nonnegative().max(PLANK_MAX).nullable(),
+  z.coerce.number().int().positive().max(PLANK_MAX).nullable(),
 );
 
 export const profileSchema = z.object({
@@ -32,7 +32,9 @@ export const profileSchema = z.object({
   age: z.coerce.number().int().min(AGE_MIN).max(AGE_MAX),
   weight_kg: z.coerce.number().positive().max(WEIGHT_MAX),
   training_days_per_week: z.coerce.number().int().min(1).max(7),
-  equipment: z.array(z.enum(Constants.public.Enums.equipment_item)).nonempty(),
+  equipment: z
+    .array(z.enum(Constants.public.Enums.equipment_item))
+    .min(1, "Wybierz co najmniej jeden element sprzętu."),
   squat_kg: optionalLiftKg,
   bench_kg: optionalLiftKg,
   deadlift_kg: optionalLiftKg,
