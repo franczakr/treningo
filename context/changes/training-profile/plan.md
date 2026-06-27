@@ -427,14 +427,14 @@ appended with `alter type ... add value`.
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npm run build`
-- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.1 Type checking passes: `npm run build` — 5753a2c
+- [x] 3.2 Linting passes: `npm run lint` — 5753a2c
 
 #### Manual
 
-- [x] 3.3 Signed-out visit to `/training-profile` redirects to signin
-- [x] 3.4 Fill required fields + save → values persist after reload (prefill)
-- [x] 3.5 Edit a value + save → updated value shown; still one row in DB
-- [x] 3.6 Blank optional lifts save successfully (stored null, not 0)
-- [x] 3.7 Out-of-range value shows friendly error, persists nothing
-- [x] 3.8 Equipment multi-select round-trips correctly
+- [x] 3.3 Signed-out visit to `/training-profile` redirects to signin — 5753a2c
+- [x] 3.4 Fill required fields + save → values persist after reload (prefill) — 5753a2c
+- [x] 3.5 Edit a value + save → updated value shown; still one row in DB — 5753a2c
+- [x] 3.6 Blank optional lifts save successfully (stored null, not 0) — 5753a2c
+- [x] 3.7 Out-of-range value shows friendly error, persists nothing — 5753a2c
+- [x] 3.8 Equipment multi-select round-trips correctly — 5753a2c

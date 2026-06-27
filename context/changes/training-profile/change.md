@@ -1,7 +1,7 @@
 ---
 id: training-profile
 title: Training profile capture & save
-status: implementing
+status: implemented
 created: 2026-06-27
 updated: 2026-06-27
 roadmap_ref: S-01
