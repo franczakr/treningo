@@ -232,28 +232,28 @@ No data migration. No schema change applied to the hosted DB in this change. The
 
 #### Automated
 
-- [x] 1.1 `supabase/migrations/` exists and is tracked
-- [x] 1.2 `db:*` scripts present in package.json
-- [x] 1.3 Lint passes
+- [x] 1.1 `supabase/migrations/` exists and is tracked — a9702c5
+- [x] 1.2 `db:*` scripts present in package.json — a9702c5
+- [x] 1.3 Lint passes — a9702c5
 
 #### Manual
 
-- [x] 1.4 Linkage verified: `migration list --linked` succeeds after user login + db:link
-- [x] 1.5 `db:push` reports "no changes"
+- [x] 1.4 Linkage verified: `migration list --linked` succeeds after user login + db:link — a9702c5
+- [x] 1.5 `db:push` reports "no changes" — a9702c5
 
 ### Phase 2: Type generation pipeline & types scaffold
 
 #### Automated
 
-- [ ] 2.1 `npm run db:types` produces non-empty `src/db/database.types.ts`
-- [ ] 2.2 `src/types.ts` exists
-- [ ] 2.3 Type checking passes (`npm run build`)
-- [ ] 2.4 Lint passes
+- [x] 2.1 `npm run db:types` produces non-empty `src/db/database.types.ts`
+- [x] 2.2 `src/types.ts` exists
+- [x] 2.3 Type checking passes (`npm run build`)
+- [x] 2.4 Lint passes
 
 #### Manual
 
-- [ ] 2.5 `npm run db:types` is idempotent
-- [ ] 2.6 `import type { Database } from "@/types"` resolves
+- [x] 2.5 `npm run db:types` is idempotent
+- [x] 2.6 `import type { Database } from "@/types"` resolves
 
 ### Phase 3: RLS convention artifact & docs
 
