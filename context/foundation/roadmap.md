@@ -27,7 +27,7 @@ Gym beginners have personal goals but don't know how to build a sound workout pl
 
 | ID    | Change ID                      | Outcome (user can …)                                            | Prerequisites | PRD refs                  | Status   |
 | ----- | ------------------------------ | --------------------------------------------------------------- | ------------- | ------------------------- | -------- |
-| F-01  | data-rls-baseline              | (foundation) migration tooling + account-isolation RLS convention in place | —             | NFR (privacy), Access Control | ready    |
+| F-01  | data-rls-baseline              | (foundation) migration tooling + account-isolation RLS convention in place | —             | NFR (privacy), Access Control | done     |
 | S-01  | training-profile               | log in and fill in / save their training profile                | F-01          | FR-001, FR-002, US-01     | blocked  |
 | S-02  | personalized-plan-generation   | generate and view a plan tailored to their profile (north star) | S-01          | FR-003, FR-004, US-01     | proposed |
 | S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | proposed |
@@ -60,7 +60,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced first because every data-touching slice depends on the RLS/account-isolation contract; getting deny-by-default wrong once would silently break the privacy guardrail across all tables. Kept minimal (tooling + convention) so it does not turn into a full data-layer build ahead of user-facing work.
-- **Status:** ready
+- **Status:** done
 
 ## Slices
 
@@ -139,4 +139,4 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends entries here when a change whose Change ID matches an item is archived.)
+- **F-01: (foundation) migration tooling + account-isolation RLS convention in place** — Archived 2026-06-27 → `context/archive/2026-06-27-data-rls-baseline/`. Lesson: —.
