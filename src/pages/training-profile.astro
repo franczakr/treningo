@@ -1,0 +1,32 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import TrainingProfileForm from "@/components/profile/TrainingProfileForm";
+import { createClient } from "@/lib/supabase";
+import { getProfile } from "@/lib/services/profile";
+import type { TrainingProfile } from "@/types";
+
+// Middleware guarantees an authenticated user on this protected route.
+const { user } = Astro.locals;
+
+let profile: TrainingProfile | null = null;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+if (supabase && user) {
+  profile = await getProfile(supabase, user.id);
+}
+
+const error = Astro.url.searchParams.get("error");
+const saved = Astro.url.searchParams.get("saved") === "1";
+---
+
+<Layout title="Profil treningowy">
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+      <h1
+        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent"
+      >
+        Profil treningowy
+      </h1>
+      <TrainingProfileForm initial={profile} serverError={error} saved={saved} client:load />
+    </div>
+  </div>
+</Layout>

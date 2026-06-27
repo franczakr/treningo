@@ -414,27 +414,27 @@ appended with `alter type ... add value`.
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run build`
-- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Type checking passes: `npm run build` — 09ff895
+- [x] 2.2 Linting passes: `npm run lint` — 09ff895
 
 #### Manual
 
-- [ ] 2.3 Valid POST creates a row; second POST updates the same row (no duplicate)
-- [ ] 2.4 Invalid POST persists nothing and redirects with an error
-- [ ] 2.5 POST while signed out is rejected, writes nothing
+- [x] 2.3 Valid POST creates a row; second POST updates the same row (no duplicate) — 09ff895
+- [x] 2.4 Invalid POST persists nothing and redirects with an error — 09ff895
+- [x] 2.5 POST while signed out is rejected, writes nothing — 09ff895
 
 ### Phase 3: Frontend (protected page + form island)
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npm run build`
-- [ ] 3.2 Linting passes: `npm run lint`
+- [x] 3.1 Type checking passes: `npm run build`
+- [x] 3.2 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Signed-out visit to `/training-profile` redirects to signin
-- [ ] 3.4 Fill required fields + save → values persist after reload (prefill)
-- [ ] 3.5 Edit a value + save → updated value shown; still one row in DB
-- [ ] 3.6 Blank optional lifts save successfully (stored null, not 0)
-- [ ] 3.7 Out-of-range value shows friendly error, persists nothing
-- [ ] 3.8 Equipment multi-select round-trips correctly
+- [x] 3.3 Signed-out visit to `/training-profile` redirects to signin
+- [x] 3.4 Fill required fields + save → values persist after reload (prefill)
+- [x] 3.5 Edit a value + save → updated value shown; still one row in DB
+- [x] 3.6 Blank optional lifts save successfully (stored null, not 0)
+- [x] 3.7 Out-of-range value shows friendly error, persists nothing
+- [x] 3.8 Equipment multi-select round-trips correctly

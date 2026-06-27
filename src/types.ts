@@ -34,24 +34,24 @@ export type EquipmentItem = Enums<"equipment_item">;
 // Canonical option lists shared by the form (UI) and validation. Keeping value +
 // label here means the select/checkbox options and the zod enums stay in sync.
 export const GOAL_OPTIONS: readonly { value: Goal; label: string }[] = [
-  { value: "strength", label: "Strength" },
-  { value: "muscle_gain", label: "Muscle gain" },
-  { value: "fat_loss", label: "Fat loss" },
-  { value: "general_fitness", label: "General fitness" },
+  { value: "strength", label: "Siła" },
+  { value: "muscle_gain", label: "Budowa masy mięśniowej" },
+  { value: "fat_loss", label: "Redukcja tkanki tłuszczowej" },
+  { value: "general_fitness", label: "Ogólna sprawność" },
 ];
 
 export const EXPERIENCE_OPTIONS: readonly { value: ExperienceLevel; label: string }[] = [
-  { value: "beginner", label: "Beginner" },
-  { value: "intermediate", label: "Intermediate" },
-  { value: "advanced", label: "Advanced" },
+  { value: "beginner", label: "Początkujący" },
+  { value: "intermediate", label: "Średniozaawansowany" },
+  { value: "advanced", label: "Zaawansowany" },
 ];
 
 export const EQUIPMENT_OPTIONS: readonly { value: EquipmentItem; label: string }[] = [
-  { value: "barbell", label: "Barbell" },
-  { value: "dumbbells", label: "Dumbbells" },
-  { value: "machines", label: "Machines" },
-  { value: "pull_up_bar", label: "Pull-up bar" },
+  { value: "barbell", label: "Sztanga" },
+  { value: "dumbbells", label: "Hantle" },
+  { value: "machines", label: "Maszyny" },
+  { value: "pull_up_bar", label: "Drążek do podciągania" },
   { value: "kettlebell", label: "Kettlebell" },
-  { value: "resistance_bands", label: "Resistance bands" },
-  { value: "bodyweight_only", label: "Bodyweight only" },
+  { value: "resistance_bands", label: "Gumy oporowe" },
+  { value: "bodyweight_only", label: "Tylko masa ciała" },
 ];
