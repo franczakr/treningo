@@ -259,11 +259,11 @@ No data migration. No schema change applied to the hosted DB in this change. The
 
 #### Automated
 
-- [x] 3.1 `supabase/migrations/README.md` exists
-- [x] 3.2 CLAUDE.md references the template
-- [x] 3.3 Lint/format pass on changed Markdown
+- [x] 3.1 `supabase/migrations/README.md` exists — ebf2e15
+- [x] 3.2 CLAUDE.md references the template — ebf2e15
+- [x] 3.3 Lint/format pass on changed Markdown — ebf2e15
 
 #### Manual
 
-- [x] 3.4 Template is copy-ready for a new per-user table
-- [x] 3.5 Documented isolation check is runnable verbatim in S-01
+- [x] 3.4 Template is copy-ready for a new per-user table — ebf2e15
+- [x] 3.5 Documented isolation check is runnable verbatim in S-01 — ebf2e15
