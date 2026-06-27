@@ -1,7 +1,7 @@
 ---
 id: data-rls-baseline
 title: Data & account-isolation baseline
-status: planned
+status: implementing
 created: 2026-06-27
 updated: 2026-06-27
 roadmap_ref: F-01

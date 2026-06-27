@@ -232,14 +232,14 @@ No data migration. No schema change applied to the hosted DB in this change. The
 
 #### Automated
 
-- [ ] 1.1 `supabase/migrations/` exists and is tracked
-- [ ] 1.2 `db:*` scripts present in package.json
-- [ ] 1.3 Lint passes
+- [x] 1.1 `supabase/migrations/` exists and is tracked
+- [x] 1.2 `db:*` scripts present in package.json
+- [x] 1.3 Lint passes
 
 #### Manual
 
-- [ ] 1.4 Linkage verified: `migration list --linked` succeeds after user login + db:link
-- [ ] 1.5 `db:push` reports "no changes"
+- [x] 1.4 Linkage verified: `migration list --linked` succeeds after user login + db:link
+- [x] 1.5 `db:push` reports "no changes"
 
 ### Phase 2: Type generation pipeline & types scaffold
 

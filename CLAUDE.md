@@ -26,7 +26,28 @@ npx supabase init             # creates supabase/ config
 npx supabase start            # prints SUPABASE_URL + anon key -> paste into .env and .dev.vars
 ```
 
-Auth uses only Supabase's built-in `auth.users` table — no app tables or migrations exist yet. In local dev, disable **Authentication → Email → Confirm email** in Supabase Studio (`http://localhost:54323`) to sign in immediately after signup.
+Auth uses only Supabase's built-in `auth.users` table. In local dev, disable **Authentication → Email → Confirm email** in Supabase Studio (`http://localhost:54323`) to sign in immediately after signup.
+
+### Database migrations (hosted-linked, no Docker)
+
+Migrations target the **hosted** Supabase project directly — no local Docker stack. Two one-time, credential-bearing steps (run by you, values stay local):
+
+```bash
+npx supabase login                              # access token (browser)
+npm run db:link -- --project-ref <project-ref>  # needs project ref + DB password
+```
+
+The `<project-ref>` is the subdomain of `SUPABASE_URL` (e.g. `https://abcd.supabase.co` → `abcd`). Linkage state lives in `supabase/.temp/` (gitignored).
+
+Then the per-change loop:
+
+```bash
+npm run db:migration <short_description>   # new supabase/migrations/<timestamp>_<desc>.sql
+npm run db:push                            # apply pending migrations to the linked project
+npm run db:types                           # regenerate src/db/database.types.ts from the schema
+```
+
+RLS convention for per-user tables: see `supabase/migrations/README.md`.
 
 ## Architecture
 
