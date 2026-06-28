@@ -65,6 +65,12 @@ const astroConfig = tseslint.config({
     "astro/no-set-html-directive": "error",
     "astro/no-unused-css-selector": "warn",
     "astro/prefer-class-list-directive": "warn",
+    // astro-eslint-parser × typescript-eslint crashes ("Expected node to have a
+    // parent") when this rule walks a top-level `return` in Astro frontmatter
+    // (e.g. `return Astro.redirect(...)`). The rule throws during traversal, so an
+    // inline disable can't suppress it — turn it off for .astro files. Astro
+    // frontmatter is server-side setup where this rule catches little anyway.
+    "@typescript-eslint/no-misused-promises": "off",
   },
 });
 

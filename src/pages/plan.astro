@@ -1,0 +1,32 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import PlanView from "@/components/plan/PlanView";
+import { createClient } from "@/lib/supabase";
+import { getProfile } from "@/lib/services/profile";
+
+// Middleware guarantees an authenticated user on this protected route. We
+// additionally redirect profile-less users to the profile form server-side — the
+// API also guards, but redirecting here avoids a flash of the generating UI.
+const { user } = Astro.locals;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+if (supabase && user) {
+  const profile = await getProfile(supabase, user.id);
+  if (!profile) {
+    return Astro.redirect("/training-profile");
+  }
+}
+---
+
+<Layout title="Twój plan treningowy">
+  <div class="bg-cosmic flex min-h-screen items-start justify-center p-4">
+    <div class="w-full max-w-2xl py-10">
+      <h1
+        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
+      >
+        Twój plan treningowy
+      </h1>
+      <PlanView client:load />
+    </div>
+  </div>
+</Layout>

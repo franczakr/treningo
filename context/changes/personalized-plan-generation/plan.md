@@ -443,21 +443,21 @@ None — no schema changes in this slice (ephemeral, no persistence).
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run build`
-- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Type checking passes: `npm run build` — c2cc8ee
+- [x] 2.2 Linting passes: `npm run lint` — c2cc8ee
 
 #### Manual
 
-- [x] 2.3 Validator reports `equipment` / `day_count` violations on crafted bad plans and empty on a sound plan
+- [x] 2.3 Validator reports `equipment` / `day_count` violations on crafted bad plans and empty on a sound plan — c2cc8ee
 - [ ] 2.4 A real-key generation yields a sound plan within the retry budget, with at least one observed retry-correction
-- [x] 2.5 A simulated hard failure throws `PlanGenerationError` (no silent bad result)
+- [x] 2.5 A simulated hard failure throws `PlanGenerationError` (no silent bad result) — c2cc8ee
 
 ### Phase 3: API route + page + island
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npm run build`
-- [ ] 3.2 Linting passes: `npm run lint`
+- [x] 3.1 Type checking passes: `npm run build`
+- [x] 3.2 Linting passes: `npm run lint`
 
 #### Manual
 
