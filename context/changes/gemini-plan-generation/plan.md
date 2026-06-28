@@ -376,11 +376,11 @@ prior change's pending rows and close it out. This closes the S-02 north star.
 
 #### Manual
 
-- [ ] 3.1 Happy path: profile → "Generuj plan" → spinner → Polish plan respecting all three guardrails (prior 3.3)
-- [ ] 3.2 "Wygeneruj ponownie" produces a fresh plan (prior 3.4)
-- [ ] 3.3 Real-key generation: sound plan within retry budget, with an observed retry-correction (prior 2.4)
-- [ ] 3.4 Profile-less user visiting `/plan` → redirect to `/training-profile` (prior 3.5)
-- [ ] 3.5 Unauthenticated request to `/plan` → redirect to signin (prior 3.6)
-- [ ] 3.6 Forced hard failure (invalid key) → friendly error + retry, no plan (prior 3.7)
-- [ ] 3.7 Forced soft failure (over-constrained equipment) → best attempt + warning banner (prior 3.8)
-- [ ] 3.8 Prior change closed out: its Manual rows checked off + `change.md` → implemented
+- [x] 3.1 Happy path: profile → "Generuj plan" → spinner → Polish plan respecting all three guardrails (prior 3.3)
+- [x] 3.2 "Wygeneruj ponownie" produces a fresh plan (prior 3.4)
+- [x] 3.3 Real-key generation: sound plan within retry budget, with an observed retry-correction (prior 2.4)
+- [x] 3.4 Profile-less user visiting `/plan` → redirect to `/training-profile` (prior 3.5)
+- [x] 3.5 Unauthenticated request to `/plan` → redirect to signin (prior 3.6)
+- [x] 3.6 Forced hard failure (invalid key) → friendly error + retry, no plan (prior 3.7)
+- [x] 3.7 Forced soft failure (over-constrained equipment) → best attempt + warning banner (prior 3.8)
+- [x] 3.8 Prior change closed out: its Manual rows checked off + `change.md` → implemented

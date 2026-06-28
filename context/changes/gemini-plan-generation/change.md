@@ -1,7 +1,7 @@
 ---
 change_id: gemini-plan-generation
 title: Switch FR-003 plan generation to free Google Gemini 2.5 Flash
-status: implementing
+status: implemented
 created: 2026-06-28
 updated: 2026-06-28
 archived_at: null
