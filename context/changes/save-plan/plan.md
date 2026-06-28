@@ -332,22 +332,22 @@ inaccessible until the four policies are in place within the same migration.
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly: `npm run db:push`
-- [x] 1.2 Types regenerate and include `plans`: `npm run db:types`
-- [x] 1.3 Type checking + lint pass: `npm run lint`
-- [x] 1.4 Build passes: `npm run build`
+- [x] 1.1 Migration applies cleanly: `npm run db:push` — b4148bd
+- [x] 1.2 Types regenerate and include `plans`: `npm run db:types` — b4148bd
+- [x] 1.3 Type checking + lint pass: `npm run lint` — b4148bd
+- [x] 1.4 Build passes: `npm run build` — b4148bd
 
 #### Manual
 
-- [x] 1.5 `plans` exists with RLS + four policies; cross-user read blocked
-- [x] 1.6 `user_id` has no `unique` constraint (two inserts for one user succeed)
+- [x] 1.5 `plans` exists with RLS + four policies; cross-user read blocked — b4148bd
+- [x] 1.6 `user_id` has no `unique` constraint (two inserts for one user succeed) — b4148bd
 
 ### Phase 2: Backend — save service + endpoint
 
 #### Automated
 
-- [ ] 2.1 Type checking + lint pass: `npm run lint`
-- [ ] 2.2 Build passes: `npm run build`
+- [x] 2.1 Type checking + lint pass: `npm run lint`
+- [x] 2.2 Build passes: `npm run build`
 
 #### Manual
 
