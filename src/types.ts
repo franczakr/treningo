@@ -40,6 +40,22 @@ export type WorkoutPlan = z.infer<typeof planSchema>;
 export type PlanSession = z.infer<typeof planSessionSchema>;
 export type PlanExercise = z.infer<typeof planExerciseSchema>;
 
+// A single guardrail violation reported by the plan validator. `message` is in
+// Polish — it doubles as corrective feedback fed back to the LLM on retry and as
+// the text shown in the UI warning banner.
+export interface Violation {
+  guardrail: "equipment" | "day_count" | "goal";
+  message: string;
+}
+
+// The outcome of a generation run: the best attempt, its outstanding violations,
+// and whether it is fully sound (`ok === (violations.length === 0)`).
+export interface PlanGenerationResult {
+  plan: WorkoutPlan;
+  violations: Violation[];
+  ok: boolean;
+}
+
 // Canonical option lists shared by the form (UI) and validation. Keeping value +
 // label here means the select/checkbox options and the zod enums stay in sync.
 export const GOAL_OPTIONS: readonly { value: Goal; label: string }[] = [

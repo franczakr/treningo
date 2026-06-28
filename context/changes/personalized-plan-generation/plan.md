@@ -430,27 +430,27 @@ None — no schema changes in this slice (ephemeral, no persistence).
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run build`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 `@anthropic-ai/sdk` resolves and imports without error in the build
+- [x] 1.1 Type checking passes: `npm run build` — bf8a57d
+- [x] 1.2 Linting passes: `npm run lint` — bf8a57d
+- [x] 1.3 `@anthropic-ai/sdk` resolves and imports without error in the build — bf8a57d
 
 #### Manual
 
-- [x] 1.4 Plan schema/types compile and are importable from `@/types` and `@/lib/schemas/plan`
-- [x] 1.5 With `ANTHROPIC_API_KEY` unset, `createAnthropic()` returns `null` (no throw)
+- [x] 1.4 Plan schema/types compile and are importable from `@/types` and `@/lib/schemas/plan` — bf8a57d
+- [x] 1.5 With `ANTHROPIC_API_KEY` unset, `createAnthropic()` returns `null` (no throw) — bf8a57d
 
 ### Phase 2: Generation service + validation layer
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run build`
-- [ ] 2.2 Linting passes: `npm run lint`
+- [x] 2.1 Type checking passes: `npm run build`
+- [x] 2.2 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Validator reports `equipment` / `day_count` violations on crafted bad plans and empty on a sound plan
+- [x] 2.3 Validator reports `equipment` / `day_count` violations on crafted bad plans and empty on a sound plan
 - [ ] 2.4 A real-key generation yields a sound plan within the retry budget, with at least one observed retry-correction
-- [ ] 2.5 A simulated hard failure throws `PlanGenerationError` (no silent bad result)
+- [x] 2.5 A simulated hard failure throws `PlanGenerationError` (no silent bad result)
 
 ### Phase 3: API route + page + island
 
