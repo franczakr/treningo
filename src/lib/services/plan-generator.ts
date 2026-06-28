@@ -17,6 +17,11 @@ import type { PlanGenerationResult, TrainingProfile, Violation, WorkoutPlan } fr
 
 const MODEL = "gemini-2.5-flash";
 const MAX_RETRIES = 2; // 3 total attempts
+// Bounds cost/latency. Generous on purpose: Gemini 2.5 Flash has thinking on by
+// default and those tokens count against this cap, so a tight limit could starve
+// the plan JSON and yield empty output. 8192 leaves ample room for the plan plus
+// thinking for the largest (7-day) plans.
+const MAX_OUTPUT_TOKENS = 8192;
 
 // JSON Schema for Gemini's structured output, derived once from the Zod schema.
 // `responseJsonSchema` accepts a full JSON Schema, but not the top-level `$schema`
@@ -57,16 +62,25 @@ export async function generatePlan(client: GoogleGenAI, profile: TrainingProfile
           systemInstruction: system,
           responseMimeType: "application/json",
           responseJsonSchema: PLAN_JSON_SCHEMA,
+          maxOutputTokens: MAX_OUTPUT_TOKENS,
         },
       });
 
       // A blocked prompt or empty output is a hard failure (no usable plan).
+      // Gemini can also stop via candidates[0].finishReason (SAFETY / RECITATION /
+      // MAX_TOKENS) without setting blockReason — those land in the empty-text
+      // branch; surface the reason in the (server-side-logged) message.
       if (response.promptFeedback?.blockReason) {
-        throw new PlanGenerationError("Model zablokował żądanie wygenerowania planu.");
+        throw new PlanGenerationError(
+          `Model zablokował żądanie wygenerowania planu (${response.promptFeedback.blockReason}).`,
+        );
       }
       const text = response.text;
       if (!text) {
-        throw new PlanGenerationError("Model nie zwrócił treści planu.");
+        const finishReason = response.candidates?.[0]?.finishReason;
+        throw new PlanGenerationError(
+          `Model nie zwrócił treści planu${finishReason ? ` (finishReason: ${finishReason})` : ""}.`,
+        );
       }
 
       const result = planSchema.safeParse(JSON.parse(text) as unknown);

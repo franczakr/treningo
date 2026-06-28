@@ -18,7 +18,7 @@ function json(body: unknown, status: number): Response {
 // Distinct status codes let the client island branch:
 //   401 → not authenticated (island redirects to signin)
 //   422 → no profile saved (island redirects to /training-profile)
-//   503 → server not configured (Supabase/Anthropic key missing)
+//   503 → server not configured (Supabase/Gemini key missing)
 //   500 → hard generation failure (island shows error + retry)
 //   200 → { plan, violations, ok }
 export const POST: APIRoute = async (context) => {

@@ -1,12 +1,13 @@
-// Generated-plan output schema — the shape the LLM must return (consumed by the
-// Anthropic structured-output helper) and the source of the shared plan types in
-// `@/types`. Field `.describe()` text doubles as generation guidance.
+// Generated-plan output schema — the shape the LLM must return (the Gemini
+// structured-output schema is derived from this via `z.toJSONSchema`) and the
+// source of the shared plan types in `@/types`. Field `.describe()` text doubles
+// as generation guidance.
 //
-// NOTE: structured-output JSON Schema does not carry numeric `min`/`max` or
-// string-length constraints — the SDK strips them and validates client-side. The
-// real guardrail enforcement (equipment ⊆ available, session count, goal
-// consistency) lives in the Phase 2 validator, NOT here. The numeric bounds below
-// are defense-in-depth for the client-side parse only.
+// NOTE: the numeric `min`/`max` bounds below are sent to Gemini as part of the
+// `responseJsonSchema` (generation guidance) and re-checked when we parse the
+// response with this Zod schema. They are NOT the soundness guardrails — the real
+// enforcement (equipment ⊆ available, session count = chosen days, goal
+// consistency) lives in the plan validator, NOT here.
 
 import { z } from "zod";
 import { Constants } from "@/db/database.types";
