@@ -4,7 +4,9 @@
 // types live in `@/db/database.types` (regenerate with `npm run db:types`);
 // re-export and build on top of them here — never hand-edit the generated file.
 
+import type { z } from "zod";
 import type { Database } from "@/db/database.types";
+import type { planSchema, planSessionSchema, planExerciseSchema } from "@/lib/schemas/plan";
 
 export type { Database };
 
@@ -30,6 +32,13 @@ export type ProfileUpsertDto = Omit<TablesInsert<"profiles">, "id" | "user_id" |
 export type Goal = Enums<"goal">;
 export type ExperienceLevel = Enums<"experience_level">;
 export type EquipmentItem = Enums<"equipment_item">;
+
+// Generated workout plan (S-02). Ephemeral generate-and-view — not persisted in
+// this slice. Types are inferred from the Zod output schema in
+// `@/lib/schemas/plan` so the LLM contract and the TS surface stay in lock-step.
+export type WorkoutPlan = z.infer<typeof planSchema>;
+export type PlanSession = z.infer<typeof planSessionSchema>;
+export type PlanExercise = z.infer<typeof planExerciseSchema>;
 
 // Canonical option lists shared by the form (UI) and validation. Keeping value +
 // label here means the select/checkbox options and the zod enums stay in sync.
