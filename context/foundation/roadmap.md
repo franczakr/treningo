@@ -29,7 +29,7 @@ Gym beginners have personal goals but don't know how to build a sound workout pl
 | ----- | ------------------------------ | --------------------------------------------------------------- | ------------- | ------------------------- | -------- |
 | F-01  | data-rls-baseline              | (foundation) migration tooling + account-isolation RLS convention in place | —             | NFR (privacy), Access Control | done     |
 | S-01  | training-profile               | log in and fill in / save their training profile                | F-01          | FR-001, FR-002, US-01     | done     |
-| S-02  | personalized-plan-generation   | generate and view a plan tailored to their profile (north star) | S-01          | FR-003, FR-004, US-01     | proposed |
+| S-02  | personalized-plan-generation   | generate and view a plan tailored to their profile (north star) | S-01          | FR-003, FR-004, US-01     | done     |
 | S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | proposed |
 | S-04  | browse-saved-plans             | browse their saved plans and reopen one                         | S-03          | FR-006, US-01             | proposed |
 
@@ -88,7 +88,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Generation approach within the chosen stack (LLM via Anthropic SDK + post-generation validation/retry vs template/rules fallback) — Owner: user/team. Block: no (decided at `/10x-plan`; tech-stack favors the LLM-plus-validation path).
 - **Risk:** Highest-effort, highest-risk slice (PRD flags FR-003) and the top_blocker (time) concentrates here. The plan-soundness guardrail — only available equipment, exactly the chosen training days, consistency with the stated goal — must be enforced by a validation layer with retry, not trusted to the generator. This slice proves the core hypothesis; everything downstream only matters if it works.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Save a generated plan
 
@@ -145,3 +145,4 @@ _None open._
 
 - **F-01: (foundation) migration tooling + account-isolation RLS convention in place** — Archived 2026-06-27 → `context/archive/2026-06-27-data-rls-baseline/`. Lesson: —.
 - **S-01: A logged-in user can fill in and save their training profile (goal, experience level, age, weight, available equipment, training days per week, current lifts, optional endurance metric).** — Archived 2026-06-28 → `context/archive/2026-06-27-training-profile/`. Lesson: —.
+- **S-02: A user with a completed profile can request a plan and immediately view one workout plan whose sessions, exercises, sets, reps, and suggested starting weights match their goal, experience, available equipment, and chosen training days.** — Archived 2026-06-28 → `context/archive/2026-06-28-personalized-plan-generation/`. Lesson: —.

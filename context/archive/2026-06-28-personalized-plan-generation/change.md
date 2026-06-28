@@ -1,10 +1,10 @@
 ---
 change_id: personalized-plan-generation
 title: Personalized plan generation + soundness validation (north star, S-02)
-status: implemented
+status: archived
 created: 2026-06-28
 updated: 2026-06-28
-archived_at: null
+archived_at: 2026-06-28T08:41:22Z
 ---
 
 ## Notes
