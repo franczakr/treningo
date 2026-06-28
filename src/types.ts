@@ -56,6 +56,23 @@ export interface PlanGenerationResult {
   ok: boolean;
 }
 
+// Saved plan (S-03). Many rows per user (history). The `plan` and
+// `profile_snapshot` jsonb columns are typed to their domain shapes here rather
+// than the generated raw `Json`. `profile_snapshot` captures the profile inputs
+// the plan was generated from, so the saved plan stays understandable even if the
+// profile later changes.
+export type ProfileSnapshot = ProfileUpsertDto;
+export type SavedPlan = Omit<Tables<"plans">, "plan" | "profile_snapshot"> & {
+  plan: WorkoutPlan;
+  profile_snapshot: ProfileSnapshot;
+};
+
+// API-boundary payload the client POSTs to /api/plan/save. Only the plan travels
+// from the client; `user_id` and `profile_snapshot` are derived server-side.
+export interface SavePlanRequest {
+  plan: WorkoutPlan;
+}
+
 // Canonical option lists shared by the form (UI) and validation. Keeping value +
 // label here means the select/checkbox options and the zod enums stay in sync.
 export const GOAL_OPTIONS: readonly { value: Goal; label: string }[] = [
