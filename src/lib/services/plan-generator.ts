@@ -1,25 +1,35 @@
 // Plan generation service — the orchestration core (and core risk) of S-02.
 //
-// Flow: build prompt → call Opus 4.8 with a Zod-constrained output schema →
-// validate → if violations remain and attempts are left, rebuild the prompt with
-// the violations as corrective feedback and regenerate (max 2 retries, 3 total
-// attempts). Returns the best attempt (fewest violations, ties broken toward the
-// latest) plus its violation list. Hard failures (API error, refusal,
-// unparseable output) throw PlanGenerationError — never a silent bad result.
+// Flow: build prompt → call Gemini 2.5 Flash with a JSON-Schema-constrained
+// output → validate → if violations remain and attempts are left, rebuild the
+// prompt with the violations as corrective feedback and regenerate (max 2
+// retries, 3 total attempts). Returns the best attempt (fewest violations, ties
+// broken toward the latest) plus its violation list. Hard failures (API error,
+// blocked prompt, empty/unparseable output) throw PlanGenerationError — never a
+// silent bad result.
 
-import type { Anthropic } from "@anthropic-ai/sdk";
-import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
+import type { GoogleGenAI } from "@google/genai";
+import { z } from "zod";
 import { planSchema } from "@/lib/schemas/plan";
 import { buildPlanPrompt } from "@/lib/services/plan-prompt";
 import { validatePlan } from "@/lib/services/plan-validator";
 import type { PlanGenerationResult, TrainingProfile, Violation, WorkoutPlan } from "@/types";
 
-const MODEL = "claude-opus-4-8";
-const MAX_TOKENS = 16000;
+const MODEL = "gemini-2.5-flash";
 const MAX_RETRIES = 2; // 3 total attempts
 
-// Hard failure: no usable plan was produced (API error, refusal, or output that
-// could not be parsed into the schema). Distinct from a soft failure, where a
+// JSON Schema for Gemini's structured output, derived once from the Zod schema.
+// `responseJsonSchema` accepts a full JSON Schema, but not the top-level `$schema`
+// key that `z.toJSONSchema` emits — strip it. The rest of the generated schema
+// (inlined objects, enums, min/max, descriptions) is accepted as-is.
+const PLAN_JSON_SCHEMA = (() => {
+  const schema = z.toJSONSchema(planSchema) as Record<string, unknown>;
+  delete schema.$schema;
+  return schema;
+})();
+
+// Hard failure: no usable plan was produced (API error, blocked prompt, or output
+// that could not be parsed into the schema). Distinct from a soft failure, where a
 // structurally-valid plan still violates a guardrail — that is returned with
 // `ok: false`, not thrown.
 export class PlanGenerationError extends Error {
@@ -32,39 +42,41 @@ export class PlanGenerationError extends Error {
   }
 }
 
-export async function generatePlan(client: Anthropic, profile: TrainingProfile): Promise<PlanGenerationResult> {
+export async function generatePlan(client: GoogleGenAI, profile: TrainingProfile): Promise<PlanGenerationResult> {
   let best: { plan: WorkoutPlan; violations: Violation[] } | null = null;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     const { system, user } = buildPlanPrompt(profile, best?.violations);
 
-    let parsed: WorkoutPlan | null;
+    let parsed: WorkoutPlan;
     try {
-      const response = await client.messages.parse({
+      const response = await client.models.generateContent({
         model: MODEL,
-        max_tokens: MAX_TOKENS,
-        thinking: { type: "adaptive" },
-        system,
-        output_config: {
-          effort: "medium",
-          format: zodOutputFormat(planSchema),
+        contents: user,
+        config: {
+          systemInstruction: system,
+          responseMimeType: "application/json",
+          responseJsonSchema: PLAN_JSON_SCHEMA,
         },
-        messages: [{ role: "user", content: user }],
       });
 
-      // A refusal is HTTP 200 with no usable content — treat as a hard failure.
-      if (response.stop_reason === "refusal") {
-        throw new PlanGenerationError("Model odmówił wygenerowania planu.");
+      // A blocked prompt or empty output is a hard failure (no usable plan).
+      if (response.promptFeedback?.blockReason) {
+        throw new PlanGenerationError("Model zablokował żądanie wygenerowania planu.");
+      }
+      const text = response.text;
+      if (!text) {
+        throw new PlanGenerationError("Model nie zwrócił treści planu.");
       }
 
-      parsed = response.parsed_output;
+      const result = planSchema.safeParse(JSON.parse(text) as unknown);
+      if (!result.success) {
+        throw new PlanGenerationError("Nie udało się odczytać planu ze struktury odpowiedzi modelu.");
+      }
+      parsed = result.data;
     } catch (error) {
       if (error instanceof PlanGenerationError) throw error;
       throw new PlanGenerationError("Błąd podczas wywołania modelu generującego plan.", error);
-    }
-
-    if (!parsed) {
-      throw new PlanGenerationError("Nie udało się odczytać planu ze struktury odpowiedzi modelu.");
     }
 
     const violations = validatePlan(parsed, profile);

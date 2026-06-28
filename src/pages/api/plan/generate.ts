@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
-import { createAnthropic } from "@/lib/anthropic";
+import { createGemini } from "@/lib/gemini";
 import { getProfile } from "@/lib/services/profile";
 import { generatePlan, PlanGenerationError } from "@/lib/services/plan-generator";
 
@@ -28,8 +28,8 @@ export const POST: APIRoute = async (context) => {
   }
 
   const supabase = createClient(context.request.headers, context.cookies);
-  const anthropic = createAnthropic();
-  if (!supabase || !anthropic) {
+  const gemini = createGemini();
+  if (!supabase || !gemini) {
     return json({ error: "not_configured", message: "Generowanie planów nie jest skonfigurowane." }, 503);
   }
 
@@ -47,10 +47,10 @@ export const POST: APIRoute = async (context) => {
   }
 
   try {
-    const result = await generatePlan(anthropic, profile);
+    const result = await generatePlan(gemini, profile);
     return json(result, 200);
   } catch (error) {
-    // Hard failure (API error / refusal / unparseable output). Log the raw cause
+    // Hard failure (API error / blocked prompt / unparseable output). Log the raw cause
     // server-side; return a friendly Polish message.
     // eslint-disable-next-line no-console -- deliberate server-side error log
     console.error("Plan generation failed:", error instanceof PlanGenerationError ? (error.cause ?? error) : error);
