@@ -77,7 +77,7 @@ Full server-side rendering (`output: "server"`). Pages are server-rendered by de
 ### Environment & deploy
 
 - Node v22.14.0 (`.nvmrc`).
-- Deploy to Cloudflare: `npm run build` then `npx wrangler deploy`; set `SUPABASE_URL` / `SUPABASE_KEY` via `npx wrangler secret put` (or the Cloudflare dashboard).
+- Deploy to Cloudflare: `npm run build` then `npx wrangler deploy`; set `SUPABASE_URL` / `SUPABASE_KEY` / `GEMINI_API_KEY` via `npx wrangler secret put` (or the Cloudflare dashboard).
 
 ## CI
 
@@ -89,6 +89,6 @@ This repository is **Treningo** — a personalized workout-plan generator — bu
 
 - `prd.md` — product requirements (auth, training profile, plan generation FR-003, persistence).
 - `tech-stack.md` — why this stack was chosen.
-- The plan generator (FR-003) is to be built with an LLM via the **Anthropic SDK** (structured outputs) plus a post-generation **validation layer** enforcing the plan-soundness guardrails (only available equipment, exactly the chosen training days, consistency with the stated goal), with retry on violation — not a hand-authored rules engine.
+- The plan generator (FR-003) is built with an LLM via the **Google Gemini SDK** (`@google/genai`, model `gemini-2.5-flash`) using **structured outputs** (`responseJsonSchema` derived from the Zod `planSchema`), plus a post-generation **validation layer** enforcing the plan-soundness guardrails (only available equipment, exactly the chosen training days, consistency with the stated goal), with retry on violation — not a hand-authored rules engine. (Provider note: originally specified as the Anthropic SDK in `tech-stack.md`; deliberately switched to Gemini's free tier to keep the MVP zero-cost — see `context/changes/gemini-plan-generation/`.)
 
 The `context/` directory is the 10x toolkit's working trail (changes, plans, foundation docs) — preserve it; do not treat it as application source.

@@ -351,26 +351,26 @@ prior change's pending rows and close it out. This closes the S-02 north star.
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run build`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 `astro check` reports 0 errors
-- [x] 1.4 `@google/genai` resolves in build; no remaining `@anthropic-ai/sdk` import in `src`
+- [x] 1.1 Type checking passes: `npm run build` — 28e7c88
+- [x] 1.2 Linting passes: `npm run lint` — 28e7c88
+- [x] 1.3 `astro check` reports 0 errors — 28e7c88
+- [x] 1.4 `@google/genai` resolves in build; no remaining `@anthropic-ai/sdk` import in `src` — 28e7c88
 
 #### Manual
 
-- [x] 1.5 Validator regression: `equipment`/`day_count` on bad plans, empty on a sound plan
-- [x] 1.6 Simulated hard failure (stubbed Gemini: throw / blocked / empty text) throws `PlanGenerationError`
-- [x] 1.7 With `GEMINI_API_KEY` unset, `createGemini()` returns `null` (no throw)
+- [x] 1.5 Validator regression: `equipment`/`day_count` on bad plans, empty on a sound plan — 28e7c88
+- [x] 1.6 Simulated hard failure (stubbed Gemini: throw / blocked / empty text) throws `PlanGenerationError` — 28e7c88
+- [x] 1.7 With `GEMINI_API_KEY` unset, `createGemini()` returns `null` (no throw) — 28e7c88
 
 ### Phase 2: Documentation alignment
 
 #### Automated
 
-- [ ] 2.1 No stale provider references: `grep -ri "anthropic" CLAUDE.md context/foundation/tech-stack.md` clean (bar intentional deviation notes)
+- [x] 2.1 No stale provider references: `grep -ri "anthropic" CLAUDE.md context/foundation/tech-stack.md` clean (bar intentional deviation notes)
 
 #### Manual
 
-- [ ] 2.2 CLAUDE.md + tech-stack.md consistently describe Gemini as the FR-003 provider
+- [x] 2.2 CLAUDE.md + tech-stack.md consistently describe Gemini as the FR-003 provider
 
 ### Phase 3: End-to-end verification (free key) — close out the north star
 

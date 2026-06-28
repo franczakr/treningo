@@ -30,9 +30,13 @@ agent-friendly gates (typed, convention-based, popular, well-documented), with
 TypeScript-first Zod schemas at boundaries that suit AI-assisted work. Auth and
 AI are the forcing features flagged; payments, realtime, and background jobs are
 out of scope per PRD non-goals. The plan generator (FR-003) uses an LLM via the
-Anthropic SDK with structured outputs, wrapped in a post-generation validation
-layer that enforces the FR-003 guardrails (available equipment, chosen training
-days, stated goal) and retries on violation; a rules/template engine remains a
-zero-per-request-cost fallback. CI runs on GitHub Actions with
+Google Gemini SDK (`@google/genai`, `gemini-2.5-flash`) with structured outputs
+(`responseJsonSchema`), wrapped in a post-generation validation layer that
+enforces the FR-003 guardrails (available equipment, chosen training days, stated
+goal) and retries on violation; a rules/template engine remains a
+zero-per-request-cost fallback. (Provider note: the original choice here was the
+Anthropic SDK; it was deliberately switched to Gemini's free tier to keep the MVP
+zero-cost — see `context/changes/gemini-plan-generation/`.) CI runs on GitHub
+Actions with
 auto-deploy-on-merge to Cloudflare Workers — what the starter ships with.
 Bootstrapper confidence is first-class.
