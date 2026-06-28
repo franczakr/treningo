@@ -366,11 +366,11 @@ prior change's pending rows and close it out. This closes the S-02 north star.
 
 #### Automated
 
-- [x] 2.1 No stale provider references: `grep -ri "anthropic" CLAUDE.md context/foundation/tech-stack.md` clean (bar intentional deviation notes)
+- [x] 2.1 No stale provider references: `grep -ri "anthropic" CLAUDE.md context/foundation/tech-stack.md` clean (bar intentional deviation notes) — 5888138
 
 #### Manual
 
-- [x] 2.2 CLAUDE.md + tech-stack.md consistently describe Gemini as the FR-003 provider
+- [x] 2.2 CLAUDE.md + tech-stack.md consistently describe Gemini as the FR-003 provider — 5888138
 
 ### Phase 3: End-to-end verification (free key) — close out the north star
 
