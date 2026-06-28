@@ -456,8 +456,8 @@ None — no schema changes in this slice (ephemeral, no persistence).
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npm run build`
-- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.1 Type checking passes: `npm run build` — 480b4ef
+- [x] 3.2 Linting passes: `npm run lint` — 480b4ef
 
 #### Manual
 
