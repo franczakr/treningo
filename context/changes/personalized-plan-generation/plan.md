@@ -449,7 +449,7 @@ None — no schema changes in this slice (ephemeral, no persistence).
 #### Manual
 
 - [x] 2.3 Validator reports `equipment` / `day_count` violations on crafted bad plans and empty on a sound plan — c2cc8ee
-- [ ] 2.4 A real-key generation yields a sound plan within the retry budget, with at least one observed retry-correction
+- [x] 2.4 A real-key generation yields a sound plan within the retry budget, with at least one observed retry-correction — verified post-migration on Gemini (gemini-plan-generation)
 - [x] 2.5 A simulated hard failure throws `PlanGenerationError` (no silent bad result) — c2cc8ee
 
 ### Phase 3: API route + page + island
@@ -461,9 +461,9 @@ None — no schema changes in this slice (ephemeral, no persistence).
 
 #### Manual
 
-- [ ] 3.3 Happy path E2E: profile → "Generuj plan" → spinner → Polish plan respecting all three guardrails
-- [ ] 3.4 "Wygeneruj ponownie" produces a fresh plan
-- [ ] 3.5 Profile-less user visiting `/plan` is redirected to `/training-profile`
-- [ ] 3.6 Unauthenticated request to `/plan` redirects to signin
-- [ ] 3.7 Forced hard failure shows friendly error + retry (no plan shown)
-- [ ] 3.8 Forced soft failure shows best attempt with a warning banner naming the violation
+- [x] 3.3 Happy path E2E: profile → "Generuj plan" → spinner → Polish plan respecting all three guardrails — verified post-migration on Gemini (gemini-plan-generation)
+- [x] 3.4 "Wygeneruj ponownie" produces a fresh plan — verified post-migration on Gemini (gemini-plan-generation)
+- [x] 3.5 Profile-less user visiting `/plan` is redirected to `/training-profile` — verified post-migration on Gemini (gemini-plan-generation)
+- [x] 3.6 Unauthenticated request to `/plan` redirects to signin — verified post-migration on Gemini (gemini-plan-generation)
+- [x] 3.7 Forced hard failure shows friendly error + retry (no plan shown) — verified post-migration on Gemini (gemini-plan-generation)
+- [x] 3.8 Forced soft failure shows best attempt with a warning banner naming the violation — verified post-migration on Gemini (gemini-plan-generation)
