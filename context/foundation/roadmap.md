@@ -3,7 +3,7 @@ project: Treningo
 version: 1
 status: draft
 created: 2026-06-27
-updated: 2026-06-28
+updated: 2026-06-29
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -30,7 +30,7 @@ Gym beginners have personal goals but don't know how to build a sound workout pl
 | F-01  | data-rls-baseline              | (foundation) migration tooling + account-isolation RLS convention in place | —             | NFR (privacy), Access Control | done     |
 | S-01  | training-profile               | log in and fill in / save their training profile                | F-01          | FR-001, FR-002, US-01     | done     |
 | S-02  | personalized-plan-generation   | generate and view a plan tailored to their profile (north star) | S-01          | FR-003, FR-004, US-01     | done     |
-| S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | proposed |
+| S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | done     |
 | S-04  | browse-saved-plans             | browse their saved plans and reopen one                         | S-03          | FR-006, US-01             | proposed |
 
 ## Baseline
@@ -100,7 +100,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Adds the plans table under the F-01 RLS convention (account isolation). Low risk once F-01's pattern exists; the main care is persisting the generated plan structure faithfully.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Browse saved plans
 
@@ -146,3 +146,4 @@ _None open._
 - **F-01: (foundation) migration tooling + account-isolation RLS convention in place** — Archived 2026-06-27 → `context/archive/2026-06-27-data-rls-baseline/`. Lesson: —.
 - **S-01: A logged-in user can fill in and save their training profile (goal, experience level, age, weight, available equipment, training days per week, current lifts, optional endurance metric).** — Archived 2026-06-28 → `context/archive/2026-06-27-training-profile/`. Lesson: —.
 - **S-02: A user with a completed profile can request a plan and immediately view one workout plan whose sessions, exercises, sets, reps, and suggested starting weights match their goal, experience, available equipment, and chosen training days.** — Archived 2026-06-28 → `context/archive/2026-06-28-personalized-plan-generation/`. Lesson: —.
+- **S-03: A user can save a generated plan so it survives between sessions.** — Archived 2026-06-29 → `context/archive/2026-06-28-save-plan/`. Lesson: —.
