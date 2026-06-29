@@ -1,9 +1,9 @@
 ---
 change_id: save-plan
 title: Save a generated workout plan (roadmap S-03)
-status: implementing
+status: implemented
 created: 2026-06-28
-updated: 2026-06-28
+updated: 2026-06-29
 ---
 
 ## Notes

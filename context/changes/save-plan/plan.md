@@ -351,20 +351,20 @@ inaccessible until the four policies are in place within the same migration.
 
 #### Manual
 
-- [x] 2.3 Valid POST returns 200 and creates a row with correct `profile_snapshot`
-- [x] 2.4 Malformed → 400, signed-out → 401, no profile → 422
-- [x] 2.5 Two saves create two rows for the same user
+- [x] 2.3 Valid POST returns 200 and creates a row with correct `profile_snapshot` — 4bca6f4
+- [x] 2.4 Malformed → 400, signed-out → 401, no profile → 422 — 4bca6f4
+- [x] 2.5 Two saves create two rows for the same user — 4bca6f4
 
 ### Phase 3: Frontend — "Zapisz plan" button
 
 #### Automated
 
-- [x] 3.1 Type checking + lint pass: `npm run lint`
-- [x] 3.2 Build passes: `npm run build`
+- [x] 3.1 Type checking + lint pass: `npm run lint` — 5d0ae74
+- [x] 3.2 Build passes: `npm run build` — 5d0ae74
 
 #### Manual
 
-- [x] 3.3 Save → "Zapisano" (disabled); row appears in `plans`
-- [x] 3.4 Regenerate resets the button; saving the new plan creates a second row
-- [x] 3.5 Soft-failure plan (`ok === false`) is still savable
-- [x] 3.6 Network/server error surfaces inline without losing the plan
+- [x] 3.3 Save → "Zapisano" (disabled); row appears in `plans` — 5d0ae74
+- [x] 3.4 Regenerate resets the button; saving the new plan creates a second row — 5d0ae74
+- [x] 3.5 Soft-failure plan (`ok === false`) is still savable — 5d0ae74
+- [x] 3.6 Network/server error surfaces inline without losing the plan — 5d0ae74
