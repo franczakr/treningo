@@ -1,0 +1,61 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import { getPlans } from "@/lib/services/plans";
+import { formatPlanDate } from "@/lib/format";
+import { GOAL_OPTIONS, type SavedPlan } from "@/types";
+
+// Middleware guarantees an authenticated user on this protected route. Plans are
+// loaded server-side (RLS-scoped via the session); no client fetch.
+const { user } = Astro.locals;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+let plans: SavedPlan[] = [];
+if (supabase && user) {
+  plans = await getPlans(supabase, user.id);
+}
+
+function goalLabel(plan: SavedPlan): string {
+  return GOAL_OPTIONS.find((o) => o.value === plan.profile_snapshot.goal)?.label ?? plan.profile_snapshot.goal;
+}
+---
+
+<Layout title="Moje plany">
+  <div class="bg-cosmic flex min-h-screen items-start justify-center p-4">
+    <div class="w-full max-w-2xl py-10">
+      <h1
+        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
+      >
+        Moje plany
+      </h1>
+
+      {
+        plans.length === 0 ? (
+          <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
+            <p class="text-blue-100/80">Nie masz jeszcze zapisanych planów.</p>
+            <a
+              href="/plan"
+              class="mt-6 inline-block rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500"
+            >
+              Generuj plan
+            </a>
+          </div>
+        ) : (
+          <ul class="space-y-3">
+            {plans.map((plan) => (
+              <li>
+                <a
+                  href={`/plan/${plan.id}`}
+                  class="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/10 p-5 text-white backdrop-blur-xl transition-colors hover:bg-white/20"
+                >
+                  <span class="font-semibold text-purple-200">{goalLabel(plan)}</span>
+                  <span class="text-sm text-blue-100/70">{formatPlanDate(plan.created_at)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+</Layout>

@@ -351,28 +351,28 @@ already exist from S-03.
 
 #### Automated
 
-- [x] 1.1 Type checking + lint pass: `npm run lint`
-- [x] 1.2 Build passes: `npm run build`
+- [x] 1.1 Type checking + lint pass: `npm run lint` — b2f8807
+- [x] 1.2 Build passes: `npm run build` — b2f8807
 
 #### Manual
 
-- [x] 1.3 Generate view still renders identically after extraction
-- [x] 1.4 `formatPlanDate` returns a sensible Polish date
+- [x] 1.3 Generate view still renders identically after extraction — b2f8807
+- [x] 1.4 `formatPlanDate` returns a sensible Polish date — b2f8807
 
 ### Phase 2: Saved-plans list — `/plans`
 
 #### Automated
 
-- [ ] 2.1 Type checking + lint pass: `npm run lint`
-- [ ] 2.2 Build passes: `npm run build`
+- [x] 2.1 Type checking + lint pass: `npm run lint`
+- [x] 2.2 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 `/plans` lists plans newest-first with goal label + date
-- [ ] 2.4 Each row links to `/plan/<id>`
-- [ ] 2.5 Zero-plan user sees empty-state CTA linking to `/plan`
-- [ ] 2.6 "Moje plany" on dashboard navigates to `/plans`
-- [ ] 2.7 Signed-out `/plans` redirects to `/auth/signin`
+- [x] 2.3 `/plans` lists plans newest-first with goal label + date
+- [x] 2.4 Each row links to `/plan/<id>`
+- [x] 2.5 Zero-plan user sees empty-state CTA linking to `/plan`
+- [x] 2.6 "Moje plany" on dashboard navigates to `/plans`
+- [x] 2.7 Signed-out `/plans` redirects to `/auth/signin`
 
 ### Phase 3: Reopen view — `/plan/[id]`
 
