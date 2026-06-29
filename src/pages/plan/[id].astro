@@ -1,0 +1,43 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { SessionCard } from "@/components/plan/PlanCards";
+import { createClient } from "@/lib/supabase";
+import { getPlanById } from "@/lib/services/plans";
+import { formatPlanDate } from "@/lib/format";
+import { GOAL_OPTIONS } from "@/types";
+
+// Middleware guarantees an authenticated user on this protected route. The plan is
+// loaded server-side, scoped to the user (RLS + explicit user_id filter); an id
+// that isn't theirs (or doesn't exist) resolves to null → redirect to the list.
+const { user } = Astro.locals;
+const { id } = Astro.params;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const saved = supabase && user && id ? await getPlanById(supabase, user.id, id) : null;
+if (!saved) {
+  return Astro.redirect("/plans");
+}
+
+const goalLabel =
+  GOAL_OPTIONS.find((o) => o.value === saved.profile_snapshot.goal)?.label ?? saved.profile_snapshot.goal;
+---
+
+<Layout title="Zapisany plan">
+  <div class="bg-cosmic flex min-h-screen items-start justify-center p-4">
+    <div class="w-full max-w-2xl py-10">
+      <a href="/plans" class="mb-4 inline-block text-sm text-blue-100/70 transition-colors hover:text-white">
+        ← Moje plany
+      </a>
+      <h1
+        class="mb-1 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
+      >
+        {goalLabel}
+      </h1>
+      <p class="mb-6 text-center text-sm text-blue-100/70">{formatPlanDate(saved.created_at)}</p>
+
+      <div class="space-y-5">
+        {saved.plan.sessions.map((session, i) => <SessionCard session={session} index={i} />)}
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -363,27 +363,27 @@ already exist from S-03.
 
 #### Automated
 
-- [x] 2.1 Type checking + lint pass: `npm run lint`
-- [x] 2.2 Build passes: `npm run build`
+- [x] 2.1 Type checking + lint pass: `npm run lint` — 6008c8b
+- [x] 2.2 Build passes: `npm run build` — 6008c8b
 
 #### Manual
 
-- [x] 2.3 `/plans` lists plans newest-first with goal label + date
-- [x] 2.4 Each row links to `/plan/<id>`
-- [x] 2.5 Zero-plan user sees empty-state CTA linking to `/plan`
-- [x] 2.6 "Moje plany" on dashboard navigates to `/plans`
-- [x] 2.7 Signed-out `/plans` redirects to `/auth/signin`
+- [x] 2.3 `/plans` lists plans newest-first with goal label + date — 6008c8b
+- [x] 2.4 Each row links to `/plan/<id>` — 6008c8b
+- [x] 2.5 Zero-plan user sees empty-state CTA linking to `/plan` — 6008c8b
+- [x] 2.6 "Moje plany" on dashboard navigates to `/plans` — 6008c8b
+- [x] 2.7 Signed-out `/plans` redirects to `/auth/signin` — 6008c8b
 
 ### Phase 3: Reopen view — `/plan/[id]`
 
 #### Automated
 
-- [ ] 3.1 Type checking + lint pass: `npm run lint`
-- [ ] 3.2 Build passes: `npm run build`
+- [x] 3.1 Type checking + lint pass: `npm run lint`
+- [x] 3.2 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 Row click opens `/plan/<id>` rendering the full plan
-- [ ] 3.4 Back link returns to `/plans`
-- [ ] 3.5 Foreign/random id redirects to `/plans` (RLS null)
-- [ ] 3.6 Signed-out `/plan/<id>` redirects to `/auth/signin`
+- [x] 3.3 Row click opens `/plan/<id>` rendering the full plan
+- [x] 3.4 Back link returns to `/plans`
+- [x] 3.5 Foreign/random id redirects to `/plans` (RLS null)
+- [x] 3.6 Signed-out `/plan/<id>` redirects to `/auth/signin`
