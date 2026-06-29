@@ -61,17 +61,14 @@ export interface PlanGenerationResult {
 // than the generated raw `Json`. `profile_snapshot` captures the profile inputs
 // the plan was generated from, so the saved plan stays understandable even if the
 // profile later changes.
-export type ProfileSnapshot = ProfileUpsertDto;
+// The persisted snapshot models the profile Row (minus identity/DB-managed
+// columns) — not the Insert DTO — because save derives it from a loaded profile
+// where every input field is present (`number | null`, never absent).
+export type ProfileSnapshot = Omit<Tables<"profiles">, "id" | "user_id" | "created_at" | "updated_at">;
 export type SavedPlan = Omit<Tables<"plans">, "plan" | "profile_snapshot"> & {
   plan: WorkoutPlan;
   profile_snapshot: ProfileSnapshot;
 };
-
-// API-boundary payload the client POSTs to /api/plan/save. Only the plan travels
-// from the client; `user_id` and `profile_snapshot` are derived server-side.
-export interface SavePlanRequest {
-  plan: WorkoutPlan;
-}
 
 // Canonical option lists shared by the form (UI) and validation. Keeping value +
 // label here means the select/checkbox options and the zod enums stay in sync.
