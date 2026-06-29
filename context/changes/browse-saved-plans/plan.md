@@ -378,12 +378,12 @@ already exist from S-03.
 
 #### Automated
 
-- [x] 3.1 Type checking + lint pass: `npm run lint`
-- [x] 3.2 Build passes: `npm run build`
+- [x] 3.1 Type checking + lint pass: `npm run lint` — 1d68e48
+- [x] 3.2 Build passes: `npm run build` — 1d68e48
 
 #### Manual
 
-- [x] 3.3 Row click opens `/plan/<id>` rendering the full plan
-- [x] 3.4 Back link returns to `/plans`
-- [x] 3.5 Foreign/random id redirects to `/plans` (RLS null)
-- [x] 3.6 Signed-out `/plan/<id>` redirects to `/auth/signin`
+- [x] 3.3 Row click opens `/plan/<id>` rendering the full plan — 1d68e48
+- [x] 3.4 Back link returns to `/plans` — 1d68e48
+- [x] 3.5 Foreign/random id redirects to `/plans` (RLS null) — 1d68e48
+- [x] 3.6 Signed-out `/plan/<id>` redirects to `/auth/signin` — 1d68e48
