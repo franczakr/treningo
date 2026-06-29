@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Loader2, RefreshCw, TriangleAlert, CircleAlert, Dumbbell, Clock } from "lucide-react";
+import { Loader2, RefreshCw, TriangleAlert, CircleAlert, Dumbbell, Clock, Save, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { PlanGenerationResult, PlanExercise, PlanSession, Violation } from "@/types";
+import type { PlanGenerationResult, PlanExercise, PlanSession, Violation, WorkoutPlan } from "@/types";
 
 type Status = "loading" | "success" | "error";
+type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 // Module-level so it's a stable reference for the effect/callback (no re-runs).
 type Outcome =
@@ -29,13 +30,39 @@ async function requestPlan(): Promise<Outcome> {
   }
 }
 
+// Outcome of a save attempt. The server re-validates the plan, so the only
+// branches the client cares about are redirect (auth), error, and success.
+type SaveOutcome = { kind: "redirect"; to: string } | { kind: "error"; message: string } | { kind: "ok" };
+
+async function savePlanRequest(plan: WorkoutPlan): Promise<SaveOutcome> {
+  try {
+    const res = await fetch("/api/plan/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan }),
+    });
+
+    if (res.status === 401) return { kind: "redirect", to: "/auth/signin" };
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { message?: string } | null;
+      return { kind: "error", message: body?.message ?? "Nie udało się zapisać planu. Spróbuj ponownie." };
+    }
+    return { kind: "ok" };
+  } catch {
+    return { kind: "error", message: "Wystąpił problem z połączeniem. Spróbuj ponownie." };
+  }
+}
+
 // Self-contained island: auto-generates a plan on mount and renders the loading
-// / plan / warning / error states. The plan is ephemeral (S-02) — held only in
-// this component's state, never persisted.
+// / plan / warning / error states. The shown plan lives in component state; it is
+// not auto-persisted, but the user can save it on demand (S-03) via "Zapisz plan",
+// which POSTs it to /api/plan/save. Generating a new plan resets the save state.
 export default function PlanView() {
   const [status, setStatus] = useState<Status>("loading");
   const [result, setResult] = useState<PlanGenerationResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [saveError, setSaveError] = useState<string>("");
 
   function apply(outcome: Outcome) {
     if (outcome.kind === "redirect") {
@@ -70,6 +97,7 @@ export default function PlanView() {
       }
       setResult(outcome.data);
       setStatus("success");
+      setSaveStatus("idle");
     });
     return () => {
       cancelled = true;
@@ -80,7 +108,29 @@ export default function PlanView() {
     setStatus("loading");
     setResult(null);
     setErrorMessage("");
+    setSaveStatus("idle");
+    setSaveError("");
     void requestPlan().then(apply);
+  }
+
+  // Persist the currently shown plan on demand. A new plan (regenerate / remount)
+  // resets saveStatus to "idle" so it can be saved independently.
+  function save() {
+    if (!result) return;
+    setSaveStatus("saving");
+    setSaveError("");
+    void savePlanRequest(result.plan).then((outcome) => {
+      if (outcome.kind === "redirect") {
+        window.location.assign(outcome.to);
+        return;
+      }
+      if (outcome.kind === "error") {
+        setSaveError(outcome.message);
+        setSaveStatus("error");
+        return;
+      }
+      setSaveStatus("saved");
+    });
   }
 
   if (status === "loading") {
@@ -112,10 +162,39 @@ export default function PlanView() {
         <SessionCard key={i} session={session} index={i} />
       ))}
 
-      <div className="flex justify-center pt-2">
+      {saveStatus === "error" && saveError ? <p className="text-center text-sm text-red-300">{saveError}</p> : null}
+
+      <div className="flex flex-wrap justify-center gap-3 pt-2">
+        <SaveButton status={saveStatus} onClick={save} />
         <RegenerateButton onClick={regenerate} label="Wygeneruj ponownie" />
       </div>
     </div>
+  );
+}
+
+function SaveButton({ status, onClick }: { status: SaveStatus; onClick: () => void }) {
+  const saved = status === "saved";
+  const saving = status === "saving";
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={saving || saved}
+      className={cn(
+        "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors",
+        saved ? "cursor-default bg-emerald-600/80" : "bg-emerald-600 hover:bg-emerald-500",
+        saving && "cursor-wait opacity-80",
+      )}
+    >
+      {saved ? (
+        <Check className="size-4" />
+      ) : saving ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <Save className="size-4" />
+      )}
+      {saved ? "Zapisano" : saving ? "Zapisywanie…" : "Zapisz plan"}
+    </button>
   );
 }
 
