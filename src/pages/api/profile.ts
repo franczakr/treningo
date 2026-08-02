@@ -1,7 +1,7 @@
 import type { APIRoute, APIContext } from "astro";
 import { createClient } from "@/lib/supabase";
 import { profileSchema } from "@/lib/schemas/profile";
-import { upsertProfile } from "@/lib/services/profile";
+import { getProfile, upsertProfile } from "@/lib/services/profile";
 
 export const prerender = false;
 
@@ -47,12 +47,29 @@ export const POST: APIRoute = async (context) => {
     return redirectWithError(context, message);
   }
 
+  // Read before writing: this is the only way to tell a first-ever save from an
+  // edit, since upsertProfile can't report insert-vs-update. A failed read is
+  // treated as "profile already existed" — the save must not be sacrificed to
+  // a transient read error just to compute where to redirect afterwards.
+  let hadProfile = true;
+  try {
+    hadProfile = (await getProfile(supabase, user.id)) !== null;
+  } catch {
+    hadProfile = true;
+  }
+
   const { error } = await upsertProfile(supabase, user.id, parsed.data);
   if (error) {
     // Keep the raw DB detail server-side; show the user a friendly message.
     // eslint-disable-next-line no-console -- deliberate server-side error log
     console.error("Profile upsert failed:", error);
     return redirectWithError(context, "Nie udało się zapisać profilu. Spróbuj ponownie.");
+  }
+
+  // First-ever profile save carries the user straight into plan generation
+  // (PRD §Business Logic); a re-save keeps today's stay-on-the-form behaviour.
+  if (!hadProfile) {
+    return context.redirect("/plan");
   }
 
   return context.redirect(`${PROFILE_PATH}?saved=1`);

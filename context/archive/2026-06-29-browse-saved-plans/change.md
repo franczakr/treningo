@@ -1,9 +1,10 @@
 ---
 change_id: browse-saved-plans
 title: Browse saved plans (roadmap S-04)
-status: impl_reviewed
+status: archived
 created: 2026-06-29
-updated: 2026-06-29
+updated: 2026-07-03
+archived_at: 2026-07-03T09:18:58Z
 ---
 
 ## Notes
