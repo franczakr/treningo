@@ -146,23 +146,23 @@ No schema or data change. Purely presentational plus one redirect target; safe t
 
 #### Automated
 
-- [x] 1.1 Linting passes: `npm run lint`
-- [x] 1.2 Production build succeeds: `npm run build`
+- [x] 1.1 Linting passes: `npm run lint` — 3859411
+- [x] 1.2 Production build succeeds: `npm run build` — 3859411
 
 #### Manual
 
-- [x] 1.3 `/` shows Treningo-specific copy with no "10x Astro Starter" text anywhere
-- [x] 1.4 `/` renders on the light grayscale palette with a steel-blue primary CTA, no cosmic/purple styling remaining
-- [x] 1.5 Signed-in and signed-out states of the embedded `Topbar` both still render correctly
+- [x] 1.3 `/` shows Treningo-specific copy with no "10x Astro Starter" text anywhere — 3859411
+- [x] 1.4 `/` renders on the light grayscale palette with a steel-blue primary CTA, no cosmic/purple styling remaining — 3859411
+- [x] 1.5 Signed-in and signed-out states of the embedded `Topbar` both still render correctly — 3859411
 
 ### Phase 2: Land on the dashboard after signing in
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 Signing in with valid credentials lands on `/dashboard`
-- [ ] 2.4 Signing in with invalid credentials still returns to `/auth/signin?error=...`
+- [x] 2.3 Signing in with valid credentials lands on `/dashboard`
+- [x] 2.4 Signing in with invalid credentials still returns to `/auth/signin?error=...`
