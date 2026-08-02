@@ -161,9 +161,9 @@ No schema change, no data migration. Purely additive/renaming at the CSS-token a
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint` — f0468f1
+- [x] 2.2 Production build succeeds: `npm run build` — f0468f1
 
 #### Manual
 
-- [x] 2.3 Every existing page still renders with no visible change
+- [x] 2.3 Every existing page still renders with no visible change — f0468f1

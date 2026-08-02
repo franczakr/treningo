@@ -1,7 +1,7 @@
 ---
 change_id: gym-visual-identity
 title: Gym visual identity — colour + type tokens & shared page shell (roadmap F-02)
-status: implementing
+status: implemented
 created: 2026-08-02
 updated: 2026-08-02
 ---
