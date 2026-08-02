@@ -1,7 +1,7 @@
 ---
 change_id: testing-plan-soundness
 title: Test runner bootstrap + plan-soundness guardrails (test-plan Phase 1)
-status: implemented
+status: impl_reviewed
 created: 2026-08-02
 updated: 2026-08-02
 archived_at: null

@@ -110,13 +110,27 @@ describe("profileSchema boundary parity", () => {
     });
   });
 
-  it("normalizes an empty optional lift field to a stored null (never 0)", () => {
-    const result = profileSchema.safeParse({ ...validInput, squat_kg: "" });
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.squat_kg).toBeNull();
-    }
-  });
+  describe.each(["squat_kg", "bench_kg", "deadlift_kg", "ohp_kg", "plank_seconds"] as const)(
+    "%s — absent/null normalization",
+    (field) => {
+      it("normalizes an empty string to a stored null (never 0)", () => {
+        const result = profileSchema.safeParse({ ...validInput, [field]: "" });
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data[field]).toBeNull();
+        }
+      });
+
+      it("normalizes an absent field to a stored null (never 0)", () => {
+        const { [field]: _omitted, ...withoutField } = validInput;
+        const result = profileSchema.safeParse(withoutField);
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data[field]).toBeNull();
+        }
+      });
+    },
+  );
 });
 
 describe("migration text guard", () => {
