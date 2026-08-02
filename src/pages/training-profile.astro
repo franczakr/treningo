@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import AppHeader from "@/components/AppHeader.astro";
 import TrainingProfileForm from "@/components/profile/TrainingProfileForm";
 import { createClient } from "@/lib/supabase";
 import { getProfile } from "@/lib/services/profile";
@@ -26,6 +27,7 @@ const saved = Astro.url.searchParams.get("saved") === "1";
 ---
 
 <Layout title="Profil treningowy">
+  <AppHeader slot="nav" />
   <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
     <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
       <h1

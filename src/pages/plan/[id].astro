@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import AppHeader from "@/components/AppHeader.astro";
 import { SessionCard } from "@/components/plan/PlanCards";
 import { createClient } from "@/lib/supabase";
 import { getPlanById } from "@/lib/services/plans";
@@ -23,6 +24,7 @@ const goalLabel =
 ---
 
 <Layout title="Zapisany plan">
+  <AppHeader slot="nav" />
   <div class="bg-cosmic flex min-h-screen items-start justify-center p-4">
     <div class="w-full max-w-2xl py-10">
       <a href="/plans" class="mb-4 inline-block text-sm text-blue-100/70 transition-colors hover:text-white">

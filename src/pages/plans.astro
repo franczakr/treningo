@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import AppHeader from "@/components/AppHeader.astro";
 import { createClient } from "@/lib/supabase";
 import { getPlans } from "@/lib/services/plans";
 import { formatPlanDate } from "@/lib/format";
@@ -21,6 +22,7 @@ function goalLabel(plan: SavedPlan): string {
 ---
 
 <Layout title="Moje plany">
+  <AppHeader slot="nav" />
   <div class="bg-cosmic flex min-h-screen items-start justify-center p-4">
     <div class="w-full max-w-2xl py-10">
       <h1

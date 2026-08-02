@@ -136,23 +136,23 @@ No schema or data change. Purely additive (one new component, one attribute adde
 
 #### Automated
 
-- [x] 1.1 Linting passes: `npm run lint`
-- [x] 1.2 Production build succeeds: `npm run build`
+- [x] 1.1 Linting passes: `npm run lint` — cad7779
+- [x] 1.2 Production build succeeds: `npm run build` — cad7779
 
 #### Manual
 
-- [x] 1.3 Component renders standalone with a signed-in user's email and all four links plus sign-out
+- [x] 1.3 Component renders standalone with a signed-in user's email and all four links plus sign-out — cad7779
 
 ### Phase 2: Mount the header on every protected page
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 `AppHeader` appears at the top of all five pages, above each page's existing content
-- [ ] 2.4 Every link navigates correctly from any of the five pages
-- [ ] 2.5 Sign-out from the header works from any of the five pages
-- [ ] 2.6 No existing page content shifted or changed beyond the header appearing above it
+- [x] 2.3 `AppHeader` appears at the top of all five pages, above each page's existing content
+- [x] 2.4 Every link navigates correctly from any of the five pages
+- [x] 2.5 Sign-out from the header works from any of the five pages
+- [x] 2.6 No existing page content shifted or changed beyond the header appearing above it
