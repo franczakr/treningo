@@ -589,26 +589,28 @@ local dev per research).
       environment — verified instead that the suite fails at the expected
       network boundary, not from a coding error, with and without dummy env
       vars)
-- [x] 2.2 `npm run lint` passes on the new file
-- [x] 2.3 `npm run test` (unit suite) remains unaffected
+- [x] 2.2 `npm run lint` passes on the new file — 9cc923c
+- [x] 2.3 `npm run test` (unit suite) remains unaffected — 9cc923c
 
 #### Manual
 
 - [x] 2.4 A reviewer confirms each cross-user assertion checks an actual
-      row-count/return-value, not just "no error was thrown"
+      row-count/return-value, not just "no error was thrown" — 9cc923c
 
 ### Phase 3: Plan isolation tests
 
 #### Automated
 
 - [ ] 3.1 `npm run test:integration` passes, including all
-      `plans.integration.test.ts` cases
-- [ ] 3.2 `npm run lint` passes on the new file
-- [ ] 3.3 `npm run test` (unit suite) remains unaffected
+      `plans.integration.test.ts` cases (**blocked**: no Docker in this
+      environment — verified instead that the suite fails at the expected
+      network boundary, not from a coding error)
+- [x] 3.2 `npm run lint` passes on the new file
+- [x] 3.3 `npm run test` (unit suite) remains unaffected
 
 #### Manual
 
-- [ ] 3.4 A reviewer confirms the `getPlanById` cross-user case matches the
+- [x] 3.4 A reviewer confirms the `getPlanById` cross-user case matches the
       real production behavior at `src/pages/plan/[id].astro`
 
 ### Phase 4: Cookbook update
