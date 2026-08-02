@@ -145,9 +145,9 @@ export default function PlanView() {
 
   if (status === "error") {
     return (
-      <div className="text-foreground flex flex-col items-center gap-4 rounded-2xl border border-red-200 bg-red-50 p-10 text-center">
-        <CircleAlert className="size-8 text-red-500" />
-        <p className="text-red-700">{errorMessage}</p>
+      <div className="text-foreground flex flex-col items-center gap-4 rounded-2xl border border-red-500/30 bg-red-950/40 p-10 text-center">
+        <CircleAlert className="size-8 text-red-400" />
+        <p className="text-red-300">{errorMessage}</p>
         <RegenerateButton onClick={regenerate} label="Spróbuj ponownie" />
       </div>
     );
@@ -163,7 +163,7 @@ export default function PlanView() {
         <SessionCard key={i} session={session} index={i} />
       ))}
 
-      {saveStatus === "error" && saveError ? <p className="text-center text-sm text-red-700">{saveError}</p> : null}
+      {saveStatus === "error" && saveError ? <p className="text-center text-sm text-red-300">{saveError}</p> : null}
 
       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <SaveButton status={saveStatus} onClick={save} />
@@ -206,12 +206,12 @@ function SaveButton({ status, onClick }: { status: SaveStatus; onClick: () => vo
 
 function WarningBanner({ violations }: { violations: Violation[] }) {
   return (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-800">
+    <div className="rounded-2xl border border-amber-500/30 bg-amber-950/30 p-4 text-amber-200">
       <p className="mb-2 flex items-center gap-2 font-semibold">
         <TriangleAlert className="size-4 shrink-0" />
         Plan może nie spełniać wszystkich wymagań:
       </p>
-      <ul className="list-inside list-disc space-y-1 text-sm text-amber-700">
+      <ul className="list-inside list-disc space-y-1 text-sm text-amber-300">
         {violations.map((v, i) => (
           <li key={i}>{v.message}</li>
         ))}

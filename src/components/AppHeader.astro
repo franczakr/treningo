@@ -1,24 +1,32 @@
 ---
+import { Dumbbell } from "lucide-react";
+
 // Mounted only on protected routes (via Layout's "nav" slot) — middleware
 // guarantees an authenticated user, so this never renders a signed-out state.
 const { user } = Astro.locals;
 ---
 
 <div
-  class="border-border bg-card text-foreground mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-2 text-sm"
+  class="border-border bg-card text-foreground mb-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border px-4 py-3 text-sm"
 >
-  <span class="text-muted-foreground">{user?.email}</span>
-  <nav class="flex flex-wrap items-center gap-3">
-    <a href="/dashboard" class="text-primary hover:text-primary/80 transition-colors hover:underline"> Dashboard </a>
-    <a href="/training-profile" class="text-primary hover:text-primary/80 transition-colors hover:underline">
-      Profil treningowy
-    </a>
-    <a href="/plan" class="text-primary hover:text-primary/80 transition-colors hover:underline"> Generuj plan </a>
-    <a href="/plans" class="text-primary hover:text-primary/80 transition-colors hover:underline"> Moje plany </a>
-    <form method="POST" action="/api/auth/signout">
-      <button type="submit" class="text-primary hover:text-primary/80 transition-colors hover:underline">
-        Wyloguj
-      </button>
-    </form>
-  </nav>
+  <a href="/dashboard" class="text-foreground flex items-center gap-2 text-xl font-bold tracking-tight">
+    <Dumbbell className="text-primary size-7" />
+    Treningo
+  </a>
+  <div class="flex flex-wrap items-center gap-4">
+    <span class="text-muted-foreground">{user?.email}</span>
+    <nav class="flex flex-wrap items-center gap-3">
+      <a href="/dashboard" class="text-primary hover:text-primary/80 transition-colors hover:underline"> Panel </a>
+      <a href="/training-profile" class="text-primary hover:text-primary/80 transition-colors hover:underline">
+        Profil treningowy
+      </a>
+      <a href="/plan" class="text-primary hover:text-primary/80 transition-colors hover:underline"> Generuj plan </a>
+      <a href="/plans" class="text-primary hover:text-primary/80 transition-colors hover:underline"> Moje plany </a>
+      <form method="POST" action="/api/auth/signout">
+        <button type="submit" class="text-primary hover:text-primary/80 transition-colors hover:underline">
+          Wyloguj
+        </button>
+      </form>
+    </nav>
+  </div>
 </div>

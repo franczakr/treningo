@@ -59,14 +59,14 @@ function SelectField({ id, label, value, onChange, error, icon, children }: Sele
           }}
           className={cn(
             "bg-background text-foreground w-full appearance-none rounded-lg border px-3 py-2 pl-10 transition-colors focus:ring-2 focus:outline-none",
-            error ? "border-red-300 focus:ring-red-400" : "border-input focus:ring-ring",
+            error ? "border-red-500/50 focus:ring-red-400" : "border-input focus:ring-ring",
           )}
         >
           {children}
         </select>
       </div>
       {error ? (
-        <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
+        <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
           <CircleAlert className="size-3" />
           {error}
         </p>
@@ -131,7 +131,7 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
   return (
     <form method="POST" action="/api/profile" className="space-y-5" onSubmit={handleSubmit} noValidate>
       {saved ? (
-        <p className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
+        <p className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-950/40 px-3 py-2 text-sm text-green-300">
           <CircleCheck className="size-4 shrink-0" />
           Profil zapisany.
         </p>
@@ -150,11 +150,11 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
         error={errors.goal}
         icon={<Target className="size-4" />}
       >
-        <option value="" disabled className="text-slate-900">
+        <option value="" disabled className="bg-white text-slate-900">
           Wybierz cel…
         </option>
         {GOAL_OPTIONS.map((o) => (
-          <option key={o.value} value={o.value} className="text-slate-900">
+          <option key={o.value} value={o.value} className="bg-white text-slate-900">
             {o.label}
           </option>
         ))}
@@ -171,11 +171,11 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
         error={errors.experience_level}
         icon={<Gauge className="size-4" />}
       >
-        <option value="" disabled className="text-slate-900">
+        <option value="" disabled className="bg-white text-slate-900">
           Wybierz poziom…
         </option>
         {EXPERIENCE_OPTIONS.map((o) => (
-          <option key={o.value} value={o.value} className="text-slate-900">
+          <option key={o.value} value={o.value} className="bg-white text-slate-900">
             {o.label}
           </option>
         ))}
@@ -246,7 +246,7 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
           ))}
         </div>
         {errors.equipment ? (
-          <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
+          <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
             <CircleAlert className="size-3" />
             {errors.equipment}
           </p>
