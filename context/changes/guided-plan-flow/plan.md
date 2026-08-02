@@ -185,12 +185,12 @@ One behavioural note worth stating: every existing account already has a profile
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint` — b5e51c0
+- [x] 2.2 Production build succeeds: `npm run build` — b5e51c0
 
 #### Manual
 
-- [x] 2.3 Saving a plan reveals a link to saved plans beside the "Zapisano" confirmation
-- [x] 2.4 Following that link opens `/plans` with the just-saved plan at the top of the list
-- [x] 2.5 Pressing "Wygeneruj ponownie" hides the link again until the new plan is saved
-- [x] 2.6 A failed save shows the existing error message and no link appears
+- [x] 2.3 Saving a plan reveals a link to saved plans beside the "Zapisano" confirmation — b5e51c0
+- [x] 2.4 Following that link opens `/plans` with the just-saved plan at the top of the list — b5e51c0
+- [x] 2.5 Pressing "Wygeneruj ponownie" hides the link again until the new plan is saved — b5e51c0
+- [x] 2.6 A failed save shows the existing error message and no link appears — b5e51c0
