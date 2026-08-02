@@ -632,14 +632,14 @@ nothing to roll back beyond reverting the added files and the small
 
 #### Automated
 
-- [ ] 2.1 `npm run test` passes, including all `plan-validator.test.ts` and
+- [x] 2.1 `npm run test` passes, including all `plan-validator.test.ts` and
       `plan-generator.test.ts` cases
-- [ ] 2.2 `npm run lint` passes on the new test files
-- [ ] 2.3 `npm run build` still passes unaffected
+- [x] 2.2 `npm run lint` passes on the new test files
+- [x] 2.3 `npm run build` still passes unaffected
 
 #### Manual
 
-- [ ] 2.4 A reviewer confirms every expected guardrail set was hand-derived,
+- [x] 2.4 A reviewer confirms every expected guardrail set was hand-derived,
       never computed by calling `validatePlan` a second time in the test file
 
 ### Phase 3: Schema↔database parity tests (Risk #5)
