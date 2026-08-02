@@ -287,24 +287,24 @@ No schema or data change. Purely class-string substitution plus one dead-file re
 
 #### Automated
 
-- [x] 3.1 Linting passes: `npm run lint`
-- [x] 3.2 Production build succeeds: `npm run build`
+- [x] 3.1 Linting passes: `npm run lint` — ddf2d02
+- [x] 3.2 Production build succeeds: `npm run build` — ddf2d02
 
 #### Manual
 
-- [x] 3.3 A generated plan (loading → success) renders on the light palette with legible session/exercise cards
-- [x] 3.4 Triggering the plan-soundness warning banner shows it clearly in light amber
-- [x] 3.5 Saving a plan shows the "Zobacz zapisane plany" link in the app's accent colour
-- [x] 3.6 The training profile form's success banner, field errors, and equipment checkboxes render correctly on the light palette
+- [x] 3.3 A generated plan (loading → success) renders on the light palette with legible session/exercise cards — ddf2d02
+- [x] 3.4 Triggering the plan-soundness warning banner shows it clearly in light amber — ddf2d02
+- [x] 3.5 Saving a plan shows the "Zobacz zapisane plany" link in the app's accent colour — ddf2d02
+- [x] 3.6 The training profile form's success banner, field errors, and equipment checkboxes render correctly on the light palette — ddf2d02
 
 ### Phase 4: Cleanup and verification sweep
 
 #### Automated
 
-- [ ] 4.1 `grep` sweep for starter colour classes returns no matches
-- [ ] 4.2 Linting passes: `npm run lint`
-- [ ] 4.3 Production build succeeds: `npm run build`
+- [x] 4.1 `grep` sweep for starter colour classes returns no matches
+- [x] 4.2 Linting passes: `npm run lint`
+- [x] 4.3 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 4.4 A full click-through of every page in the app shows one consistent light grey/white/steel-blue palette with no remaining starter branding anywhere
+- [x] 4.4 A full click-through of every page in the app shows one consistent light grey/white/steel-blue palette with no remaining starter branding anywhere
