@@ -1,8 +1,9 @@
 ---
 project: "Treningo"
-version: 1
+version: 2
 status: draft
 created: 2026-06-27
+updated: 2026-08-02
 context_type: greenfield
 product_type: web-app
 target_scale:
@@ -82,6 +83,7 @@ Primary persona: a beginner at the gym with their own personal goal (the app's a
 
 - Personal and body data (weight, age, current lifts) is never visible to anyone but the account owner.
 - A saved plan remains retrievable on every subsequent login and is not lost.
+- The app presents one consistent visual identity on every page — a gym-appropriate silver / grey / white palette applied through shared design tokens rather than per-page colours — and never shows starter-template branding. Added in v2 (2026-08-02): the MVP shipped on the starter's stock look, and a plan the user is meant to trust should not arrive on a page that still announces itself as a template.
 
 ## Business Logic
 

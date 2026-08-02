@@ -1,19 +1,25 @@
 ---
 project: Treningo
-version: 1
+version: 2
 status: draft
 created: 2026-06-27
-updated: 2026-06-29
-prd_version: 1
-main_goal: speed
-top_blocker: time
+updated: 2026-08-02
+prd_version: 2
+main_goal: quality
+top_blocker: decisions
 ---
 
 # Roadmap: Treningo
 
-> Derived from `context/foundation/prd.md` (v1) + auto-researched codebase baseline.
+> Derived from `context/foundation/prd.md` (v2) + auto-researched codebase baseline.
 > Edit-in-place; archive when superseded.
 > Slices below are listed in dependency order. The "At a glance" table is the index.
+>
+> **v2 (2026-08-02)** — edited in place, not regenerated. The MVP chain (F-01, S-01…S-04) shipped
+> and is left untouched below. What v2 adds is a second phase: every must-have FR is `done`, yet
+> the PRD's Primary Success Criterion — a new user going end to end — is still not met, because the
+> pages that satisfy those FRs are not reachable from one another. Sequencing bias moved from
+> `speed` to `quality` now that every must-have requirement is delivered and the work left is finishing it.
 
 ## Vision recap
 
@@ -21,7 +27,13 @@ Gym beginners have personal goals but don't know how to build a sound workout pl
 
 ## North star
 
-**S-02: user generates and views a personalized plan from their profile** — this is the validation milestone (the smallest end-to-end slice whose successful delivery would prove the core product hypothesis; placed as early as Prerequisites allow because everything else only matters if this works). It is the moment of value in the PRD's Business Logic: the plan visibly reflects the inputs the user gave. Sequenced as early as its prerequisites (a logged-in user + a filled profile) permit.
+**Current (v2) — S-05: after saving a profile the user is carried straight into generating a plan, and after saving a plan straight through to their saved plans.**
+
+This is the validation milestone for the second phase — the smallest end-to-end slice whose successful delivery would prove the phase worked, placed as early as its Prerequisites allow because everything else only matters if this works. It has no Prerequisites at all, so it is sequenced first and runs alongside the (currently blocked) visual foundation F-02.
+
+Why this one and not the visual work: the PRD's Business Logic describes this exact chain sentence by sentence — "the user encounters the rule right after completing their profile: they request a plan and immediately see one tailored to their parameters, which they can then save and revisit". Both joints in that chain are broken today (`src/pages/api/profile.ts:58` returns the user to the profile form; `src/components/plan/PlanView.tsx:133` leaves them on the plan page with no route onward). Until they are closed, the Primary Success Criterion is a claim the app cannot actually demonstrate.
+
+**Delivered (v1) — S-02: user generates and views a personalized plan from their profile.** This was the first phase's validation milestone: the moment of value in the PRD's Business Logic, where the plan visibly reflects the inputs the user gave. Shipped and archived 2026-06-28.
 
 ## At a glance
 
@@ -31,21 +43,39 @@ Gym beginners have personal goals but don't know how to build a sound workout pl
 | S-01  | training-profile               | log in and fill in / save their training profile                | F-01          | FR-001, FR-002, US-01     | done     |
 | S-02  | personalized-plan-generation   | generate and view a plan tailored to their profile (north star) | S-01          | FR-003, FR-004, US-01     | done     |
 | S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | done     |
-| S-04  | browse-saved-plans             | browse their saved plans and reopen one                         | S-03          | FR-006, US-01             | proposed |
+| S-04  | browse-saved-plans             | browse their saved plans and reopen one                         | S-03          | FR-006, US-01             | done     |
+| S-05  | guided-plan-flow               | be carried from saving a profile into generating a plan, and from saving a plan through to their saved plans | —             | FR-002, FR-003, FR-005, FR-006, US-01, Business Logic | ready    |
+| F-02  | gym-visual-identity            | (foundation) one gym-themed colour + type system and a shared page shell exist for pages to build on | —             | NFR (visual identity)     | blocked  |
+| S-06  | treningo-entry-point           | arrive on a Treningo home page offering sign-in and registration, and land on the dashboard after signing in | F-02          | FR-001, US-01, Access Control, NFR (visual identity) | proposed |
+| S-07  | app-header-nav                 | reach their profile, plan generation, saved plans and sign-out from any page once signed in | F-02          | FR-002, FR-003, FR-006, US-01 | proposed |
+| S-08  | retire-hardcoded-colours       | see every remaining page in the Treningo palette instead of stock starter colours | F-02, S-06, S-07 | US-01, NFR (visual identity) | proposed |
+
+## Streams
+
+Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
+
+| Stream | Theme                  | Chain                                            | Note                                                                                                        |
+| ------ | ---------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| A      | MVP core (closed)      | `F-01` → `S-01` → `S-02` → `S-03` → `S-04`        | Phase one. All `done` and archived; listed for continuity only.                                             |
+| B      | User path              | `S-05`                                           | Standalone — no Prerequisites, so the north star starts immediately and does not wait on Stream C.          |
+| C      | Visual identity        | `F-02` → `S-06` / `S-07` (parallel) → `S-08`      | Blocked at the head on three design decisions. Matches `main_goal: quality` — tokens before painted surface. |
 
 ## Baseline
 
-What's already in place in the codebase as of `2026-06-27` (auto-researched + user-confirmed).
+What's already in place in the codebase as of `2026-08-02` (auto-researched + user-confirmed).
 Foundations below assume these are present and do NOT re-scaffold them.
 
-- **Frontend:** present — Astro 6 SSR + React 19 islands + Tailwind 4 + shadcn/ui (`src/layouts/`, `src/components/ui/`; per `tech-stack.md`).
-- **Backend / API:** present — Astro API routes, pattern established (`src/pages/api/auth/{signin,signup,signout}.ts`, `prerender = false`).
-- **Data:** absent — no `supabase/migrations/`, no app tables, no `src/types.ts`; only Supabase `auth.users` exists.
-- **Auth:** present — Supabase `@supabase/ssr`, `src/middleware.ts` guards `PROTECTED_ROUTES`, `/dashboard` redirects to signin; verified live this session.
-- **Deploy / infra:** present — Cloudflare Workers, live at `treningo.franczakr066.workers.dev` (first deploy done 2026-06-27).
-- **Observability:** partial — `observability.enabled` in `wrangler.jsonc` + `wrangler tail`; no app-level error tracking.
+- **Frontend:** present — Astro 6 SSR + React 19 islands + Tailwind 4; nine page routes under `src/pages/`. Navigation is the gap, not the framework: `src/components/Topbar.astro` is the only nav component and it is mounted solely inside `src/components/Welcome.astro:28`, so `/dashboard`, `/plan`, `/plans`, `/training-profile` and `/plan/[id]` all render with no header at all.
+- **Backend / API:** present — six POST endpoints (`src/pages/api/auth/{signin,signup,signout}.ts`, `api/profile.ts`, `api/plan/generate.ts`, `api/plan/save.ts`), all `prerender = false`, all zod-validated.
+- **Data:** present — `profiles` (`supabase/migrations/20260627202445_create_profiles.sql`) and `plans` (`20260628105841_create_plans.sql`), both RLS-enabled with the four per-operation own-row policies from the F-01 convention; `src/db/database.types.ts` generated.
+- **Auth:** present — Supabase `@supabase/ssr`; `src/middleware.ts:4` guards `PROTECTED_ROUTES = ["/dashboard", "/training-profile", "/plan"]` by prefix match, so `/plans` and `/plan/[id]` are covered too. No redirect-away rule for a signed-in user sitting on `/auth/*` or `/`.
+- **Deploy / infra:** present — Cloudflare Workers, live at `treningo.franczakr066.workers.dev`; GitHub Actions CI runs lint + build.
+- **Observability:** partial — `observability.enabled` in `wrangler.jsonc:16-18`; logging is bare `console.error` in the API routes; no error-tracking SDK and no 404/500 pages under `src/pages`.
+- **Design system:** partial — `src/styles/global.css` carries the stock shadcn `neutral` tokens verbatim (`--primary: oklch(0.205 0 0)` etc.), and the only real primitive in `src/components/ui/` is `button.tsx`. Roughly 192 hardcoded colour classes are spread across 19 files (`Topbar.astro:13` `text-purple-300`, `auth/SubmitButton.tsx:18` `bg-purple-600`, `Banner.astro:28-30` raw hex), a `.dark` block exists at `global.css:41-73` with nothing anywhere able to toggle it, and there is no font or typography rule in the repo at all.
+- **Testing:** absent — no runner in `package.json`, no `test` script, no test files. Unchanged since v1.
 
-> Note for FR-003: no LLM SDK (Anthropic/OpenAI) is installed yet — the plan generator is introduced inside S-02, the first slice that needs it.
+> Superseded from v1: the `Data: absent` line and the note that no LLM SDK was installed. Both were
+> closed by S-01 through S-03; the plan generator now runs on `@google/genai` via `src/lib/gemini.ts`.
 
 ## Foundations
 
@@ -61,6 +91,22 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:** —
 - **Risk:** Sequenced first because every data-touching slice depends on the RLS/account-isolation contract; getting deny-by-default wrong once would silently break the privacy guardrail across all tables. Kept minimal (tooling + convention) so it does not turn into a full data-layer build ahead of user-facing work.
 - **Status:** done
+
+### F-02: Gym visual identity & shared page shell
+
+- **Outcome:** (foundation) One silver / grey / white colour system and one typography choice exist as tokens in `src/styles/global.css`, and a shared page shell with a slot for navigation is available for pages to adopt. From this point on no page invents its own colour.
+- **Change ID:** gym-visual-identity
+- **PRD refs:** NFR (visual identity) — added in PRD v2
+- **Unlocks:** S-06 and S-07 (both build new user-facing surface and would otherwise be painted in the stock purples and then repainted), S-08 (the migration target it defines), and it resolves the three blocking Unknowns below, which no later item can proceed past.
+- **Prerequisites:** —
+- **Parallel with:** S-05
+- **Blockers:** —
+- **Unknowns:**
+  - Which typeface and weights does Treningo use? There is no font rule anywhere in the repo today, so this is a choice with no default to fall back on. — Owner: user. Block: yes.
+  - Does the dark theme stay or go? `global.css:41-73` defines one and nothing can toggle it. Keeping it doubles the token work; removing it deletes dead CSS. — Owner: user. Block: yes.
+  - What carries a call-to-action in an all-greyscale palette — one accent hue, or pure contrast (near-black button on near-white page)? Every button today is a hardcoded purple that the palette removes. — Owner: user. Block: yes.
+- **Risk:** Sequenced ahead of the visual slices because `main_goal` is `quality` and both S-06 and S-07 create new painted surface; building them first means building them twice. Deliberately capped at tokens + typography + shell — it does **not** restyle the 19 existing files (that is S-08), so S-06 and S-07 still exercise it through real user-facing behaviour rather than it landing as a finished UI layer nobody has used.
+- **Status:** blocked
 
 ## Slices
 
@@ -112,23 +158,78 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Read-side of persistence; depends on saved plans existing. Closes the end-to-end loop in the Primary Success Criterion. Low risk.
+- **Status:** done
+
+### S-05: Guided path forward (north star)
+
+- **Outcome:** A user who saves their training profile is carried straight into generating a plan, and a user who saves a generated plan is given a direct way through to their saved plans.
+- **Change ID:** guided-plan-flow
+- **PRD refs:** FR-002, FR-003, FR-005, FR-006, US-01 (acceptance criterion "the user can save the plan and find it later among their saved plans"), Business Logic
+- **Prerequisites:** —
+- **Parallel with:** F-02
+- **Blockers:** —
+- **Unknowns:**
+  - ~~Should the jump into plan generation fire on every profile save, or only when the user has no plan yet?~~ — resolved at `/10x-plan` (2026-08-02): only when no profile existed before the save. `/plan` auto-generates on mount, so forwarding on every save would fire a ten-plus-second Gemini call on each profile edit. Detected by reading the profile before the upsert; a failed read degrades to the existing behaviour rather than failing the save.
+- **Risk:** The north star, and deliberately not held behind F-02 despite `main_goal: quality` — it changes two redirect targets and adds one link, so it creates almost no painted surface to repaint later, and holding it behind a blocked foundation would stall the whole phase. The real care is the Unknown above: the guided path must lead a first-time user without trapping a returning one.
+- **Status:** ready
+
+### S-06: Treningo entry point
+
+- **Outcome:** A visitor arrives on a Treningo home page that offers signing in and registering, and after signing in lands on the dashboard instead of being returned to the starter page.
+- **Change ID:** treningo-entry-point
+- **PRD refs:** FR-001, US-01, Access Control, NFR (visual identity)
+- **Prerequisites:** F-02
+- **Parallel with:** S-07
+- **Blockers:** —
+- **Unknowns:**
+  - Is the signed-out hub the home page `/` itself, or does `/` forward to `/dashboard` with the dashboard rendering a signed-out variant? The request supports either reading. Planning assumes the first — a public `/` and a protected `/dashboard` — because `src/middleware.ts:4` already protects `/dashboard` and inverting that would mean unpicking the guard. — Owner: user. Block: no.
+- **Risk:** Touches the one route with no auth guard, so a mistake here is visible to anyone who opens the site. Two concrete things to remove rather than restyle: `src/components/Welcome.astro:35-38` still announces "10x Astro Starter", and `src/pages/api/auth/signin.ts:19` redirects to `/` on success, which is what makes signing in feel like it did nothing.
+- **Status:** proposed
+
+### S-07: Persistent app header
+
+- **Outcome:** Once signed in, a user reaches their profile, plan generation, saved plans and sign-out from any page — not only from the home page.
+- **Change ID:** app-header-nav
+- **PRD refs:** FR-002, FR-003, FR-006, US-01
+- **Prerequisites:** F-02
+- **Parallel with:** S-06
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Low risk, high reach — it is the escape hatch that makes every destination reachable even where the guided path of S-05 does not apply. Sequenced after F-02 because the header is new painted surface and is the single most-seen component in the app; building it before the shell exists guarantees rework.
+- **Status:** proposed
+
+### S-08: Retire the stock starter colours
+
+- **Outcome:** Every remaining page renders in the Treningo palette; no page carries stock starter colours or invents its own.
+- **Change ID:** retire-hardcoded-colours
+- **PRD refs:** US-01 (the pages this journey runs through), NFR (visual identity)
+- **Prerequisites:** F-02, S-06, S-07
+- **Parallel with:** —
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** The largest surface in the phase (~192 colour classes across 19 files) but the lowest conceptual risk, so it is sequenced last, where it sweeps a settled shape rather than chasing a moving one. One thing to watch: `src/components/plan/PlanView.tsx` alone holds 22 colour hits and some of them carry meaning — a validation warning that is currently legible only because it is red must stay distinguishable once the palette is greyscale.
 - **Status:** proposed
 
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                      | Suggested issue title                                  | Ready for `/10x-plan` | Notes |
 | ---------- | ------------------------------ | ------------------------------------------------------ | --------------------- | ----- |
-| F-01       | data-rls-baseline              | Data & account-isolation baseline (migrations + RLS)   | yes                   | Run `/10x-plan data-rls-baseline` |
-| S-01       | training-profile               | Training profile capture & save                        | yes                   | Planned: `context/changes/training-profile/plan.md` |
-| S-02       | personalized-plan-generation   | Personalized plan generation + soundness validation    | no                    | Prereq S-01; north star |
-| S-03       | save-plan                      | Save a generated plan                                  | no                    | Prereq S-02, F-01 |
-| S-04       | browse-saved-plans             | Browse saved plans                                     | no                    | Prereq S-03 |
+| F-01       | data-rls-baseline              | Data & account-isolation baseline (migrations + RLS)   | done                  | Archived 2026-06-27 |
+| S-01       | training-profile               | Training profile capture & save                        | done                  | Archived 2026-06-28 |
+| S-02       | personalized-plan-generation   | Personalized plan generation + soundness validation    | done                  | Archived 2026-06-28 |
+| S-03       | save-plan                      | Save a generated plan                                  | done                  | Archived 2026-06-29 |
+| S-04       | browse-saved-plans             | Browse saved plans                                     | done                  | Archived 2026-07-03 |
+| S-05       | guided-plan-flow               | Guided path: profile → generate → saved plans          | yes                   | No prerequisites. Run `/10x-plan guided-plan-flow` |
+| F-02       | gym-visual-identity            | Gym visual identity: colour + type tokens & page shell | no                    | Three design decisions must be answered first — see `## Open Roadmap Questions` |
+| S-06       | treningo-entry-point           | Treningo home page & post-sign-in landing              | no                    | Prereq F-02 |
+| S-07       | app-header-nav                 | Persistent app header on every signed-in page          | no                    | Prereq F-02 |
+| S-08       | retire-hardcoded-colours       | Retire ~192 hardcoded colour classes across 19 files   | no                    | Prereq F-02, S-06, S-07 |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
 ## Open Roadmap Questions
 
-_None open._
+1. **What does "silver / grey / white" actually resolve to as a design system?** The colour direction is settled; three things underneath it are not, and F-02 cannot be planned past any of them. (a) Which typeface and weights — there is no font rule anywhere in the repo, so there is no default to inherit. (b) Does the dark theme stay or go — `src/styles/global.css:41-73` defines one and nothing can toggle it. (c) What carries a call-to-action in an all-greyscale palette — one accent hue, or pure contrast — given every button today is a hardcoded purple the palette removes. — Owner: user. Block: F-02, and through it S-06, S-07, S-08.
 
 ### Resolved
 
@@ -137,7 +238,8 @@ _None open._
 ## Parked
 
 - **Manual plan editing** — Why parked: PRD §Non-Goals (deferred to v2; keeps MVP focused on generation + save).
-- **Multiple plan variants (2–3 alternatives)** — Why parked: PRD §Non-Goals + Success Criteria §Secondary; v1 generates a single plan. With main_goal `speed`, this stays out of the must-have path.
+- **Multiple plan variants (2–3 alternatives)** — Why parked: PRD §Non-Goals + Success Criteria §Secondary; v1 generates a single plan. Still parked under `main_goal: quality` — the second phase finishes the single-plan journey rather than widening it.
+- **Error pages and app-level error tracking** — Why parked: no PRD requirement gates it, and the `Observability: partial` baseline line predates this phase. Surfaced by the v2 baseline probe (no 404/500 pages, logging is bare `console.error`); recorded here so it is a choice rather than an oversight.
 - **Progress tracking / workout journal** — Why parked: PRD §Non-Goals (logging completed workouts, weight history, progression out of MVP scope).
 - **Social / trainer features** — Why parked: PRD §Non-Goals (flat single-user-per-account model; no sharing, community, or roles).
 
@@ -147,3 +249,4 @@ _None open._
 - **S-01: A logged-in user can fill in and save their training profile (goal, experience level, age, weight, available equipment, training days per week, current lifts, optional endurance metric).** — Archived 2026-06-28 → `context/archive/2026-06-27-training-profile/`. Lesson: —.
 - **S-02: A user with a completed profile can request a plan and immediately view one workout plan whose sessions, exercises, sets, reps, and suggested starting weights match their goal, experience, available equipment, and chosen training days.** — Archived 2026-06-28 → `context/archive/2026-06-28-personalized-plan-generation/`. Lesson: —.
 - **S-03: A user can save a generated plan so it survives between sessions.** — Archived 2026-06-29 → `context/archive/2026-06-28-save-plan/`. Lesson: —.
+- **S-04: A user can browse their saved plans and reopen any one to view it again.** — Archived 2026-07-03 → `context/archive/2026-06-29-browse-saved-plans/`. Lesson: —.
