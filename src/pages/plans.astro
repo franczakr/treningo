@@ -23,21 +23,17 @@ function goalLabel(plan: SavedPlan): string {
 
 <Layout title="Moje plany">
   <AppHeader slot="nav" />
-  <div class="bg-cosmic flex min-h-screen items-start justify-center p-4">
+  <div class="flex min-h-screen items-start justify-center p-4">
     <div class="w-full max-w-2xl py-10">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
-      >
-        Moje plany
-      </h1>
+      <h1 class="text-foreground mb-6 text-center text-3xl font-bold">Moje plany</h1>
 
       {
         plans.length === 0 ? (
-          <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
-            <p class="text-blue-100/80">Nie masz jeszcze zapisanych planów.</p>
+          <div class="border-border bg-card text-foreground rounded-2xl border p-8 text-center">
+            <p class="text-muted-foreground">Nie masz jeszcze zapisanych planów.</p>
             <a
               href="/plan"
-              class="mt-6 inline-block rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500"
+              class="bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-block rounded-lg px-4 py-2 text-sm font-medium transition-colors"
             >
               Generuj plan
             </a>
@@ -48,10 +44,10 @@ function goalLabel(plan: SavedPlan): string {
               <li>
                 <a
                   href={`/plan/${plan.id}`}
-                  class="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/10 p-5 text-white backdrop-blur-xl transition-colors hover:bg-white/20"
+                  class="border-border bg-card text-foreground hover:bg-accent flex items-center justify-between gap-4 rounded-2xl border p-5 transition-colors"
                 >
-                  <span class="font-semibold text-purple-200">{goalLabel(plan)}</span>
-                  <span class="text-sm text-blue-100/70">{formatPlanDate(plan.created_at)}</span>
+                  <span class="text-primary font-semibold">{goalLabel(plan)}</span>
+                  <span class="text-muted-foreground text-sm">{formatPlanDate(plan.created_at)}</span>
                 </a>
               </li>
             ))}

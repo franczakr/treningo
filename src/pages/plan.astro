@@ -21,13 +21,9 @@ if (supabase && user) {
 
 <Layout title="Twój plan treningowy">
   <AppHeader slot="nav" />
-  <div class="bg-cosmic flex min-h-screen items-start justify-center p-4">
+  <div class="flex min-h-screen items-start justify-center p-4">
     <div class="w-full max-w-2xl py-10">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-3xl font-bold text-transparent"
-      >
-        Twój plan treningowy
-      </h1>
+      <h1 class="text-foreground mb-6 text-center text-3xl font-bold">Twój plan treningowy</h1>
       <PlanView client:load />
     </div>
   </div>

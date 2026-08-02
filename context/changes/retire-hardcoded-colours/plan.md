@@ -261,27 +261,27 @@ No schema or data change. Purely class-string substitution plus one dead-file re
 
 #### Automated
 
-- [x] 1.1 Linting passes: `npm run lint`
-- [x] 1.2 Production build succeeds: `npm run build`
+- [x] 1.1 Linting passes: `npm run lint` — 0a9770f
+- [x] 1.2 Production build succeeds: `npm run build` — 0a9770f
 
 #### Manual
 
-- [x] 1.3 `/auth/signin`, `/auth/signup`, `/auth/confirm-email` render on the light palette with no cosmic/purple/blue starter styling
-- [x] 1.4 A validation error on either auth form is still clearly legible in red
-- [x] 1.5 Password show/hide toggle still works and is visible against the light input
+- [x] 1.3 `/auth/signin`, `/auth/signup`, `/auth/confirm-email` render on the light palette with no cosmic/purple/blue starter styling — 0a9770f
+- [x] 1.4 A validation error on either auth form is still clearly legible in red — 0a9770f
+- [x] 1.5 Password show/hide toggle still works and is visible against the light input — 0a9770f
 
 ### Phase 2: Protected page shells
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 All five protected pages render on the light palette with no cosmic/purple/blue starter styling
-- [ ] 2.4 `dashboard.astro`'s three action links and `plans.astro`'s empty-state CTA are still clearly primary/secondary
-- [ ] 2.5 A saved-plans list with at least one entry still renders legibly, and `plan/[id].astro`'s back-link still works
+- [x] 2.3 All five protected pages render on the light palette with no cosmic/purple/blue starter styling
+- [x] 2.4 `dashboard.astro`'s three action links and `plans.astro`'s empty-state CTA are still clearly primary/secondary
+- [x] 2.5 A saved-plans list with at least one entry still renders legibly, and `plan/[id].astro`'s back-link still works
 
 ### Phase 3: Plan and profile components
 

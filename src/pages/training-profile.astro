@@ -28,13 +28,9 @@ const saved = Astro.url.searchParams.get("saved") === "1";
 
 <Layout title="Profil treningowy">
   <AppHeader slot="nav" />
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent"
-      >
-        Profil treningowy
-      </h1>
+  <div class="flex min-h-screen items-center justify-center p-4">
+    <div class="border-border bg-card text-foreground w-full max-w-lg rounded-2xl border p-8">
+      <h1 class="mb-6 text-center text-2xl font-bold">Profil treningowy</h1>
       <TrainingProfileForm initial={profile} serverError={error} saved={saved} client:load />
     </div>
   </div>
