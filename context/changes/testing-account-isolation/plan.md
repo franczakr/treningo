@@ -618,4 +618,4 @@ local dev per research).
 #### Manual
 
 - [x] 4.1 §6.3 no longer reads "TBD" and references the actual test files
-      shipped
+      shipped — b8e2cfc
