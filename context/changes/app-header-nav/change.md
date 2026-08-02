@@ -1,7 +1,7 @@
 ---
 change_id: app-header-nav
 title: Persistent app header on every signed-in page (roadmap S-07)
-status: implemented
+status: impl_reviewed
 created: 2026-08-02
 updated: 2026-08-02
 ---
