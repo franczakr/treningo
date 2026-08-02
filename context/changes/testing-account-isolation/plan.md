@@ -567,9 +567,8 @@ local dev per research).
 
 #### Automated
 
-- [ ] 1.1 `supabase start` succeeds locally and `npm run test:integration`
-      smoke test passes (**blocked**: no Docker in this environment — see
-      note below)
+- [x] 1.1 `supabase start` succeeds locally and `npm run test:integration`
+      smoke test passes
 - [x] 1.2 `npm run test` still passes and does not pick up
       `*.integration.test.ts` — 3dd0240
 - [x] 1.3 `npm run lint` passes on all new files — 3dd0240
@@ -584,11 +583,8 @@ local dev per research).
 
 #### Automated
 
-- [ ] 2.1 `npm run test:integration` passes, including all
-      `profile.integration.test.ts` cases (**blocked**: no Docker in this
-      environment — verified instead that the suite fails at the expected
-      network boundary, not from a coding error, with and without dummy env
-      vars)
+- [x] 2.1 `npm run test:integration` passes, including all
+      `profile.integration.test.ts` cases
 - [x] 2.2 `npm run lint` passes on the new file — 9cc923c
 - [x] 2.3 `npm run test` (unit suite) remains unaffected — 9cc923c
 
@@ -601,10 +597,8 @@ local dev per research).
 
 #### Automated
 
-- [ ] 3.1 `npm run test:integration` passes, including all
-      `plans.integration.test.ts` cases (**blocked**: no Docker in this
-      environment — verified instead that the suite fails at the expected
-      network boundary, not from a coding error)
+- [x] 3.1 `npm run test:integration` passes, including all
+      `plans.integration.test.ts` cases
 - [x] 3.2 `npm run lint` passes on the new file — b2fed40
 - [x] 3.3 `npm run test` (unit suite) remains unaffected — b2fed40
 
