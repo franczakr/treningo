@@ -633,29 +633,29 @@ nothing to roll back beyond reverting the added files and the small
 #### Automated
 
 - [x] 2.1 `npm run test` passes, including all `plan-validator.test.ts` and
-      `plan-generator.test.ts` cases
-- [x] 2.2 `npm run lint` passes on the new test files
-- [x] 2.3 `npm run build` still passes unaffected
+      `plan-generator.test.ts` cases — 551fdf7
+- [x] 2.2 `npm run lint` passes on the new test files — 551fdf7
+- [x] 2.3 `npm run build` still passes unaffected — 551fdf7
 
 #### Manual
 
 - [x] 2.4 A reviewer confirms every expected guardrail set was hand-derived,
-      never computed by calling `validatePlan` a second time in the test file
+      never computed by calling `validatePlan` a second time in the test file — 551fdf7
 
 ### Phase 3: Schema↔database parity tests (Risk #5)
 
 #### Automated
 
-- [ ] 3.1 `npm run test` passes, including all `profile.test.ts` and
+- [x] 3.1 `npm run test` passes, including all `profile.test.ts` and
       `plan.test.ts` cases
-- [ ] 3.2 `npm run lint` passes on the new/changed files
-- [ ] 3.3 `npm run build` still passes unaffected
+- [x] 3.2 `npm run lint` passes on the new/changed files
+- [x] 3.3 `npm run build` still passes unaffected
 
 #### Manual
 
-- [ ] 3.4 A reviewer confirms every parity-table bound matches a quoted CHECK
+- [x] 3.4 A reviewer confirms every parity-table bound matches a quoted CHECK
       clause verified against the actual migration file
-- [ ] 3.5 A reviewer confirms the migration-text guard's drift-vs-correctness
+- [x] 3.5 A reviewer confirms the migration-text guard's drift-vs-correctness
       limitation is documented inline
 
 ### Phase 4: Cookbook update

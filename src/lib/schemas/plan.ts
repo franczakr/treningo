@@ -18,20 +18,29 @@ const SETS_MAX = 20;
 const REST_MIN = 0;
 const REST_MAX = 1200; // seconds
 
+// Postgres jsonb cannot store the NUL code point; reject it here so a
+// structurally-valid plan can never fail at the database insert (Risk #5
+// Defect B — see context/changes/testing-plan-soundness/research.md).
+const boundedText = (description: string) =>
+  z
+    .string()
+    .refine((v) => !v.includes("\u0000"), "Tekst nie może zawierać znaku NUL.")
+    .describe(description);
+
 export const planExerciseSchema = z.object({
-  name: z.string().describe("Nazwa ćwiczenia po polsku."),
+  name: boundedText("Nazwa ćwiczenia po polsku."),
   equipment: z
     .enum(Constants.public.Enums.equipment_item)
     .describe("Sprzęt wymagany do ćwiczenia — musi należeć do sprzętu dostępnego użytkownikowi."),
   sets: z.number().int().min(SETS_MIN).max(SETS_MAX).describe("Liczba serii roboczych."),
-  reps: z.string().describe('Zakres lub liczba powtórzeń, np. "8–10" lub "do upadku".'),
-  suggested_weight: z.string().describe('Orientacyjny ciężar, np. "orientacyjnie 40 kg", "masa ciała", "70% 1RM".'),
+  reps: boundedText('Zakres lub liczba powtórzeń, np. "8–10" lub "do upadku".'),
+  suggested_weight: boundedText('Orientacyjny ciężar, np. "orientacyjnie 40 kg", "masa ciała", "70% 1RM".'),
   rest_seconds: z.number().int().min(REST_MIN).max(REST_MAX).describe("Czas odpoczynku między seriami w sekundach."),
 });
 
 export const planSessionSchema = z.object({
-  name: z.string().describe('Nazwa sesji treningowej po polsku, np. "Trening A — góra".'),
-  focus: z.string().describe('Główny cel/obszar sesji po polsku, np. "klatka i triceps".'),
+  name: boundedText('Nazwa sesji treningowej po polsku, np. "Trening A — góra".'),
+  focus: boundedText('Główny cel/obszar sesji po polsku, np. "klatka i triceps".'),
   exercises: z.array(planExerciseSchema).describe("Lista ćwiczeń w tej sesji."),
 });
 
