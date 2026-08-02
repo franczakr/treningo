@@ -147,12 +147,12 @@ No schema or data change. Purely additive (one new component, one attribute adde
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint` — 9f99ad4
+- [x] 2.2 Production build succeeds: `npm run build` — 9f99ad4
 
 #### Manual
 
-- [x] 2.3 `AppHeader` appears at the top of all five pages, above each page's existing content
-- [x] 2.4 Every link navigates correctly from any of the five pages
-- [x] 2.5 Sign-out from the header works from any of the five pages
-- [x] 2.6 No existing page content shifted or changed beyond the header appearing above it
+- [x] 2.3 `AppHeader` appears at the top of all five pages, above each page's existing content — 9f99ad4
+- [x] 2.4 Every link navigates correctly from any of the five pages — 9f99ad4
+- [x] 2.5 Sign-out from the header works from any of the five pages — 9f99ad4
+- [x] 2.6 No existing page content shifted or changed beyond the header appearing above it — 9f99ad4
