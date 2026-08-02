@@ -605,17 +605,17 @@ local dev per research).
       `plans.integration.test.ts` cases (**blocked**: no Docker in this
       environment — verified instead that the suite fails at the expected
       network boundary, not from a coding error)
-- [x] 3.2 `npm run lint` passes on the new file
-- [x] 3.3 `npm run test` (unit suite) remains unaffected
+- [x] 3.2 `npm run lint` passes on the new file — b2fed40
+- [x] 3.3 `npm run test` (unit suite) remains unaffected — b2fed40
 
 #### Manual
 
 - [x] 3.4 A reviewer confirms the `getPlanById` cross-user case matches the
-      real production behavior at `src/pages/plan/[id].astro`
+      real production behavior at `src/pages/plan/[id].astro` — b2fed40
 
 ### Phase 4: Cookbook update
 
 #### Manual
 
-- [ ] 4.1 §6.3 no longer reads "TBD" and references the actual test files
+- [x] 4.1 §6.3 no longer reads "TBD" and references the actual test files
       shipped

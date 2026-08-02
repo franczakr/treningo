@@ -192,9 +192,49 @@ once — see the training-profile impl review's zero-value finding.
 
 ### 6.3 Adding an account-isolation test
 
-TBD — see §3 Phase 2. Will cover the pattern for exercising a route as two
-distinct real users through the production auth path, and why a mocked
-database client cannot substitute.
+Canonical example: `src/lib/test-helpers/integration-users.ts` +
+`src/lib/services/profile.integration.test.ts` /
+`plans.integration.test.ts` (shipped in §3 Phase 2,
+`context/changes/testing-account-isolation/`).
+
+Pattern: run this test layer against a **local Docker Supabase stack**
+(`supabase start`), never the hosted project — a separate, gitignored env
+file (`.env.test.local`, loaded via Node's native `process.loadEnvFile()`
+in a Vitest `setupFiles` entry) points the suite at `127.0.0.1:54321` so it
+can never fall back to the hosted `.env`. Use the shared `createTestUser()`
+helper to sign up two real throwaway users per suite (`beforeAll`, reused
+across cases — cheap because RLS isolation is deterministic per pair,
+regardless of reuse) via `@supabase/supabase-js`'s plain `createClient`
+(not the SSR cookie wrapper, which needs a real HTTP request/response
+cycle this test doesn't have). Call the app's actual service functions
+(`getProfile`, `getPlanById`, etc.) with each user's real client — this
+exercises the real RLS policy through the real anon-key + JWT path, not a
+simulation of it.
+
+For every operation the RLS policies define (`select`/`insert`/`update`/
+`delete`), assert on the actual return value: `null`/`[]` for a blocked
+read, `data` an empty array for a blocked update/delete (confirmed via
+`.select()` chained onto the mutation) — followed by a same-user read
+confirming the row is genuinely unmutated. Include an anonymous-client case
+(no signed-in session) and a same-user negative control, so the suite can't
+silently pass by being over-broad. Where no app-level function exposes an
+operation (this project has no plan/profile *editing* UI at all, so
+update/delete have zero app-level callers), call the raw Postgrest client
+directly — the guardrail under test is the database policy, not whichever
+app code happens to invoke it today.
+
+Run this suite as `npm run test:integration`, in a **separate** Vitest
+config and CI job from the fast unit suite (`vitest.integration.config.ts`,
+excluded from `vitest.config.ts` via `test.exclude`) — Docker/container boot
+time must never couple to the hermetic unit gate.
+
+**Anti-patterns to avoid**: testing isolation through a mocked database
+client (a mock returns whatever you told it to and proves nothing about a
+policy); treating a manual SQL script that fabricates `request.jwt.claims`
+via raw Postgres GUCs as equivalent proof — it bypasses real GoTrue JWT
+issuance/verification and only proves the policy predicate, not the actual
+authentication path (see `supabase/scripts/verify-profiles-rls.sql` for the
+prior-art example this project explicitly did not reuse, for that reason).
 
 ### 6.4 Adding a test for a new API endpoint
 
