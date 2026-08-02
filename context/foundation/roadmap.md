@@ -20,6 +20,13 @@ top_blocker: none
 > the PRD's Primary Success Criterion — a new user going end to end — is still not met, because the
 > pages that satisfy those FRs are not reachable from one another. Sequencing bias moved from
 > `speed` to `quality` now that every must-have requirement is delivered and the work left is finishing it.
+>
+> **Phase 2 complete (2026-08-02):** S-05, F-02, S-06, S-07, and S-08 are all implemented and
+> impl-reviewed (APPROVED) — none archived yet. Every roadmap item currently defined is `done`.
+> The PRD's Primary Success Criterion is now something the app can actually demonstrate end to end,
+> and one consistent visual identity replaces the starter's stock theme on every page. Next step
+> for each: `/10x-archive <change-id>` when ready to close the loop; beyond that, see `## Parked`
+> for what's deliberately not in scope, or open a new PRD requirement to start a third phase.
 
 ## Vision recap
 
@@ -45,10 +52,10 @@ Why this one and not the visual work: the PRD's Business Logic describes this ex
 | S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | done     |
 | S-04  | browse-saved-plans             | browse their saved plans and reopen one                         | S-03          | FR-006, US-01             | done     |
 | S-05  | guided-plan-flow               | be carried from saving a profile into generating a plan, and from saving a plan through to their saved plans | —             | FR-002, FR-003, FR-005, FR-006, US-01, Business Logic | done     |
-| F-02  | gym-visual-identity            | (foundation) one gym-themed colour + type system and a shared page shell exist for pages to build on | —             | NFR (visual identity)     | ready    |
-| S-06  | treningo-entry-point           | arrive on a Treningo home page offering sign-in and registration, and land on the dashboard after signing in | F-02          | FR-001, US-01, Access Control, NFR (visual identity) | proposed |
-| S-07  | app-header-nav                 | reach their profile, plan generation, saved plans and sign-out from any page once signed in | F-02          | FR-002, FR-003, FR-006, US-01 | proposed |
-| S-08  | retire-hardcoded-colours       | see every remaining page in the Treningo palette instead of stock starter colours | F-02, S-06, S-07 | US-01, NFR (visual identity) | proposed |
+| F-02  | gym-visual-identity            | (foundation) one gym-themed colour + type system and a shared page shell exist for pages to build on | —             | NFR (visual identity)     | done     |
+| S-06  | treningo-entry-point           | arrive on a Treningo home page offering sign-in and registration, and land on the dashboard after signing in | F-02          | FR-001, US-01, Access Control, NFR (visual identity) | done     |
+| S-07  | app-header-nav                 | reach their profile, plan generation, saved plans and sign-out from any page once signed in | F-02          | FR-002, FR-003, FR-006, US-01 | done     |
+| S-08  | retire-hardcoded-colours       | see every remaining page in the Treningo palette instead of stock starter colours | F-02, S-06, S-07 | US-01, NFR (visual identity) | done     |
 
 ## Streams
 
@@ -58,7 +65,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ---------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | A      | MVP core (closed)      | `F-01` → `S-01` → `S-02` → `S-03` → `S-04`        | Phase one. All `done` and archived; listed for continuity only.                                             |
 | B      | User path              | `S-05`                                           | Done 2026-08-02, not yet archived. Standalone — had no Prerequisites, so it started immediately without waiting on Stream C. |
-| C      | Visual identity        | `F-02` → `S-06` / `S-07` (parallel) → `S-08`      | F-02 unblocked 2026-08-02 (all three design decisions resolved). Matches `main_goal: quality` — tokens before painted surface. |
+| C      | Visual identity        | `F-02` → `S-06` / `S-07` (parallel) → `S-08`      | All four done 2026-08-02, not yet archived. Matches `main_goal: quality` — tokens landed before any painted surface. |
 
 ## Baseline
 
@@ -103,7 +110,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced ahead of the visual slices because `main_goal` is `quality` and both S-06 and S-07 create new painted surface; building them first means building them twice. Deliberately capped at tokens + typography + shell — it does **not** restyle the 19 existing files (that is S-08), so S-06 and S-07 still exercise it through real user-facing behaviour rather than it landing as a finished UI layer nobody has used.
-- **Status:** ready
+- **Status:** done — implemented `2026-08-02` (`8a6531d`, `f0468f1`); impl-reviewed (APPROVED, 1 fixed observation); not yet archived, see `context/changes/gym-visual-identity/`
 
 ## Slices
 
@@ -181,7 +188,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - Is the signed-out hub the home page `/` itself, or does `/` forward to `/dashboard` with the dashboard rendering a signed-out variant? The request supports either reading. Planning assumes the first — a public `/` and a protected `/dashboard` — because `src/middleware.ts:4` already protects `/dashboard` and inverting that would mean unpicking the guard. — Owner: user. Block: no.
 - **Risk:** Touches the one route with no auth guard, so a mistake here is visible to anyone who opens the site. Two concrete things to remove rather than restyle: `src/components/Welcome.astro:35-38` still announces "10x Astro Starter", and `src/pages/api/auth/signin.ts:19` redirects to `/` on success, which is what makes signing in feel like it did nothing.
-- **Status:** proposed
+- **Status:** done — implemented `2026-08-02` (`3859411`, `9c82e98`); impl-reviewed (APPROVED, no findings); not yet archived, see `context/changes/treningo-entry-point/`
 
 ### S-07: Persistent app header
 
@@ -193,7 +200,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Low risk, high reach — it is the escape hatch that makes every destination reachable even where the guided path of S-05 does not apply. Sequenced after F-02 because the header is new painted surface and is the single most-seen component in the app; building it before the shell exists guarantees rework.
-- **Status:** proposed
+- **Status:** done — implemented `2026-08-02` (`cad7779`, `9f99ad4`, `06d68b2`); impl-reviewed (APPROVED, 2 fixed findings); not yet archived, see `context/changes/app-header-nav/`
 
 ### S-08: Retire the stock starter colours
 
@@ -205,7 +212,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The largest surface in the phase (~192 colour classes across 19 files) but the lowest conceptual risk, so it is sequenced last, where it sweeps a settled shape rather than chasing a moving one. One thing to watch: `src/components/plan/PlanView.tsx` alone holds 22 colour hits and some of them carry meaning — a validation warning that is currently legible only because it is red must stay distinguishable once the palette is greyscale.
-- **Status:** proposed
+- **Status:** done — implemented `2026-08-02` across 4 phases (`0a9770f`, `b33c82b`, `ddf2d02`, `1c3ffd9`); impl-reviewed (APPROVED, 1 observation, no action needed); not yet archived, see `context/changes/retire-hardcoded-colours/`. The semantic-colour risk noted above held: error/warning/success were re-tuned for the light palette (not dropped), staying exactly as distinguishable as before.
 
 ## Backlog Handoff
 
@@ -217,10 +224,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-03       | save-plan                      | Save a generated plan                                  | done                  | Archived 2026-06-29 |
 | S-04       | browse-saved-plans             | Browse saved plans                                     | done                  | Archived 2026-07-03 |
 | S-05       | guided-plan-flow               | Guided path: profile → generate → saved plans          | done                  | Implemented 2026-08-02 (`2cab15f`, `b5e51c0`); run `/10x-archive guided-plan-flow` when ready |
-| F-02       | gym-visual-identity            | Gym visual identity: colour + type tokens & page shell | yes                   | Unblocked 2026-08-02 — system font stack, no dark theme, one steel-blue CTA accent. Run `/10x-plan gym-visual-identity` |
-| S-06       | treningo-entry-point           | Treningo home page & post-sign-in landing              | no                    | Prereq F-02 |
-| S-07       | app-header-nav                 | Persistent app header on every signed-in page          | no                    | Prereq F-02 |
-| S-08       | retire-hardcoded-colours       | Retire ~192 hardcoded colour classes across 19 files   | no                    | Prereq F-02, S-06, S-07 |
+| F-02       | gym-visual-identity            | Gym visual identity: colour + type tokens & page shell | done                  | Implemented 2026-08-02 (`8a6531d`, `f0468f1`); run `/10x-archive gym-visual-identity` when ready |
+| S-06       | treningo-entry-point           | Treningo home page & post-sign-in landing              | done                  | Implemented 2026-08-02 (`3859411`, `9c82e98`); run `/10x-archive treningo-entry-point` when ready |
+| S-07       | app-header-nav                 | Persistent app header on every signed-in page          | done                  | Implemented 2026-08-02 (`cad7779`, `9f99ad4`, `06d68b2`); run `/10x-archive app-header-nav` when ready |
+| S-08       | retire-hardcoded-colours       | Retire ~192 hardcoded colour classes across 19 files   | done                  | Implemented 2026-08-02 across 4 phases; run `/10x-archive retire-hardcoded-colours` when ready |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
