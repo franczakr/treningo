@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "input=$(cat); f=$(jq -r '.tool_input.file_path // empty' <<< \"$input\"); if [[ -n \"$f\" && \"$f\" =~ \\.(ts|tsx|astro)$ ]]; then out=$(npx eslint --fix \"$f\" 2>&1); code=$?; if [ $code -ne 0 ]; then jq -n --arg out \"$out\" '{\"decision\":\"block\",\"reason\":\"ESLint found unfixable errors\",\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":(\"ESLint errors in edited file:\\n\" + $out)}}'; fi; fi; exit 0",
+            "timeout": 30,
+            "statusMessage": "Linting edited file..."
+          },
+          {
+            "type": "command",
+            "command": "input=$(cat); f=$(jq -r '.tool_input.file_path // empty' <<< \"$input\"); if [[ -n \"$f\" && \"$f\" =~ \\.(ts|tsx|astro)$ ]]; then out=$(npm run typecheck --silent 2>&1); code=$?; if [ $code -ne 0 ]; then jq -n --arg out \"$out\" '{\"decision\":\"block\",\"reason\":\"Type errors found\",\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":(\"Type errors after editing:\\n\" + $out)}}'; fi; fi; exit 0",
+            "timeout": 60,
+            "statusMessage": "Type-checking project..."
+          }
+        ]
+      }
+    ]
+  }
+}
