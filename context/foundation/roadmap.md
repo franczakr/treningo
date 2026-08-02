@@ -6,7 +6,7 @@ created: 2026-06-27
 updated: 2026-08-02
 prd_version: 2
 main_goal: quality
-top_blocker: decisions
+top_blocker: none
 ---
 
 # Roadmap: Treningo
@@ -27,11 +27,11 @@ Gym beginners have personal goals but don't know how to build a sound workout pl
 
 ## North star
 
-**Current (v2) — S-05: after saving a profile the user is carried straight into generating a plan, and after saving a plan straight through to their saved plans.**
+**Delivered (v2) — S-05: after saving a profile the user is carried straight into generating a plan, and after saving a plan straight through to their saved plans.**
 
-This is the validation milestone for the second phase — the smallest end-to-end slice whose successful delivery would prove the phase worked, placed as early as its Prerequisites allow because everything else only matters if this works. It has no Prerequisites at all, so it is sequenced first and runs alongside the (currently blocked) visual foundation F-02.
+This was the validation milestone for the second phase — the smallest end-to-end slice whose successful delivery proves the phase worked. It had no Prerequisites, so it was sequenced first and ran alongside the visual foundation F-02 (blocked at the time). Implemented 2026-08-02 (`2cab15f`, `b5e51c0`); not yet archived.
 
-Why this one and not the visual work: the PRD's Business Logic describes this exact chain sentence by sentence — "the user encounters the rule right after completing their profile: they request a plan and immediately see one tailored to their parameters, which they can then save and revisit". Both joints in that chain are broken today (`src/pages/api/profile.ts:58` returns the user to the profile form; `src/components/plan/PlanView.tsx:133` leaves them on the plan page with no route onward). Until they are closed, the Primary Success Criterion is a claim the app cannot actually demonstrate.
+Why this one and not the visual work: the PRD's Business Logic describes this exact chain sentence by sentence — "the user encounters the rule right after completing their profile: they request a plan and immediately see one tailored to their parameters, which they can then save and revisit". Both joints in that chain were broken (`src/pages/api/profile.ts:58` returned the user to the profile form; `src/components/plan/PlanView.tsx:133` left them on the plan page with no route onward) until this slice closed them, making the Primary Success Criterion something the app can now actually demonstrate.
 
 **Delivered (v1) — S-02: user generates and views a personalized plan from their profile.** This was the first phase's validation milestone: the moment of value in the PRD's Business Logic, where the plan visibly reflects the inputs the user gave. Shipped and archived 2026-06-28.
 
@@ -44,8 +44,8 @@ Why this one and not the visual work: the PRD's Business Logic describes this ex
 | S-02  | personalized-plan-generation   | generate and view a plan tailored to their profile (north star) | S-01          | FR-003, FR-004, US-01     | done     |
 | S-03  | save-plan                      | save a generated plan                                           | S-02, F-01    | FR-005, US-01             | done     |
 | S-04  | browse-saved-plans             | browse their saved plans and reopen one                         | S-03          | FR-006, US-01             | done     |
-| S-05  | guided-plan-flow               | be carried from saving a profile into generating a plan, and from saving a plan through to their saved plans | —             | FR-002, FR-003, FR-005, FR-006, US-01, Business Logic | ready    |
-| F-02  | gym-visual-identity            | (foundation) one gym-themed colour + type system and a shared page shell exist for pages to build on | —             | NFR (visual identity)     | blocked  |
+| S-05  | guided-plan-flow               | be carried from saving a profile into generating a plan, and from saving a plan through to their saved plans | —             | FR-002, FR-003, FR-005, FR-006, US-01, Business Logic | done     |
+| F-02  | gym-visual-identity            | (foundation) one gym-themed colour + type system and a shared page shell exist for pages to build on | —             | NFR (visual identity)     | ready    |
 | S-06  | treningo-entry-point           | arrive on a Treningo home page offering sign-in and registration, and land on the dashboard after signing in | F-02          | FR-001, US-01, Access Control, NFR (visual identity) | proposed |
 | S-07  | app-header-nav                 | reach their profile, plan generation, saved plans and sign-out from any page once signed in | F-02          | FR-002, FR-003, FR-006, US-01 | proposed |
 | S-08  | retire-hardcoded-colours       | see every remaining page in the Treningo palette instead of stock starter colours | F-02, S-06, S-07 | US-01, NFR (visual identity) | proposed |
@@ -57,8 +57,8 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | Stream | Theme                  | Chain                                            | Note                                                                                                        |
 | ------ | ---------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | A      | MVP core (closed)      | `F-01` → `S-01` → `S-02` → `S-03` → `S-04`        | Phase one. All `done` and archived; listed for continuity only.                                             |
-| B      | User path              | `S-05`                                           | Standalone — no Prerequisites, so the north star starts immediately and does not wait on Stream C.          |
-| C      | Visual identity        | `F-02` → `S-06` / `S-07` (parallel) → `S-08`      | Blocked at the head on three design decisions. Matches `main_goal: quality` — tokens before painted surface. |
+| B      | User path              | `S-05`                                           | Done 2026-08-02, not yet archived. Standalone — had no Prerequisites, so it started immediately without waiting on Stream C. |
+| C      | Visual identity        | `F-02` → `S-06` / `S-07` (parallel) → `S-08`      | F-02 unblocked 2026-08-02 (all three design decisions resolved). Matches `main_goal: quality` — tokens before painted surface. |
 
 ## Baseline
 
@@ -94,19 +94,16 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### F-02: Gym visual identity & shared page shell
 
-- **Outcome:** (foundation) One silver / grey / white colour system and one typography choice exist as tokens in `src/styles/global.css`, and a shared page shell with a slot for navigation is available for pages to adopt. From this point on no page invents its own colour.
+- **Outcome:** (foundation) One silver / grey / white colour system — system font stack, no dark theme, one steel-blue accent for calls-to-action — exists as tokens in `src/styles/global.css`, and a shared page shell with a slot for navigation is available for pages to adopt. From this point on no page invents its own colour.
 - **Change ID:** gym-visual-identity
 - **PRD refs:** NFR (visual identity) — added in PRD v2
-- **Unlocks:** S-06 and S-07 (both build new user-facing surface and would otherwise be painted in the stock purples and then repainted), S-08 (the migration target it defines), and it resolves the three blocking Unknowns below, which no later item can proceed past.
+- **Unlocks:** S-06 and S-07 (both build new user-facing surface and would otherwise be painted in the stock purples and then repainted), S-08 (the migration target it defines).
 - **Prerequisites:** —
-- **Parallel with:** S-05
+- **Parallel with:** S-05 (done)
 - **Blockers:** —
-- **Unknowns:**
-  - Which typeface and weights does Treningo use? There is no font rule anywhere in the repo today, so this is a choice with no default to fall back on. — Owner: user. Block: yes.
-  - Does the dark theme stay or go? `global.css:41-73` defines one and nothing can toggle it. Keeping it doubles the token work; removing it deletes dead CSS. — Owner: user. Block: yes.
-  - What carries a call-to-action in an all-greyscale palette — one accent hue, or pure contrast (near-black button on near-white page)? Every button today is a hardcoded purple that the palette removes. — Owner: user. Block: yes.
+- **Unknowns:** —
 - **Risk:** Sequenced ahead of the visual slices because `main_goal` is `quality` and both S-06 and S-07 create new painted surface; building them first means building them twice. Deliberately capped at tokens + typography + shell — it does **not** restyle the 19 existing files (that is S-08), so S-06 and S-07 still exercise it through real user-facing behaviour rather than it landing as a finished UI layer nobody has used.
-- **Status:** blocked
+- **Status:** ready
 
 ## Slices
 
@@ -171,7 +168,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - ~~Should the jump into plan generation fire on every profile save, or only when the user has no plan yet?~~ — resolved at `/10x-plan` (2026-08-02): only when no profile existed before the save. `/plan` auto-generates on mount, so forwarding on every save would fire a ten-plus-second Gemini call on each profile edit. Detected by reading the profile before the upsert; a failed read degrades to the existing behaviour rather than failing the save.
 - **Risk:** The north star, and deliberately not held behind F-02 despite `main_goal: quality` — it changes two redirect targets and adds one link, so it creates almost no painted surface to repaint later, and holding it behind a blocked foundation would stall the whole phase. The real care is the Unknown above: the guided path must lead a first-time user without trapping a returning one.
-- **Status:** ready
+- **Status:** done — implemented `2026-08-02` (`2cab15f`, `b5e51c0`); not yet archived, see `context/changes/guided-plan-flow/`
 
 ### S-06: Treningo entry point
 
@@ -219,8 +216,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-02       | personalized-plan-generation   | Personalized plan generation + soundness validation    | done                  | Archived 2026-06-28 |
 | S-03       | save-plan                      | Save a generated plan                                  | done                  | Archived 2026-06-29 |
 | S-04       | browse-saved-plans             | Browse saved plans                                     | done                  | Archived 2026-07-03 |
-| S-05       | guided-plan-flow               | Guided path: profile → generate → saved plans          | yes                   | No prerequisites. Run `/10x-plan guided-plan-flow` |
-| F-02       | gym-visual-identity            | Gym visual identity: colour + type tokens & page shell | no                    | Three design decisions must be answered first — see `## Open Roadmap Questions` |
+| S-05       | guided-plan-flow               | Guided path: profile → generate → saved plans          | done                  | Implemented 2026-08-02 (`2cab15f`, `b5e51c0`); run `/10x-archive guided-plan-flow` when ready |
+| F-02       | gym-visual-identity            | Gym visual identity: colour + type tokens & page shell | yes                   | Unblocked 2026-08-02 — system font stack, no dark theme, one steel-blue CTA accent. Run `/10x-plan gym-visual-identity` |
 | S-06       | treningo-entry-point           | Treningo home page & post-sign-in landing              | no                    | Prereq F-02 |
 | S-07       | app-header-nav                 | Persistent app header on every signed-in page          | no                    | Prereq F-02 |
 | S-08       | retire-hardcoded-colours       | Retire ~192 hardcoded colour classes across 19 files   | no                    | Prereq F-02, S-06, S-07 |
@@ -229,11 +226,12 @@ This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 
 ## Open Roadmap Questions
 
-1. **What does "silver / grey / white" actually resolve to as a design system?** The colour direction is settled; three things underneath it are not, and F-02 cannot be planned past any of them. (a) Which typeface and weights — there is no font rule anywhere in the repo, so there is no default to inherit. (b) Does the dark theme stay or go — `src/styles/global.css:41-73` defines one and nothing can toggle it. (c) What carries a call-to-action in an all-greyscale palette — one accent hue, or pure contrast — given every button today is a hardcoded purple the palette removes. — Owner: user. Block: F-02, and through it S-06, S-07, S-08.
+_None open._
 
 ### Resolved
 
 1. ~~**Which profile fields are required vs optional?**~~ — Resolved 2026-06-27 (`/10x-plan training-profile`): required = goal, experience, training days, age, weight; optional = current lifts + plank time. Unblocked S-01.
+2. ~~**What does "silver / grey / white" actually resolve to as a design system?**~~ — Resolved 2026-08-02: (a) typeface — system font stack, no webfont load; (b) dark theme — removed, `global.css:41-73`'s `.dark` block is deleted rather than finished; (c) call-to-action colour — one steel-blue accent hue, not pure contrast. Unblocked F-02, and through it S-06, S-07, S-08.
 
 ## Parked
 
