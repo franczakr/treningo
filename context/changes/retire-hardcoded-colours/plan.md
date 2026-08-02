@@ -274,28 +274,28 @@ No schema or data change. Purely class-string substitution plus one dead-file re
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint` — b33c82b
+- [x] 2.2 Production build succeeds: `npm run build` — b33c82b
 
 #### Manual
 
-- [x] 2.3 All five protected pages render on the light palette with no cosmic/purple/blue starter styling
-- [x] 2.4 `dashboard.astro`'s three action links and `plans.astro`'s empty-state CTA are still clearly primary/secondary
-- [x] 2.5 A saved-plans list with at least one entry still renders legibly, and `plan/[id].astro`'s back-link still works
+- [x] 2.3 All five protected pages render on the light palette with no cosmic/purple/blue starter styling — b33c82b
+- [x] 2.4 `dashboard.astro`'s three action links and `plans.astro`'s empty-state CTA are still clearly primary/secondary — b33c82b
+- [x] 2.5 A saved-plans list with at least one entry still renders legibly, and `plan/[id].astro`'s back-link still works — b33c82b
 
 ### Phase 3: Plan and profile components
 
 #### Automated
 
-- [ ] 3.1 Linting passes: `npm run lint`
-- [ ] 3.2 Production build succeeds: `npm run build`
+- [x] 3.1 Linting passes: `npm run lint`
+- [x] 3.2 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 A generated plan (loading → success) renders on the light palette with legible session/exercise cards
-- [ ] 3.4 Triggering the plan-soundness warning banner shows it clearly in light amber
-- [ ] 3.5 Saving a plan shows the "Zobacz zapisane plany" link in the app's accent colour
-- [ ] 3.6 The training profile form's success banner, field errors, and equipment checkboxes render correctly on the light palette
+- [x] 3.3 A generated plan (loading → success) renders on the light palette with legible session/exercise cards
+- [x] 3.4 Triggering the plan-soundness warning banner shows it clearly in light amber
+- [x] 3.5 Saving a plan shows the "Zobacz zapisane plany" link in the app's accent colour
+- [x] 3.6 The training profile form's success banner, field errors, and equipment checkboxes render correctly on the light palette
 
 ### Phase 4: Cleanup and verification sweep
 

@@ -45,11 +45,11 @@ interface SelectFieldProps {
 function SelectField({ id, label, value, onChange, error, icon, children }: SelectFieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1 block text-sm text-blue-100/80">
+      <label htmlFor={id} className="text-muted-foreground mb-1 block text-sm">
         {label}
       </label>
       <div className="relative">
-        <span className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/40">{icon}</span>
+        <span className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2">{icon}</span>
         <select
           id={id}
           name={id}
@@ -58,15 +58,15 @@ function SelectField({ id, label, value, onChange, error, icon, children }: Sele
             onChange(e.target.value);
           }}
           className={cn(
-            "w-full appearance-none rounded-lg border bg-white/10 px-3 py-2 pl-10 text-white transition-colors focus:ring-2 focus:outline-none",
-            error ? "border-red-400/60 focus:ring-red-400" : "border-white/20 focus:ring-purple-400",
+            "bg-background text-foreground w-full appearance-none rounded-lg border px-3 py-2 pl-10 transition-colors focus:ring-2 focus:outline-none",
+            error ? "border-red-300 focus:ring-red-400" : "border-input focus:ring-ring",
           )}
         >
           {children}
         </select>
       </div>
       {error ? (
-        <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+        <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
           <CircleAlert className="size-3" />
           {error}
         </p>
@@ -131,7 +131,7 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
   return (
     <form method="POST" action="/api/profile" className="space-y-5" onSubmit={handleSubmit} noValidate>
       {saved ? (
-        <p className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-900/30 px-3 py-2 text-sm text-green-300">
+        <p className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
           <CircleCheck className="size-4 shrink-0" />
           Profil zapisany.
         </p>
@@ -224,12 +224,12 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
       />
 
       <fieldset>
-        <legend className="mb-2 block text-sm text-blue-100/80">Dostępny sprzęt</legend>
+        <legend className="text-muted-foreground mb-2 block text-sm">Dostępny sprzęt</legend>
         <div className="grid grid-cols-2 gap-2">
           {EQUIPMENT_OPTIONS.map((o) => (
             <label
               key={o.value}
-              className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white transition-colors hover:bg-white/10"
+              className="border-input bg-background text-foreground hover:bg-accent flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors"
             >
               <input
                 type="checkbox"
@@ -239,14 +239,14 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
                 onChange={() => {
                   toggleEquipment(o.value);
                 }}
-                className="size-4 accent-purple-500"
+                className="accent-primary size-4"
               />
               {o.label}
             </label>
           ))}
         </div>
         {errors.equipment ? (
-          <p className="mt-1 flex items-center gap-1 text-xs text-red-300">
+          <p className="mt-1 flex items-center gap-1 text-xs text-red-700">
             <CircleAlert className="size-3" />
             {errors.equipment}
           </p>
@@ -254,7 +254,7 @@ export default function TrainingProfileForm({ initial, serverError, saved }: Pro
       </fieldset>
 
       <div className="space-y-1">
-        <p className="text-sm text-blue-100/80">Aktualne wyniki (opcjonalnie)</p>
+        <p className="text-muted-foreground text-sm">Aktualne wyniki (opcjonalnie)</p>
         <div className="grid grid-cols-2 gap-3">
           <FormField
             id="squat_kg"

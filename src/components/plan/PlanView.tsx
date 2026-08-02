@@ -136,18 +136,18 @@ export default function PlanView() {
 
   if (status === "loading") {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/10 p-10 text-white backdrop-blur-xl">
-        <Loader2 className="size-8 animate-spin text-purple-300" />
-        <p className="text-blue-100/80">Generuję Twój plan… to może potrwać kilkanaście sekund.</p>
+      <div className="border-border bg-card text-foreground flex flex-col items-center gap-3 rounded-2xl border p-10">
+        <Loader2 className="text-primary size-8 animate-spin" />
+        <p className="text-muted-foreground">Generuję Twój plan… to może potrwać kilkanaście sekund.</p>
       </div>
     );
   }
 
   if (status === "error") {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-2xl border border-red-500/30 bg-red-900/20 p-10 text-center text-white backdrop-blur-xl">
-        <CircleAlert className="size-8 text-red-300" />
-        <p className="text-red-100">{errorMessage}</p>
+      <div className="text-foreground flex flex-col items-center gap-4 rounded-2xl border border-red-200 bg-red-50 p-10 text-center">
+        <CircleAlert className="size-8 text-red-500" />
+        <p className="text-red-700">{errorMessage}</p>
         <RegenerateButton onClick={regenerate} label="Spróbuj ponownie" />
       </div>
     );
@@ -163,13 +163,13 @@ export default function PlanView() {
         <SessionCard key={i} session={session} index={i} />
       ))}
 
-      {saveStatus === "error" && saveError ? <p className="text-center text-sm text-red-300">{saveError}</p> : null}
+      {saveStatus === "error" && saveError ? <p className="text-center text-sm text-red-700">{saveError}</p> : null}
 
       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <SaveButton status={saveStatus} onClick={save} />
         <RegenerateButton onClick={regenerate} label="Wygeneruj ponownie" />
         {saveStatus === "saved" ? (
-          <a href="/plans" className="text-sm font-medium text-blue-200 underline hover:text-blue-100">
+          <a href="/plans" className="text-primary hover:text-primary/80 text-sm font-medium underline">
             Zobacz zapisane plany
           </a>
         ) : null}
@@ -206,12 +206,12 @@ function SaveButton({ status, onClick }: { status: SaveStatus; onClick: () => vo
 
 function WarningBanner({ violations }: { violations: Violation[] }) {
   return (
-    <div className="rounded-2xl border border-amber-500/40 bg-amber-900/20 p-4 text-amber-100 backdrop-blur-xl">
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-800">
       <p className="mb-2 flex items-center gap-2 font-semibold">
         <TriangleAlert className="size-4 shrink-0" />
         Plan może nie spełniać wszystkich wymagań:
       </p>
-      <ul className="list-inside list-disc space-y-1 text-sm text-amber-100/90">
+      <ul className="list-inside list-disc space-y-1 text-sm text-amber-700">
         {violations.map((v, i) => (
           <li key={i}>{v.message}</li>
         ))}
@@ -226,8 +226,8 @@ function RegenerateButton({ onClick, label }: { onClick: () => void; label: stri
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white",
-        "transition-colors hover:bg-purple-500",
+        "bg-primary text-primary-foreground inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium",
+        "hover:bg-primary/90 transition-colors",
       )}
     >
       <RefreshCw className="size-4" />
