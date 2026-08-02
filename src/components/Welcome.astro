@@ -1,39 +1,44 @@
 ---
 import Topbar from "@/components/Topbar.astro";
+import AppHeader from "@/components/AppHeader.astro";
+
+// The landing page is public, but signed-in users get the full app nav and
+// CTAs that point into the app instead of back to the auth screens.
+const { user } = Astro.locals;
 ---
 
 <div class="relative min-h-screen w-full">
-  <div class="relative z-10 p-4 sm:p-8">
-    <Topbar />
+  <div class="relative z-10 p-4 sm:px-8 sm:py-6">
+    {user ? <AppHeader /> : <Topbar />}
 
     <!-- Hero section -->
-    <div class="mx-auto flex max-w-4xl flex-col items-center justify-center px-4 py-24 text-center sm:py-32 lg:py-40">
-      <h1 class="text-foreground mb-6 text-5xl leading-tight font-bold sm:text-6xl lg:text-7xl">
+    <div class="mx-auto flex max-w-4xl flex-col items-center justify-center px-4 py-10 text-center sm:py-12 lg:py-16">
+      <h1 class="text-foreground mb-4 text-4xl leading-tight font-bold sm:text-5xl lg:text-6xl">
         Twój spersonalizowany plan treningowy
       </h1>
-      <p class="text-muted-foreground mb-10 max-w-2xl text-lg sm:text-xl">
+      <p class="text-muted-foreground mb-8 max-w-2xl text-base sm:text-lg">
         Nie wiesz, jak ułożyć trening pod swój cel? Treningo generuje plan dopasowany do Twojego celu, poziomu
         zaawansowania, dostępnego sprzętu i liczby dni treningowych — zamiast gotowca z internetu.
       </p>
-      <div class="flex flex-col gap-4 sm:flex-row">
+      <div class="flex flex-col gap-3 sm:flex-row">
         <a
-          href="/auth/signin"
-          class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-lg px-6 py-3 text-base font-medium transition-colors"
+          href={user ? "/plan" : "/auth/signin"}
+          class="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-lg px-6 py-2.5 text-base font-medium transition-colors"
         >
-          Zaloguj się
+          {user ? "Generuj plan" : "Zaloguj się"}
         </a>
         <a
-          href="/auth/signup"
-          class="border-input text-foreground hover:bg-accent inline-flex items-center justify-center rounded-lg border px-6 py-3 text-base font-medium transition-colors"
+          href={user ? "/dashboard" : "/auth/signup"}
+          class="border-input text-foreground hover:bg-accent inline-flex items-center justify-center rounded-lg border px-6 py-2.5 text-base font-medium transition-colors"
         >
-          Załóż konto
+          {user ? "Przejdź do panelu" : "Załóż konto"}
         </a>
       </div>
     </div>
 
     <!-- Feature cards -->
-    <div class="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-4 pb-24 sm:grid-cols-3">
-      <div class="border-border bg-card rounded-xl border p-6">
+    <div class="mx-auto grid max-w-4xl grid-cols-1 gap-4 px-4 pb-4 sm:grid-cols-3">
+      <div class="border-border bg-card rounded-xl border p-5">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -44,20 +49,20 @@ import Topbar from "@/components/Topbar.astro";
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="text-primary mb-4"
+          class="text-primary mb-3"
         >
           <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
           <polyline points="2 17 12 22 22 17"></polyline>
           <polyline points="2 12 12 17 22 12"></polyline>
         </svg>
-        <h3 class="text-foreground mb-2 text-lg font-semibold">Spersonalizowany plan</h3>
+        <h3 class="text-foreground mb-1.5 text-base font-semibold">Spersonalizowany plan</h3>
         <p class="text-muted-foreground text-sm leading-relaxed">
           Ćwiczenia, serie, powtórzenia i ciężary startowe dopasowane do Twojego celu, poziomu i sprzętu, jaki
           faktycznie masz.
         </p>
       </div>
 
-      <div class="border-border bg-card rounded-xl border p-6">
+      <div class="border-border bg-card rounded-xl border p-5">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -68,18 +73,18 @@ import Topbar from "@/components/Topbar.astro";
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="text-primary mb-4"
+          class="text-primary mb-3"
         >
           <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg>
-        <h3 class="text-foreground mb-2 text-lg font-semibold">Twoje dane tylko dla Ciebie</h3>
+        <h3 class="text-foreground mb-1.5 text-base font-semibold">Twoje dane tylko dla Ciebie</h3>
         <p class="text-muted-foreground text-sm leading-relaxed">
           Profil treningowy i zapisane plany widzi wyłącznie właściciel konta — nikt inny nie ma do nich dostępu.
         </p>
       </div>
 
-      <div class="border-border bg-card rounded-xl border p-6">
+      <div class="border-border bg-card rounded-xl border p-5">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -90,12 +95,12 @@ import Topbar from "@/components/Topbar.astro";
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="text-primary mb-4"
+          class="text-primary mb-3"
         >
           <polyline points="16 18 22 12 16 6"></polyline>
           <polyline points="8 6 2 12 8 18"></polyline>
         </svg>
-        <h3 class="text-foreground mb-2 text-lg font-semibold">Zapisz i wracaj</h3>
+        <h3 class="text-foreground mb-1.5 text-base font-semibold">Zapisz i wracaj</h3>
         <p class="text-muted-foreground text-sm leading-relaxed">
           Zapisz wygenerowany plan i przeglądaj go, kiedy tylko chcesz — zostaje dostępny przy każdym kolejnym
           logowaniu.

@@ -1,38 +1,73 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import AppHeader from "@/components/AppHeader.astro";
+import { createClient } from "@/lib/supabase";
+import { getPlans } from "@/lib/services/plans";
+import { formatPlanDate } from "@/lib/format";
+import { GOAL_OPTIONS, type SavedPlan } from "@/types";
 
+// Middleware guarantees an authenticated user on this protected route. Plans are
+// loaded server-side (RLS-scoped via the session); no client fetch.
 const { user } = Astro.locals;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+let plans: SavedPlan[] = [];
+if (supabase && user) {
+  plans = await getPlans(supabase, user.id);
+}
+
+function goalLabel(plan: SavedPlan): string {
+  return GOAL_OPTIONS.find((o) => o.value === plan.profile_snapshot.goal)?.label ?? plan.profile_snapshot.goal;
+}
 ---
 
-<Layout title="Dashboard">
+<Layout title="Panel">
   <AppHeader slot="nav" />
-  <div class="flex min-h-screen items-center justify-center p-4">
-    <div class="border-border bg-card text-foreground rounded-2xl border p-8 text-center">
-      <h1 class="mb-4 text-3xl font-bold">Panel</h1>
-      <p class="text-muted-foreground">
-        Witaj, <span class="text-foreground font-semibold">{user?.email}</span>
-      </p>
-      <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <a
-          href="/plan"
-          class="bg-primary text-primary-foreground hover:bg-primary/90 inline-block rounded-lg px-4 py-2 text-sm font-medium transition-colors"
-        >
-          Generuj plan
-        </a>
-        <a
-          href="/plans"
-          class="border-input bg-background text-foreground hover:bg-accent inline-block rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
-        >
-          Moje plany
-        </a>
-        <a
-          href="/training-profile"
-          class="border-input bg-background text-foreground hover:bg-accent inline-block rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
-        >
-          Edytuj profil treningowy
-        </a>
+  <div class="flex min-h-[calc(100vh-7rem)] items-start justify-center p-4">
+    <div class="w-full max-w-2xl">
+      <div class="border-border bg-card text-foreground rounded-2xl border p-8 text-center">
+        <h1 class="mb-4 text-3xl font-bold">Panel</h1>
+        <p class="text-muted-foreground">
+          Witaj, <span class="text-foreground font-semibold">{user?.email}</span>
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+          <a
+            href="/plan"
+            class="bg-primary text-primary-foreground hover:bg-primary/90 inline-block rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+          >
+            Generuj plan
+          </a>
+          <a
+            href="/training-profile"
+            class="border-input bg-background text-foreground hover:bg-accent inline-block rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
+          >
+            Edytuj profil treningowy
+          </a>
+        </div>
       </div>
+
+      <h2 class="text-foreground mt-8 mb-3 text-xl font-semibold">Moje plany</h2>
+      {
+        plans.length === 0 ? (
+          <p class="text-muted-foreground border-border bg-card rounded-2xl border p-6 text-center text-sm">
+            Nie masz jeszcze zapisanych planów.
+          </p>
+        ) : (
+          <ul class="space-y-3">
+            {plans.map((plan) => (
+              <li>
+                <a
+                  href={`/plan/${plan.id}`}
+                  class="border-border bg-card text-foreground hover:bg-accent flex items-center justify-between gap-4 rounded-2xl border p-5 transition-colors"
+                >
+                  <span class="text-primary font-semibold">{goalLabel(plan)}</span>
+                  <span class="text-muted-foreground text-sm">{formatPlanDate(plan.created_at)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
     </div>
   </div>
 </Layout>

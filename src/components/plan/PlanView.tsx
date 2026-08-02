@@ -169,7 +169,7 @@ export default function PlanView() {
         <SaveButton status={saveStatus} onClick={save} />
         <RegenerateButton onClick={regenerate} label="Wygeneruj ponownie" />
         {saveStatus === "saved" ? (
-          <a href="/plans" className="text-primary hover:text-primary/80 text-sm font-medium underline">
+          <a href="/dashboard" className="text-primary hover:text-primary/80 text-sm font-medium underline">
             Zobacz zapisane plany
           </a>
         ) : null}

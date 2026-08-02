@@ -1,17 +1,21 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
 import SignUpForm from "@/components/auth/SignUpForm";
 
 const error = Astro.url.searchParams.get("error");
 ---
 
-<Layout title="Sign up">
-  <div class="flex min-h-screen items-center justify-center p-4">
+<Layout title="Załóż konto">
+  <div slot="nav" class="px-4 pt-4 sm:px-8 sm:pt-6">
+    <Topbar />
+  </div>
+  <div class="flex min-h-[calc(100vh-7rem)] items-center justify-center p-4">
     <div class="border-border bg-card text-foreground w-full max-w-sm rounded-2xl border p-8">
-      <h1 class="mb-6 text-center text-2xl font-bold">Sign up</h1>
+      <h1 class="mb-6 text-center text-2xl font-bold">Załóż konto</h1>
       <SignUpForm serverError={error} client:load />
       <p class="text-muted-foreground mt-4 text-center text-sm">
-        Already have an account? <a href="/auth/signin" class="text-primary hover:underline">Sign in</a>
+        Masz już konto? <a href="/auth/signin" class="text-primary hover:underline">Zaloguj się</a>
       </p>
     </div>
   </div>

@@ -1,8 +1,9 @@
 ---
 import { Dumbbell } from "lucide-react";
 
-// Mounted only on protected routes (via Layout's "nav" slot) — middleware
-// guarantees an authenticated user, so this never renders a signed-out state.
+// Rendered only for authenticated users — on protected routes (via Layout's
+// "nav" slot, where middleware guarantees a user) and on the public landing
+// page behind a `user` check. It never renders a signed-out state.
 const { user } = Astro.locals;
 ---
 
@@ -21,7 +22,6 @@ const { user } = Astro.locals;
         Profil treningowy
       </a>
       <a href="/plan" class="text-primary hover:text-primary/80 transition-colors hover:underline"> Generuj plan </a>
-      <a href="/plans" class="text-primary hover:text-primary/80 transition-colors hover:underline"> Moje plany </a>
       <form method="POST" action="/api/auth/signout">
         <button type="submit" class="text-primary hover:text-primary/80 transition-colors hover:underline">
           Wyloguj
