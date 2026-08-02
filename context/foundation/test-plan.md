@@ -138,15 +138,56 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.1 Adding a unit test
 
-TBD — see §3 Phase 1. Will cover the guardrail pattern: asserting a generated
-plan against the profile that produced it, with the expected result derived
-from the profile and the PRD guardrail rather than from the validation code.
+Canonical example: `src/lib/services/plan-validator.test.ts` and
+`src/lib/services/plan-generator.test.ts` (shipped in §3 Phase 1,
+`context/changes/testing-plan-soundness/`).
+
+Pattern: build a literal `(profile, plan)` fixture, then write the expected
+guardrail set (or `ok`/`violations` shape) by hand from the profile and the
+PRD guardrail sentence — never by calling the code under test and comparing
+it to itself. This is the oracle-problem trap: a test that re-derives its
+expected value from the same predicate it's checking will green-light
+current behavior, bugs included. Assert on guardrail *categories*, not on
+message text, unless the text itself is a functional contract (e.g. it is
+fed back to an LLM as retry-correction input). Include at least one sound
+negative control and single-property mutations off it, so the fixture is
+provably sensitive to the property under test.
+
+When the unit under test calls an external SDK (as `generatePlan` calls
+`@google/genai`), prefer testing through the real orchestration with a
+hand-written fake substituted only at the SDK-call boundary, over testing
+the inner pure function alone — it costs the same and proves the guardrail
+holds through retries and tie-breaks, not just in isolation. If the
+behavior under test is a documented, *accepted* product decision (e.g. a
+soft-failure plan being returned rather than thrown), write it as a
+characterization test and say so in the test name/comment — don't fail the
+suite on shipped, intentional behavior.
 
 ### 6.2 Adding a schema-boundary test
 
-TBD — see §3 Phase 1 and Phase 3. Will cover the pattern for keeping the
-server-side schema and the database constraints in lock-step, so the class of
-bug recorded in the training-profile impl review cannot recur.
+Canonical example: `src/lib/schemas/profile.test.ts` (shipped in §3 Phase 1,
+`context/changes/testing-plan-soundness/`).
+
+Pattern: transcribe each database CHECK constraint's bound into the test
+with the exact SQL line quoted in a comment or describe title, then assert
+boundary values (one just inside, one just outside) against the zod schema.
+The migration file — not the schema's own source — is the oracle; testing
+the schema in isolation is an implementation mirror and cannot detect drift.
+Add a small guard alongside the boundary tests that reads the migration
+`.sql` file at test time (resolve the path via
+`fileURLToPath(new URL(...))`, not `__dirname`/`process.cwd()`, since this
+repo is ESM) and asserts each transcribed clause still appears verbatim —
+so an edited migration forces the test to be revisited.
+
+**Know the guard's limit**: it detects drift (the transcription and the file
+disagreeing), not incorrectness. A CHECK clause that was wrong from the
+start — Postgres's `array_length(x, 1) >= 1` is a documented no-op for an
+empty array, since `array_length('{}', 1)` is `NULL` and a CHECK passes on
+`NULL` — will pass this guard forever, because its text never changes. State
+that limitation inline wherever the pattern is reused, so it isn't mistaken
+for proof the constraint actually holds. This class of bug (a value passing
+both the schema and reaching the database, or the reverse) already shipped
+once — see the training-profile impl review's zero-value finding.
 
 ### 6.3 Adding an account-isolation test
 

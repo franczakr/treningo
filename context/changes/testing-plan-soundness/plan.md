@@ -647,20 +647,20 @@ nothing to roll back beyond reverting the added files and the small
 #### Automated
 
 - [x] 3.1 `npm run test` passes, including all `profile.test.ts` and
-      `plan.test.ts` cases
-- [x] 3.2 `npm run lint` passes on the new/changed files
-- [x] 3.3 `npm run build` still passes unaffected
+      `plan.test.ts` cases — 384e0b5
+- [x] 3.2 `npm run lint` passes on the new/changed files — 384e0b5
+- [x] 3.3 `npm run build` still passes unaffected — 384e0b5
 
 #### Manual
 
 - [x] 3.4 A reviewer confirms every parity-table bound matches a quoted CHECK
-      clause verified against the actual migration file
+      clause verified against the actual migration file — 384e0b5
 - [x] 3.5 A reviewer confirms the migration-text guard's drift-vs-correctness
-      limitation is documented inline
+      limitation is documented inline — 384e0b5
 
 ### Phase 4: Cookbook update
 
 #### Manual
 
-- [ ] 4.1 §6.1 and §6.2 no longer read "TBD" and reference the actual test
+- [x] 4.1 §6.1 and §6.2 no longer read "TBD" and reference the actual test
       files shipped
