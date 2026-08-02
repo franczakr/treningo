@@ -571,9 +571,9 @@ local dev per research).
       smoke test passes (**blocked**: no Docker in this environment — see
       note below)
 - [x] 1.2 `npm run test` still passes and does not pick up
-      `*.integration.test.ts`
-- [x] 1.3 `npm run lint` passes on all new files
-- [x] 1.4 `npm run build` still passes unaffected
+      `*.integration.test.ts` — 3dd0240
+- [x] 1.3 `npm run lint` passes on all new files — 3dd0240
+- [x] 1.4 `npm run build` still passes unaffected — 3dd0240
 
 #### Manual
 
@@ -585,13 +585,16 @@ local dev per research).
 #### Automated
 
 - [ ] 2.1 `npm run test:integration` passes, including all
-      `profile.integration.test.ts` cases
-- [ ] 2.2 `npm run lint` passes on the new file
-- [ ] 2.3 `npm run test` (unit suite) remains unaffected
+      `profile.integration.test.ts` cases (**blocked**: no Docker in this
+      environment — verified instead that the suite fails at the expected
+      network boundary, not from a coding error, with and without dummy env
+      vars)
+- [x] 2.2 `npm run lint` passes on the new file
+- [x] 2.3 `npm run test` (unit suite) remains unaffected
 
 #### Manual
 
-- [ ] 2.4 A reviewer confirms each cross-user assertion checks an actual
+- [x] 2.4 A reviewer confirms each cross-user assertion checks an actual
       row-count/return-value, not just "no error was thrown"
 
 ### Phase 3: Plan isolation tests
