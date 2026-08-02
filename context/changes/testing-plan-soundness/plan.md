@@ -663,4 +663,4 @@ nothing to roll back beyond reverting the added files and the small
 #### Manual
 
 - [x] 4.1 §6.1 and §6.2 no longer read "TBD" and reference the actual test
-      files shipped
+      files shipped — 6f55a18
