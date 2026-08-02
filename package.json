@@ -12,6 +12,7 @@
     "typecheck": "astro check",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "format": "prettier --write .",
     "db:link": "supabase link",
     "db:migration": "supabase migration new",

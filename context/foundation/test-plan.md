@@ -6,8 +6,9 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-08-02 (§2 risk wording + response guidance, §4 unit row and
-> §7 backported from `context/changes/testing-plan-soundness/research.md`)
+> Last updated: 2026-08-02 (§3 Phase 1 marked complete — implemented and
+> impl-reviewed, APPROVED; §2 risk wording + response guidance, §4 unit row
+> and §7 backported from `context/changes/testing-plan-soundness/research.md`)
 
 ## 1. Strategy
 
@@ -80,8 +81,8 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Runner bootstrap + plan soundness | Stand up the test runner and prove that a plan the system reports as acceptable actually honors the user's equipment, day count, and goal; wire the suite into CI so the floor is locked from the first test | #2, #5 (schema side) | unit, CI gate | planned | `context/changes/testing-plan-soundness/` |
-| 2 | Account isolation | Prove automatically — not by two manual SQL sessions — that one account can never read another's plans or body metrics | #1 | integration | not started | — |
+| 1 | Runner bootstrap + plan soundness | Stand up the test runner and prove that a plan the system reports as acceptable actually honors the user's equipment, day count, and goal; wire the suite into CI so the floor is locked from the first test | #2, #5 (schema side) | unit, CI gate | complete | `context/changes/testing-plan-soundness/` |
+| 2 | Account isolation | Prove automatically — not by two manual SQL sessions — that one account can never read another's plans or body metrics | #1 | integration | planned | `context/changes/testing-account-isolation/` |
 | 3 | Persistence round-trip + boundary contracts | Prove a saved plan returns unchanged, and close the gap between what the schema accepts and what the database and storage will take | #3, #5, #6 | integration | not started | — |
 | 4 | Model failure surfaces | Prove every documented model-side failure ends in a clean retryable error, and that no error path leaks internal detail | #4, #7 | unit, integration | not started | — |
 
