@@ -171,26 +171,26 @@ One behavioural note worth stating: every existing account already has a profile
 
 #### Automated
 
-- [x] 1.1 Linting passes: `npm run lint`
-- [x] 1.2 Production build succeeds: `npm run build`
+- [x] 1.1 Linting passes: `npm run lint` — 2cab15f
+- [x] 1.2 Production build succeeds: `npm run build` — 2cab15f
 
 #### Manual
 
-- [x] 1.3 A user with no saved profile fills the form, saves, and lands on `/plan` with generation under way
-- [x] 1.4 A user who already has a profile re-saves and stays on `/training-profile` with the "Profil zapisany." banner, and no generation starts
-- [x] 1.5 A validation failure still returns to `/training-profile` with the error message shown
-- [x] 1.6 An unauthenticated POST to `/api/profile` still redirects to `/auth/signin`
+- [x] 1.3 A user with no saved profile fills the form, saves, and lands on `/plan` with generation under way — 2cab15f
+- [x] 1.4 A user who already has a profile re-saves and stays on `/training-profile` with the "Profil zapisany." banner, and no generation starts — 2cab15f
+- [x] 1.5 A validation failure still returns to `/training-profile` with the error message shown — 2cab15f
+- [x] 1.6 An unauthenticated POST to `/api/profile` still redirects to `/auth/signin` — 2cab15f
 
 ### Phase 2: Route onward from a saved plan
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 Saving a plan reveals a link to saved plans beside the "Zapisano" confirmation
-- [ ] 2.4 Following that link opens `/plans` with the just-saved plan at the top of the list
-- [ ] 2.5 Pressing "Wygeneruj ponownie" hides the link again until the new plan is saved
-- [ ] 2.6 A failed save shows the existing error message and no link appears
+- [x] 2.3 Saving a plan reveals a link to saved plans beside the "Zapisano" confirmation
+- [x] 2.4 Following that link opens `/plans` with the just-saved plan at the top of the list
+- [x] 2.5 Pressing "Wygeneruj ponownie" hides the link again until the new plan is saved
+- [x] 2.6 A failed save shows the existing error message and no link appears

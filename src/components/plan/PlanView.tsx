@@ -165,9 +165,14 @@ export default function PlanView() {
 
       {saveStatus === "error" && saveError ? <p className="text-center text-sm text-red-300">{saveError}</p> : null}
 
-      <div className="flex flex-wrap justify-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <SaveButton status={saveStatus} onClick={save} />
         <RegenerateButton onClick={regenerate} label="Wygeneruj ponownie" />
+        {saveStatus === "saved" ? (
+          <a href="/plans" className="text-sm font-medium text-blue-200 underline hover:text-blue-100">
+            Zobacz zapisane plany
+          </a>
+        ) : null}
       </div>
     </div>
   );
