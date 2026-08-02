@@ -301,10 +301,10 @@ No schema or data change. Purely class-string substitution plus one dead-file re
 
 #### Automated
 
-- [x] 4.1 `grep` sweep for starter colour classes returns no matches
-- [x] 4.2 Linting passes: `npm run lint`
-- [x] 4.3 Production build succeeds: `npm run build`
+- [x] 4.1 `grep` sweep for starter colour classes returns no matches — 1c3ffd9
+- [x] 4.2 Linting passes: `npm run lint` — 1c3ffd9
+- [x] 4.3 Production build succeeds: `npm run build` — 1c3ffd9
 
 #### Manual
 
-- [x] 4.4 A full click-through of every page in the app shows one consistent light grey/white/steel-blue palette with no remaining starter branding anywhere
+- [x] 4.4 A full click-through of every page in the app shows one consistent light grey/white/steel-blue palette with no remaining starter branding anywhere — 1c3ffd9
