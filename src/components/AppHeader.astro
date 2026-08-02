@@ -1,4 +1,6 @@
 ---
+// Mounted only on protected routes (via Layout's "nav" slot) — middleware
+// guarantees an authenticated user, so this never renders a signed-out state.
 const { user } = Astro.locals;
 ---
 
