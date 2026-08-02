@@ -12,6 +12,8 @@ export default defineConfig({
     // Integration tests (real database, run via `npm run test:integration`
     // + vitest.integration.config.ts) live alongside unit tests but must not
     // be picked up here — this suite stays hermetic and Docker-independent.
-    exclude: [...configDefaults.exclude, "**/*.integration.test.ts"],
+    // Playwright specs under tests/e2e/ (run via `npm run test:e2e`) must
+    // also be excluded — they import `@playwright/test`, not `vitest`.
+    exclude: [...configDefaults.exclude, "**/*.integration.test.ts", "tests/e2e/**"],
   },
 });
