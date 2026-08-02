@@ -148,22 +148,22 @@ No schema change, no data migration. Purely additive/renaming at the CSS-token a
 
 #### Automated
 
-- [x] 1.1 Linting passes: `npm run lint`
-- [x] 1.2 Production build succeeds: `npm run build`
+- [x] 1.1 Linting passes: `npm run lint` — 8a6531d
+- [x] 1.2 Production build succeeds: `npm run build` — 8a6531d
 
 #### Manual
 
-- [x] 1.3 Every existing page renders visually identical to before this phase
-- [x] 1.4 The sign-in/sign-up submit button is unchanged
-- [x] 1.5 Toggling OS-level dark mode no longer changes any part of the app's appearance
+- [x] 1.3 Every existing page renders visually identical to before this phase — 8a6531d
+- [x] 1.4 The sign-in/sign-up submit button is unchanged — 8a6531d
+- [x] 1.5 Toggling OS-level dark mode no longer changes any part of the app's appearance — 8a6531d
 
 ### Phase 2: Navigation slot in the shared shell
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Production build succeeds: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 Every existing page still renders with no visible change
+- [x] 2.3 Every existing page still renders with no visible change
