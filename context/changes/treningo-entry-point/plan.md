@@ -159,10 +159,10 @@ No schema or data change. Purely presentational plus one redirect target; safe t
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Production build succeeds: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint` — 9c82e98
+- [x] 2.2 Production build succeeds: `npm run build` — 9c82e98
 
 #### Manual
 
-- [x] 2.3 Signing in with valid credentials lands on `/dashboard`
-- [x] 2.4 Signing in with invalid credentials still returns to `/auth/signin?error=...`
+- [x] 2.3 Signing in with valid credentials lands on `/dashboard` — 9c82e98
+- [x] 2.4 Signing in with invalid credentials still returns to `/auth/signin?error=...` — 9c82e98
