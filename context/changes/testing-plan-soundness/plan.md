@@ -618,15 +618,15 @@ nothing to roll back beyond reverting the added files and the small
 
 #### Automated
 
-- [x] 1.1 `npm run test` passes locally
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 `npm run build` still passes unaffected
+- [x] 1.1 `npm run test` passes locally — e723fff
+- [x] 1.2 `npm run lint` passes — e723fff
+- [x] 1.3 `npm run build` still passes unaffected — e723fff
 - [x] 1.4 `.github/workflows/ci.yml` contains the new test step between
-      `lint` and `build`
+      `lint` and `build` — e723fff
 
 #### Manual
 
-- [x] 1.5 A push/PR CI run shows the new test step executing and passing
+- [x] 1.5 A push/PR CI run shows the new test step executing and passing — e723fff
 
 ### Phase 2: Plan-soundness guardrail tests (Risk #2)
 
