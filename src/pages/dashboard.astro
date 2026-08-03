@@ -55,14 +55,24 @@ function goalLabel(plan: SavedPlan): string {
         ) : (
           <ul class="space-y-3">
             {plans.map((plan) => (
-              <li>
+              <li class="border-border bg-card flex items-center gap-2 rounded-2xl border p-2">
                 <a
                   href={`/plan/${plan.id}`}
-                  class="border-border bg-card text-foreground hover:bg-accent flex items-center justify-between gap-4 rounded-2xl border p-5 transition-colors"
+                  class="text-foreground hover:bg-accent flex flex-1 items-center justify-between gap-4 rounded-xl p-3 transition-colors"
                 >
                   <span class="text-primary font-semibold">{goalLabel(plan)}</span>
                   <span class="text-muted-foreground text-sm">{formatPlanDate(plan.created_at)}</span>
                 </a>
+                <form method="POST" action="/api/plan/delete" onsubmit="return confirm('Usunąć ten plan?')">
+                  <input type="hidden" name="plan_id" value={plan.id} />
+                  <button
+                    type="submit"
+                    class="text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg p-3 text-sm transition-colors"
+                    aria-label="Usuń plan"
+                  >
+                    Usuń
+                  </button>
+                </form>
               </li>
             ))}
           </ul>

@@ -164,24 +164,24 @@ None — no schema or RLS changes; `plans_delete_own` already exists.
 
 #### Automated
 
-- [x] 1.1 `npm run test:integration` passes, including the new owner-delete case
-- [x] 1.2 `npm run lint` passes on all new/changed files
-- [x] 1.3 `npm run test` (unit suite) remains unaffected
+- [x] 1.1 `npm run test:integration` passes, including the new owner-delete case — 93345fb
+- [x] 1.2 `npm run lint` passes on all new/changed files — 93345fb
+- [x] 1.3 `npm run test` (unit suite) remains unaffected — 93345fb
 
 #### Manual
 
-- [x] 1.4 Calling `POST /api/plan/delete` with a valid session and a plan id you own actually removes the row
+- [x] 1.4 Calling `POST /api/plan/delete` with a valid session and a plan id you own actually removes the row — 93345fb
 
 ### Phase 2: Delete controls on the list and detail page
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes on both changed files
-- [ ] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes on both changed files
+- [x] 2.2 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 2.3 Dashboard delete: confirm dialog fires, confirming removes the plan and lands on `/dashboard`
-- [ ] 2.4 Cancelling the confirm dialog leaves the plan untouched
-- [ ] 2.5 Detail-page delete redirects to `/dashboard` and the plan is gone
-- [ ] 2.6 Opening a deleted plan's URL directly redirects to `/dashboard`
+- [x] 2.3 Dashboard delete: confirm dialog fires, confirming removes the plan and lands on `/dashboard`
+- [x] 2.4 Cancelling the confirm dialog leaves the plan untouched
+- [x] 2.5 Detail-page delete redirects to `/dashboard` and the plan is gone
+- [x] 2.6 Opening a deleted plan's URL directly redirects to `/dashboard`
