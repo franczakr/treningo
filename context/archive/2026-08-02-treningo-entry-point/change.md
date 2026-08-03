@@ -1,9 +1,10 @@
 ---
 change_id: treningo-entry-point
 title: Treningo entry point — home page & post-sign-in landing (roadmap S-06)
-status: impl_reviewed
+status: archived
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-03
+archived_at: 2026-08-03T10:19:22Z
 ---
 
 ## Notes
