@@ -3,7 +3,7 @@ project: "Treningo"
 version: 2
 status: draft
 created: 2026-06-27
-updated: 2026-08-02
+updated: 2026-08-03
 context_type: greenfield
 product_type: web-app
 target_scale:
@@ -78,6 +78,9 @@ Primary persona: a beginner at the gym with their own personal goal (the app's a
 
 - FR-006: User can browse their saved plans. Priority: must-have
   > Socratic: No compelling counter-argument. The user must be able to return to their plan later. Stands as written.
+
+- FR-007: User can delete a saved plan they no longer want. Priority: must-have. Added in v2 (2026-08-03).
+  > Socratic: Counter-argument considered: "not in the original scope, and Non-Goals already caps v1 at generation + save; adding delete grows scope." Resolution: kept as must-have — browsing (FR-006) without any way to remove a plan leaves the saved-plans list strictly growing with no way to prune an unwanted or superseded plan, which is a real gap in the persistence story FR-005/FR-006 already commit to, not new scope. Account isolation (Guardrails) applies identically: a user may only delete their own plan.
 
 ## Non-Functional Requirements
 

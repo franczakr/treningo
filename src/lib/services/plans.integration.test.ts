@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { getPlanById, getPlans, savePlan } from "@/lib/services/plans";
+import { deletePlan, getPlanById, getPlans, savePlan } from "@/lib/services/plans";
 import { createAnonClient, createTestUser, type TestUser } from "@/lib/test-helpers/integration-users";
 import type { ProfileSnapshot, WorkoutPlan } from "@/types";
 
@@ -103,5 +103,23 @@ describe("plans account isolation", () => {
     // Confirm the row still exists, as user A.
     const single = await getPlanById(userA.client, userA.userId, planId);
     expect(single).not.toBeNull();
+  });
+
+  // Positive control (S-09): the owner's own delete must actually work. Uses a
+  // second, dedicated plan for user A rather than the shared `planId` above —
+  // the negative-control test just above still needs that row to exist.
+  it("owner can delete their own plan", async () => {
+    const { error: saveError } = await savePlan(userA.client, userA.userId, plan, profileSnapshot);
+    if (saveError) throw new Error(`Failed to seed second plan: ${saveError.message}`);
+
+    const rows = await getPlans(userA.client, userA.userId);
+    const secondPlanId = rows.find((row) => row.id !== planId)?.id;
+    if (!secondPlanId) throw new Error("Second seeded plan not found via getPlans");
+
+    const { error } = await deletePlan(userA.client, userA.userId, secondPlanId);
+    expect(error).toBeNull();
+
+    const single = await getPlanById(userA.client, userA.userId, secondPlanId);
+    expect(single).toBeNull();
   });
 });

@@ -3,7 +3,7 @@ project: Treningo
 version: 2
 status: draft
 created: 2026-06-27
-updated: 2026-08-02
+updated: 2026-08-03
 prd_version: 2
 main_goal: quality
 top_blocker: none
@@ -27,6 +27,10 @@ top_blocker: none
 > and one consistent visual identity replaces the starter's stock theme on every page. Next step
 > for each: `/10x-archive <change-id>` when ready to close the loop; beyond that, see `## Parked`
 > for what's deliberately not in scope, or open a new PRD requirement to start a third phase.
+>
+> **S-09 added (2026-08-03):** browsing a saved plan (S-04) had no way to remove one — the list only
+> ever grows. Added FR-007 to the PRD and S-09 (delete-plan) here, hand-added rather than through a
+> full `/10x-roadmap` regeneration since every other item is `done` and this is one incremental slice.
 
 ## Vision recap
 
@@ -56,6 +60,7 @@ Why this one and not the visual work: the PRD's Business Logic describes this ex
 | S-06  | treningo-entry-point           | arrive on a Treningo home page offering sign-in and registration, and land on the dashboard after signing in | F-02          | FR-001, US-01, Access Control, NFR (visual identity) | done     |
 | S-07  | app-header-nav                 | reach their profile, plan generation, saved plans and sign-out from any page once signed in | F-02          | FR-002, FR-003, FR-006, US-01 | done     |
 | S-08  | retire-hardcoded-colours       | see every remaining page in the Treningo palette instead of stock starter colours | F-02, S-06, S-07 | US-01, NFR (visual identity) | done     |
+| S-09  | delete-plan                    | delete a saved plan they no longer want                         | S-04          | FR-007, US-01             | ready    |
 
 ## Streams
 
@@ -214,6 +219,18 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Risk:** The largest surface in the phase (~192 colour classes across 19 files) but the lowest conceptual risk, so it is sequenced last, where it sweeps a settled shape rather than chasing a moving one. One thing to watch: `src/components/plan/PlanView.tsx` alone holds 22 colour hits and some of them carry meaning — a validation warning that is currently legible only because it is red must stay distinguishable once the palette is greyscale.
 - **Status:** done — implemented `2026-08-02` across 4 phases (`0a9770f`, `b33c82b`, `ddf2d02`, `1c3ffd9`); impl-reviewed (APPROVED, 1 observation, no action needed); not yet archived, see `context/changes/retire-hardcoded-colours/`. The semantic-colour risk noted above held: error/warning/success were re-tuned for the light palette (not dropped), staying exactly as distinguishable as before.
 
+### S-09: Delete a saved plan
+
+- **Outcome:** A user can delete a saved plan they no longer want; it stops appearing in their saved-plans list and can no longer be reopened.
+- **Change ID:** delete-plan
+- **PRD refs:** FR-007 (must-have, added v2 2026-08-03), US-01, Guardrails (account isolation — a user may only delete their own plan)
+- **Prerequisites:** S-04 (the saved-plans list this adds a control to)
+- **Parallel with:** —
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Low — the `plans_delete_own` RLS policy already exists (`supabase/migrations/20260628105841_create_plans.sql:41`) and is already exercised as a negative-control probe in `plans.integration.test.ts` (user B's delete of user A's plan is rejected), so the isolation guardrail is proven; this slice only needs to add the application-level path (service method, API route, UI control) that a real owner uses to trigger it.
+- **Status:** ready
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                      | Suggested issue title                                  | Ready for `/10x-plan` | Notes |
@@ -228,6 +245,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-06       | treningo-entry-point           | Treningo home page & post-sign-in landing              | done                  | Implemented 2026-08-02 (`3859411`, `9c82e98`); run `/10x-archive treningo-entry-point` when ready |
 | S-07       | app-header-nav                 | Persistent app header on every signed-in page          | done                  | Implemented 2026-08-02 (`cad7779`, `9f99ad4`, `06d68b2`); run `/10x-archive app-header-nav` when ready |
 | S-08       | retire-hardcoded-colours       | Retire ~192 hardcoded colour classes across 19 files   | done                  | Implemented 2026-08-02 across 4 phases; run `/10x-archive retire-hardcoded-colours` when ready |
+| S-09       | delete-plan                    | Delete a saved plan                                    | yes                   | Added 2026-08-03 (FR-007) |
 
 This table is the clean handoff to Jira/Linear or any MCP-backed backlog.
 

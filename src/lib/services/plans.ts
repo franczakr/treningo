@@ -54,3 +54,15 @@ export async function getPlanById(supabase: Client, userId: string, planId: stri
   }
   return data as SavedPlan | null;
 }
+
+// Delete a single saved plan by id, scoped to the user (S-09) — same double-filter
+// defense in depth as getPlanById, on top of the plans_delete_own RLS policy.
+export async function deletePlan(
+  supabase: Client,
+  userId: string,
+  planId: string,
+): Promise<{ error: PostgrestError | null }> {
+  const { error } = await supabase.from("plans").delete().eq("user_id", userId).eq("id", planId);
+
+  return { error };
+}
