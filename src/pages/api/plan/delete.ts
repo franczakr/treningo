@@ -23,7 +23,7 @@ export const POST: APIRoute = async (context) => {
 
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return redirectWithError(context, "Supabase is not configured");
+    return redirectWithError(context, "Usuwanie planu nie jest skonfigurowane.");
   }
 
   const form = await context.request.formData();

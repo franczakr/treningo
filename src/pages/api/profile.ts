@@ -21,7 +21,7 @@ export const POST: APIRoute = async (context) => {
 
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return redirectWithError(context, "Supabase is not configured");
+    return redirectWithError(context, "Zapisywanie profilu nie jest skonfigurowane.");
   }
 
   const form = await context.request.formData();
@@ -43,7 +43,13 @@ export const POST: APIRoute = async (context) => {
 
   const parsed = profileSchema.safeParse(raw);
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? "Invalid profile data";
+    // Every message in `profileSchema` is authored Polish, so surfacing one is
+    // user feedback, not internal detail (Risk #7 — zod's English defaults used
+    // to reach the user here). The fallback stays Polish for the same reason,
+    // and the full issue list is logged rather than shown.
+    // eslint-disable-next-line no-console -- deliberate server-side error log
+    console.error("Profile validation failed:", parsed.error.issues);
+    const message = parsed.error.issues[0]?.message ?? "Nieprawidłowe dane profilu. Sprawdź formularz.";
     return redirectWithError(context, message);
   }
 

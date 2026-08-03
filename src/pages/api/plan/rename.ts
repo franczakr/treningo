@@ -4,7 +4,9 @@ import { createClient } from "@/lib/supabase";
 import { renamePlan } from "@/lib/services/plans";
 
 const renameSchema = z.object({
-  plan_id: z.uuid(),
+  // Authored message on purpose: `issues[0].message` below is user-facing, and
+  // zod's default ("Invalid UUID") is English internal detail (Risk #7).
+  plan_id: z.uuid("Nieprawidłowy identyfikator planu."),
   // Empty/whitespace-only input clears the custom name (falls back to the
   // goal label in the UI) rather than being rejected as invalid.
   name: z
@@ -33,7 +35,7 @@ export const POST: APIRoute = async (context) => {
 
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
-    return redirectWithError(context, "Supabase is not configured");
+    return redirectWithError(context, "Zmiana nazwy planu nie jest skonfigurowana.");
   }
 
   const form = await context.request.formData();

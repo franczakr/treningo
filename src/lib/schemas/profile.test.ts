@@ -158,3 +158,58 @@ describe("migration text guard", () => {
     expect(migrationSql).toContain(clause);
   });
 });
+
+// Risk #7. Every message this schema produces is rendered to a user — per
+// field by the client mirror (`TrainingProfileForm`), and the first one by the
+// API route into `/training-profile?error=`. Zod's English defaults were
+// therefore user-facing, and some of them ("Invalid option: expected one of
+// \"strength\"|…") enumerate the database enum domain — internal detail in a
+// user-facing string. This block pins the property that authored messages
+// stay authored: a new field or constraint added without a message
+// reintroduces English and fails here.
+//
+// KNOW THE LIMIT: the vocabulary below is zod-4-specific. A zod major upgrade
+// can change the default phrasing, which would make this guard pass while
+// English text reappears — revisit it on any zod major bump.
+describe("profileSchema — no zod default message can reach a user (Risk #7)", () => {
+  const ZOD_DEFAULT_VOCABULARY = /expected|received|Invalid option|Invalid input|Too small|Too big|must be/i;
+
+  // One invalid payload per constrained field, so every message-carrying
+  // constraint in the schema is exercised at least once.
+  const invalidPayloads: Record<string, Record<string, unknown>> = {
+    goal: { goal: "not_a_goal" },
+    experience_level: { experience_level: "wizard" },
+    "age (below min)": { age: 5 },
+    "age (above max)": { age: 200 },
+    "age (not an integer)": { age: 30.5 },
+    "age (not a number)": { age: "abc" },
+    "weight_kg (zero)": { weight_kg: 0 },
+    "weight_kg (above max)": { weight_kg: 900 },
+    "training_days_per_week (zero)": { training_days_per_week: 0 },
+    "training_days_per_week (above max)": { training_days_per_week: 9 },
+    "equipment (empty)": { equipment: [] },
+    "equipment (unknown item)": { equipment: ["jetpack"] },
+    "squat_kg (zero)": { squat_kg: 0 },
+    "squat_kg (above max)": { squat_kg: 5000 },
+    "bench_kg (zero)": { bench_kg: 0 },
+    "deadlift_kg (above max)": { deadlift_kg: 5000 },
+    "ohp_kg (zero)": { ohp_kg: 0 },
+    "plank_seconds (above max)": { plank_seconds: 99999 },
+    "plank_seconds (not an integer)": { plank_seconds: 10.5 },
+  };
+
+  it.each(Object.entries(invalidPayloads))("%s produces an authored Polish message", (_label, overrides) => {
+    const result = profileSchema.safeParse({ ...validInput, ...overrides });
+
+    // Guard the guard: a payload that accidentally parses would make the
+    // assertions below vacuous.
+    expect(result.success).toBe(false);
+    if (result.success) return;
+
+    expect(result.error.issues.length).toBeGreaterThan(0);
+    for (const issue of result.error.issues) {
+      expect(issue.message).not.toMatch(ZOD_DEFAULT_VOCABULARY);
+      expect(issue.message.length).toBeGreaterThan(0);
+    }
+  });
+});
