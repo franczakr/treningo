@@ -1,4 +1,36 @@
+<p align="center">
+  <img src="./public/logo.svg" alt="Treningo logo" width="360" />
+</p>
+
 # Treningo
+
+**Your first personal trainer, minus the price tag.** Treningo turns a short
+training profile into a workout plan built specifically for you — not another
+generic PDF pulled off the internet.
+
+## Why Treningo
+
+Starting at the gym is intimidating. You have a goal — lose fat, build muscle,
+get stronger — but no idea which exercises to do, how often, or how heavy to
+go. The usual options are all flawed: generic plans and YouTube routines
+ignore the equipment you actually have access to and the schedule you can
+realistically stick to; a personal trainer solves that, but costs real money
+every month.
+
+Treningo closes that gap. Tell it your goal, experience level, available
+equipment, how many days a week you can train, and your current lifts — and
+within seconds you get back a complete workout plan built around exactly
+those constraints: the right exercises, sets, reps, and starting weights,
+using only the equipment you marked as available and matching the exact
+number of training days you chose. No generic templates, no guesswork, no
+subscription. Save it, come back to it, rename it, drop it once you've
+outgrown it, and generate the next one.
+
+It's built for the person who is motivated to train but doesn't yet know how
+to turn that motivation into a plan — the first months at the gym, where good
+guidance matters most.
+
+## What it does
 
 Treningo generates a personalized gym workout plan for beginners. You fill in a
 short training profile — goal, experience level, available equipment, training
@@ -89,15 +121,15 @@ npm run dev
 ```md
 .
 ├── src/
-│ ├── layouts/          # Astro layouts
-│ ├── pages/             # Astro pages
-│ │ └── api/             # API endpoints
-│ ├── components/       # UI components (Astro & React)
-│ └── lib/               # Services / business logic (plan generation, validation, Supabase access)
+│ ├── layouts/ # Astro layouts
+│ ├── pages/ # Astro pages
+│ │ └── api/ # API endpoints
+│ ├── components/ # UI components (Astro & React)
+│ └── lib/ # Services / business logic (plan generation, validation, Supabase access)
 ├── supabase/migrations/ # Database schema (Postgres, RLS per user)
-├── context/              # Product/foundation docs (PRD, tech stack, test plan, roadmap)
-├── public/               # Public assets
-├── wrangler.jsonc        # Cloudflare Workers config
+├── context/ # Product/foundation docs (PRD, tech stack, test plan, roadmap)
+├── public/ # Public assets
+├── wrangler.jsonc # Cloudflare Workers config
 ```
 
 ## Supabase Configuration
@@ -186,15 +218,15 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 
 ### Auth routes
 
-| Route                 | Description                                                             |
-| --------------------- | ------------------------------------------------------------------------ |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Saved-plans list (redirects to `/auth/signin` if unauthenticated)        |
-| `/training-profile`   | Training profile form                                                    |
-| `/plan`               | Generate a new plan                                                      |
-| `/plan/[id]`          | View a saved plan                                                        |
+| Route                 | Description                                                       |
+| --------------------- | ----------------------------------------------------------------- |
+| `/auth/signin`        | Email/password sign-in form                                       |
+| `/auth/signup`        | Email/password sign-up form                                       |
+| `/auth/confirm-email` | Post-signup "check your inbox" page                               |
+| `/dashboard`          | Saved-plans list (redirects to `/auth/signin` if unauthenticated) |
+| `/training-profile`   | Training profile form                                             |
+| `/plan`               | Generate a new plan                                               |
+| `/plan/[id]`          | View a saved plan                                                 |
 
 Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
 
