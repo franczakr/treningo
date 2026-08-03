@@ -1,16 +1,39 @@
-# 10x Astro Starter
+# Treningo
 
-![](./public/template.png)
+Treningo generates a personalized gym workout plan for beginners. You fill in a
+short training profile — goal, experience level, available equipment, training
+days per week, current lifts — and get one workout plan back, tailored to those
+parameters, that you can save and browse later.
 
-A modern, opinionated starter template for building fast, accessible web applications.
+The problem it solves: generic, one-size-fits-all plans found online don't
+account for what equipment you actually have, how many days you can train, or
+your current strength level. Treningo asks for those inputs up front and builds
+a plan around them instead.
+
+See [`context/foundation/prd.md`](./context/foundation/prd.md) for the full
+product requirements and [`context/foundation/tech-stack.md`](./context/foundation/tech-stack.md)
+for why this stack was chosen.
+
+## How it works
+
+1. Sign up / log in (Supabase Auth).
+2. Fill in your training profile (goal, experience, equipment, training days,
+   current lifts).
+3. Generate a plan — an LLM (Google Gemini, `gemini-2.5-flash`) produces a
+   structured workout plan from your profile, which is then checked against
+   plan-soundness guardrails (only your available equipment, exactly your
+   chosen number of training days) and retried automatically if it violates
+   them.
+4. Save the plan, browse your saved plans later, rename or delete them.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
+- [Astro](https://astro.build/) v6 - Server-first rendering, deployed to Cloudflare Workers
+- [React](https://react.dev/) v19 - Interactive UI islands
 - [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
+- [Tailwind CSS](https://tailwindcss.com/) v4 + [shadcn/ui](https://ui.shadcn.com/) - Styling and components
+- [Supabase](https://supabase.com/) - Auth and Postgres persistence (RLS-scoped per user)
+- [Google Gemini](https://ai.google.dev/) (`@google/genai`) - Structured-output plan generation
 - [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
 
 ## Prerequisites
@@ -23,8 +46,8 @@ A modern, opinionated starter template for building fast, accessible web applica
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
+git clone <this-repo-url>
+cd treningo
 ```
 
 2. Install dependencies:
@@ -41,7 +64,9 @@ npm install
 cp .env.example .dev.vars
 ```
 
-5. Run the development server:
+5. Add your `GEMINI_API_KEY` (get one from [Google AI Studio](https://aistudio.google.com/apikey)) to both `.env` and `.dev.vars`.
+
+6. Run the development server:
 
 ```bash
 npm run dev
@@ -52,27 +77,35 @@ npm run dev
 - `npm run dev` - Start development server (Cloudflare workerd runtime)
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
+- `npm run lint` / `npm run lint:fix` - ESLint (type-checked rules)
+- `npm run typecheck` - `astro check`
+- `npm run format` - Prettier
+- `npm run test` - Unit tests (Vitest)
+- `npm run test:integration` - Integration tests against a real local Supabase instance
+- `npm run test:e2e` - End-to-end tests (Playwright)
 
 ## Project Structure
 
 ```md
 .
 ├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
+│ ├── layouts/          # Astro layouts
+│ ├── pages/             # Astro pages
+│ │ └── api/             # API endpoints
+│ ├── components/       # UI components (Astro & React)
+│ └── lib/               # Services / business logic (plan generation, validation, Supabase access)
+├── supabase/migrations/ # Database schema (Postgres, RLS per user)
+├── context/              # Product/foundation docs (PRD, tech stack, test plan, roadmap)
+├── public/               # Public assets
+├── wrangler.jsonc        # Cloudflare Workers config
 ```
 
 ## Supabase Configuration
 
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
+This project uses [Supabase](https://supabase.com/) for authentication and for
+persisting training profiles and saved plans. Environment variables are
+declared via Astro's `astro:env` schema and are treated as **server-only
+secrets** — they are never exposed to the client.
 
 ### First-time setup (local, no cloud project needed)
 
@@ -111,8 +144,6 @@ npx supabase stop
 
 The local Studio UI is available at `http://localhost:54323`.
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
-
 ### Using a cloud Supabase project instead
 
 If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
@@ -127,6 +158,22 @@ SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_KEY=<anon-key>
 ```
 
+### Database migrations (hosted-linked)
+
+Migrations target the hosted Supabase project directly (no local Docker
+required for this step):
+
+```bash
+npx supabase login
+npm run db:link -- --project-ref <project-ref>   # subdomain of SUPABASE_URL
+npm run db:migration <short_description>          # new supabase/migrations/<timestamp>_<desc>.sql
+npm run db:push                                    # apply pending migrations
+npm run db:types                                   # regenerate src/db/database.types.ts
+```
+
+See `supabase/migrations/README.md` for the RLS policy convention used for
+every per-user table.
+
 ### Email confirmation in local development
 
 By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
@@ -140,11 +187,14 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 ### Auth routes
 
 | Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
+| --------------------- | ------------------------------------------------------------------------ |
 | `/auth/signin`        | Email/password sign-in form                                             |
 | `/auth/signup`        | Email/password sign-up form                                             |
 | `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| `/dashboard`          | Saved-plans list (redirects to `/auth/signin` if unauthenticated)        |
+| `/training-profile`   | Training profile form                                                    |
+| `/plan`               | Generate a new plan                                                      |
+| `/plan/[id]`          | View a saved plan                                                        |
 
 Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
 
@@ -164,11 +214,14 @@ npm run build
 npx wrangler deploy
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+Set `SUPABASE_URL`, `SUPABASE_KEY`, and `GEMINI_API_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
 
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+GitHub Actions (`.github/workflows/ci.yml`) runs lint, unit tests, and build on
+every push and PR to `master`, plus a separate job running integration tests
+against a real local Supabase stack. Configure `SUPABASE_URL` and
+`SUPABASE_KEY` as repository secrets in GitHub.
 
 ## License
 
