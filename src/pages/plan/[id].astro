@@ -21,6 +21,7 @@ if (!saved) {
 
 const goalLabel =
   GOAL_OPTIONS.find((o) => o.value === saved.profile_snapshot.goal)?.label ?? saved.profile_snapshot.goal;
+const displayName = saved.name ?? goalLabel;
 ---
 
 <Layout title="Zapisany plan">
@@ -36,8 +37,27 @@ const goalLabel =
           </button>
         </form>
       </div>
-      <h1 class="text-foreground mb-1 text-center text-3xl font-bold">{goalLabel}</h1>
-      <p class="text-muted-foreground mb-6 text-center text-sm">{formatPlanDate(saved.created_at)}</p>
+      <h1 class="text-foreground mb-1 text-center text-3xl font-bold">{displayName}</h1>
+      <p class="text-muted-foreground mb-1 text-center text-sm">{formatPlanDate(saved.created_at)}</p>
+      <form method="POST" action="/api/plan/rename" class="mb-6 flex items-center justify-center gap-2">
+        <input type="hidden" name="plan_id" value={saved.id} />
+        <input type="hidden" name="return_to" value={`/plan/${saved.id}`} />
+        <input
+          type="text"
+          name="name"
+          value={saved.name ?? ""}
+          placeholder={goalLabel}
+          maxlength="100"
+          aria-label="Nazwa planu"
+          class="border-input bg-background text-foreground rounded-lg border px-3 py-1.5 text-sm"
+        />
+        <button
+          type="submit"
+          class="border-input bg-background text-foreground hover:bg-accent rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors"
+        >
+          Zmień nazwę
+        </button>
+      </form>
 
       <div class="space-y-5">
         {saved.plan.sessions.map((session, i) => <SessionCard session={session} index={i} />)}

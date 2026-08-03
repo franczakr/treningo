@@ -1,13 +1,13 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { deletePlan, getPlanById, getPlans, savePlan } from "@/lib/services/plans";
+import { deletePlan, getPlanById, getPlans, renamePlan, savePlan } from "@/lib/services/plans";
 import { createAnonClient, createTestUser, type TestUser } from "@/lib/test-helpers/integration-users";
 import type { ProfileSnapshot, WorkoutPlan } from "@/types";
 
 // Real-database isolation test: user B (and an anonymous client) must never
-// list, read, update, or delete user A's saved plan — through the app's own
-// getPlans/getPlanById, and through the raw Postgrest client for
-// update/delete, which no service function exposes cross-user (there is no
-// app-level plan-editing UI at all). No mocked client anywhere below.
+// list, read, rename, or delete user A's saved plan — through the app's own
+// getPlans/getPlanById/renamePlan/deletePlan, and through the raw Postgrest
+// client for the plan content itself, which no service function exposes for
+// editing. No mocked client anywhere below.
 describe("plans account isolation", () => {
   let userA: TestUser;
   let userB: TestUser;
@@ -94,6 +94,23 @@ describe("plans account isolation", () => {
     // Confirm the row is genuinely unmutated, as user A.
     const single = await getPlanById(userA.client, userA.userId, planId);
     expect(single?.plan.sessions).toHaveLength(1);
+  });
+
+  it("user B cannot rename user A's plan", async () => {
+    const { error } = await renamePlan(userB.client, userA.userId, planId, "Zawłaszczony plan");
+    expect(error).toBeNull(); // RLS silently matches zero rows rather than erroring.
+
+    const single = await getPlanById(userA.client, userA.userId, planId);
+    expect(single?.name).toBeNull();
+  });
+
+  // Positive control (FR-008): the owner's own rename must actually work.
+  it("owner can rename their own plan", async () => {
+    const { error } = await renamePlan(userA.client, userA.userId, planId, "Plan na siłę");
+    expect(error).toBeNull();
+
+    const single = await getPlanById(userA.client, userA.userId, planId);
+    expect(single?.name).toBe("Plan na siłę");
   });
 
   it("user B cannot delete user A's plan", async () => {

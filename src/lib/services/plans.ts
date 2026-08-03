@@ -66,3 +66,18 @@ export async function deletePlan(
 
   return { error };
 }
+
+// Rename a single saved plan by id, scoped to the user (FR-008) — same
+// double-filter defense in depth as deletePlan, on top of the
+// plans_update_own RLS policy. `name` may be null to clear a custom name
+// (falls back to the goal label in the UI).
+export async function renamePlan(
+  supabase: Client,
+  userId: string,
+  planId: string,
+  name: string | null,
+): Promise<{ error: PostgrestError | null }> {
+  const { error } = await supabase.from("plans").update({ name }).eq("user_id", userId).eq("id", planId);
+
+  return { error };
+}
