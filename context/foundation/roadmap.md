@@ -205,7 +205,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Low risk, high reach — it is the escape hatch that makes every destination reachable even where the guided path of S-05 does not apply. Sequenced after F-02 because the header is new painted surface and is the single most-seen component in the app; building it before the shell exists guarantees rework.
-- **Status:** done — implemented `2026-08-02` (`cad7779`, `9f99ad4`, `06d68b2`); impl-reviewed (APPROVED, 2 fixed findings); not yet archived, see `context/changes/app-header-nav/`
+- **Status:** done
 
 ### S-08: Retire the stock starter colours
 
@@ -276,3 +276,4 @@ _None open._
 - **S-05: A user who saves their training profile is carried straight into generating a plan, and a user who saves a generated plan is given a direct way through to their saved plans.** — Archived 2026-08-03 → `context/archive/2026-08-02-guided-plan-flow/`. Lesson: —.
 - **F-02: (foundation) One silver / grey / white colour system — system font stack, no dark theme, one steel-blue accent for calls-to-action — exists as tokens in `src/styles/global.css`, and a shared page shell with a slot for navigation is available for pages to adopt. From this point on no page invents its own colour.** — Archived 2026-08-03 → `context/archive/2026-08-02-gym-visual-identity/`. Lesson: —.
 - **S-06: A visitor arrives on a Treningo home page that offers signing in and registering, and after signing in lands on the dashboard instead of being returned to the starter page.** — Archived 2026-08-03 → `context/archive/2026-08-02-treningo-entry-point/`. Lesson: —.
+- **S-07: Once signed in, a user reaches their profile, plan generation, saved plans and sign-out from any page — not only from the home page.** — Archived 2026-08-03 → `context/archive/2026-08-02-app-header-nav/`. Lesson: —.
