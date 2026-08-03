@@ -6,7 +6,11 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-08-02 (§3 Phase 1 marked complete — implemented and
+> Last updated: 2026-08-03 (§3 Phase 2 marked complete — implemented and
+> impl-reviewed, APPROVED; Phases 1 and 2 archived, change-folder references
+> below updated to their archive paths)
+>
+> Previously: 2026-08-02 (§3 Phase 1 marked complete — implemented and
 > impl-reviewed, APPROVED; §2 risk wording + response guidance, §4 unit row
 > and §7 backported from `context/changes/testing-plan-soundness/research.md`)
 
@@ -81,8 +85,8 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|---|---|---|---|---|---|
-| 1 | Runner bootstrap + plan soundness | Stand up the test runner and prove that a plan the system reports as acceptable actually honors the user's equipment, day count, and goal; wire the suite into CI so the floor is locked from the first test | #2, #5 (schema side) | unit, CI gate | complete | `context/changes/testing-plan-soundness/` |
-| 2 | Account isolation | Prove automatically — not by two manual SQL sessions — that one account can never read another's plans or body metrics | #1 | integration | implementing | `context/changes/testing-account-isolation/` |
+| 1 | Runner bootstrap + plan soundness | Stand up the test runner and prove that a plan the system reports as acceptable actually honors the user's equipment, day count, and goal; wire the suite into CI so the floor is locked from the first test | #2, #5 (schema side) | unit, CI gate | complete | `context/archive/2026-08-02-testing-plan-soundness/` |
+| 2 | Account isolation | Prove automatically — not by two manual SQL sessions — that one account can never read another's plans or body metrics | #1 | integration | complete | `context/archive/2026-08-02-testing-account-isolation/` |
 | 3 | Persistence round-trip + boundary contracts | Prove a saved plan returns unchanged, and close the gap between what the schema accepts and what the database and storage will take | #3, #5, #6 | integration | not started | — |
 | 4 | Model failure surfaces | Prove every documented model-side failure ends in a clean retryable error, and that no error path leaks internal detail | #4, #7 | unit, integration | not started | — |
 
@@ -141,7 +145,7 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 Canonical example: `src/lib/services/plan-validator.test.ts` and
 `src/lib/services/plan-generator.test.ts` (shipped in §3 Phase 1,
-`context/changes/testing-plan-soundness/`).
+`context/archive/2026-08-02-testing-plan-soundness/`).
 
 Pattern: build a literal `(profile, plan)` fixture, then write the expected
 guardrail set (or `ok`/`violations` shape) by hand from the profile and the
@@ -167,7 +171,7 @@ suite on shipped, intentional behavior.
 ### 6.2 Adding a schema-boundary test
 
 Canonical example: `src/lib/schemas/profile.test.ts` (shipped in §3 Phase 1,
-`context/changes/testing-plan-soundness/`).
+`context/archive/2026-08-02-testing-plan-soundness/`).
 
 Pattern: transcribe each database CHECK constraint's bound into the test
 with the exact SQL line quoted in a comment or describe title, then assert
@@ -195,7 +199,7 @@ once — see the training-profile impl review's zero-value finding.
 Canonical example: `src/lib/test-helpers/integration-users.ts` +
 `src/lib/services/profile.integration.test.ts` /
 `plans.integration.test.ts` (shipped in §3 Phase 2,
-`context/changes/testing-account-isolation/`).
+`context/archive/2026-08-02-testing-account-isolation/`).
 
 Pattern: run this test layer against a **local Docker Supabase stack**
 (`supabase start`), never the hosted project — a separate, gitignored env
