@@ -60,5 +60,8 @@ pnpm-debug.log*
 *.scaffold
 # TypeScript incremental build cache
 *.tsbuildinfo
+# Playwright run artifacts
+/test-results/
+/playwright-report/
 # Claude Code local (machine-specific) settings — keep shared settings.json tracked
 .claude/settings.local.json

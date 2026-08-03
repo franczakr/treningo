@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 // Golden-path risk: a new user can sign up, sign in, and have their training
 // profile persist — the first three steps of the PRD's primary success
@@ -11,6 +11,21 @@ import { test, expect } from "@playwright/test";
 // Runs against the LOCAL Supabase stack only — tests/e2e/global-setup.ts
 // refuses to run this suite at all unless .dev.vars is confirmed local,
 // never the hosted project.
+
+// Astro islands hydrate asynchronously: Playwright can write into a
+// controlled input's DOM node before React attaches to it, and hydration
+// then resets the value back to the component's initial state (""). Waiting
+// for the network to go idle after each navigation closes most of that gap
+// (the island's JS chunk has landed by then), but `fillStable`'s retry is
+// kept as defense-in-depth for the remaining race between "value observed as
+// set" and a hydration pass reconciling it back to empty.
+async function fillStable(page: Page, label: string, value: string, options?: { exact?: boolean }) {
+  await expect(async () => {
+    await page.getByLabel(label, options).fill(value);
+    await expect(page.getByLabel(label, options)).toHaveValue(value);
+  }).toPass();
+}
+
 test("profile data persists across a fresh navigation after first save", async ({ page }) => {
   const unique = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   const email = `e2e-${unique}@example.com`;
@@ -18,9 +33,10 @@ test("profile data persists across a fresh navigation after first save", async (
 
   // --- Sign up ---
   await page.goto("/auth/signup");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Hasło", { exact: true }).fill(password);
-  await page.getByLabel("Potwierdź hasło").fill(password);
+  await page.waitForLoadState("networkidle");
+  await fillStable(page, "E-mail", email);
+  await fillStable(page, "Hasło", password, { exact: true });
+  await fillStable(page, "Potwierdź hasło", password);
   await page.getByRole("button", { name: "Załóż konto" }).click();
 
   await page.waitForURL("**/auth/confirm-email");
@@ -28,20 +44,31 @@ test("profile data persists across a fresh navigation after first save", async (
 
   // --- Sign in ---
   await page.waitForURL("**/auth/signin");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Hasło", { exact: true }).fill(password);
+  await page.waitForLoadState("networkidle");
+  await fillStable(page, "E-mail", email);
+  await fillStable(page, "Hasło", password, { exact: true });
   await page.getByRole("button", { name: "Zaloguj się" }).click();
 
   await page.waitForURL("**/dashboard");
 
   // --- Fill and save the training profile (first-ever save) ---
   await page.goto("/training-profile");
-  await page.getByLabel("Cel treningowy").selectOption({ label: "Siła" });
-  await page.getByLabel("Poziom zaawansowania").selectOption({ label: "Początkujący" });
-  await page.getByLabel("Wiek").fill("30");
-  await page.getByLabel("Waga (kg)").fill("80");
-  await page.getByLabel("Dni treningowe w tygodniu").fill("3");
-  await page.getByLabel("Sztanga").check();
+  await page.waitForLoadState("networkidle");
+  await expect(async () => {
+    await page.getByLabel("Cel treningowy").selectOption({ label: "Siła" });
+    await expect(page.getByLabel("Cel treningowy")).toHaveValue("strength");
+  }).toPass();
+  await expect(async () => {
+    await page.getByLabel("Poziom zaawansowania").selectOption({ label: "Początkujący" });
+    await expect(page.getByLabel("Poziom zaawansowania")).toHaveValue("beginner");
+  }).toPass();
+  await fillStable(page, "Wiek", "30");
+  await fillStable(page, "Waga (kg)", "80");
+  await fillStable(page, "Dni treningowe w tygodniu", "3");
+  await expect(async () => {
+    await page.getByLabel("Sztanga").check();
+    await expect(page.getByLabel("Sztanga")).toBeChecked();
+  }).toPass();
   await page.getByRole("button", { name: "Zapisz profil" }).click();
 
   // First-ever save carries the user straight into plan generation

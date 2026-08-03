@@ -21,8 +21,17 @@ export default defineConfig({
     // "Cannot read properties of null (reading 'useState')") or a 404 on the
     // not-yet-written dep. Either way the island crashes and its server-rendered
     // markup is torn out of the DOM. Pre-bundling it up front avoids that.
+    //
+    // `lucide-react` hits the same class of bug on the SSR side: each form
+    // island imports a different subset of named icon exports, so the first
+    // request to a page using a not-yet-discovered icon (e.g. sign-in's
+    // `LogIn`, vs. sign-up's own set) triggers mid-request re-optimization
+    // that crashes SSR rendering ("Invalid hook call" inside lucide-react's
+    // `useContext`, from a stale SSR module copy) — the page renders without
+    // its island ever hydrating. Pre-bundling the whole package avoids
+    // per-icon discovery entirely.
     optimizeDeps: {
-      include: ["zod"],
+      include: ["zod", "lucide-react"],
     },
   },
   adapter: cloudflare(),
