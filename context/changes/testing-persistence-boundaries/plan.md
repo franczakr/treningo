@@ -509,8 +509,8 @@ that `plans` has no CHECK constraints and none are being added here).
 
 #### Automated
 
-- [x] 5.1 `npm run lint` passes
+- [x] 5.1 `npm run lint` passes — 0b56d01
 
 #### Manual
 
-- [x] 5.2 §6.4 no longer reads "TBD"; §6.6 names this phase's additions
+- [x] 5.2 §6.4 no longer reads "TBD"; §6.6 names this phase's additions — 0b56d01

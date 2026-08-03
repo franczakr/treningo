@@ -1,7 +1,7 @@
 ---
 change_id: testing-persistence-boundaries
 title: Persistence round-trip and boundary contracts (test-plan Phase 3)
-status: implementing
+status: implemented
 created: 2026-08-03
 updated: 2026-08-03
 archived_at: null
