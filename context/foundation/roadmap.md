@@ -115,7 +115,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequenced ahead of the visual slices because `main_goal` is `quality` and both S-06 and S-07 create new painted surface; building them first means building them twice. Deliberately capped at tokens + typography + shell — it does **not** restyle the 19 existing files (that is S-08), so S-06 and S-07 still exercise it through real user-facing behaviour rather than it landing as a finished UI layer nobody has used.
-- **Status:** done — implemented `2026-08-02` (`8a6531d`, `f0468f1`); impl-reviewed (APPROVED, 1 fixed observation); not yet archived, see `context/changes/gym-visual-identity/`
+- **Status:** done
 
 ## Slices
 
@@ -274,3 +274,4 @@ _None open._
 - **S-03: A user can save a generated plan so it survives between sessions.** — Archived 2026-06-29 → `context/archive/2026-06-28-save-plan/`. Lesson: —.
 - **S-04: A user can browse their saved plans and reopen any one to view it again.** — Archived 2026-07-03 → `context/archive/2026-06-29-browse-saved-plans/`. Lesson: —.
 - **S-05: A user who saves their training profile is carried straight into generating a plan, and a user who saves a generated plan is given a direct way through to their saved plans.** — Archived 2026-08-03 → `context/archive/2026-08-02-guided-plan-flow/`. Lesson: —.
+- **F-02: (foundation) One silver / grey / white colour system — system font stack, no dark theme, one steel-blue accent for calls-to-action — exists as tokens in `src/styles/global.css`, and a shared page shell with a slot for navigation is available for pages to adopt. From this point on no page invents its own colour.** — Archived 2026-08-03 → `context/archive/2026-08-02-gym-visual-identity/`. Lesson: —.
