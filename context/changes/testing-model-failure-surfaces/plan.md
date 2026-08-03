@@ -722,7 +722,7 @@ migration-pinned tests from rollout Phases 1 and 3 stay valid.
 
 - [x] 1.1 Unit tests pass: `npm run test` — f7e674e
 - [x] 1.2 Lint passes: `npm run lint` — f7e674e
-- [x] 1.3 Deliberate-break check: swallowing the hard-failure re-throw turns the new cases red — f7e674e (3 cases red: S2, S3, S5c)
+- [x] 1.3 Deliberate-break check: swallowing the hard-failure re-throw turns the new cases red (3 cases red: S2, S3, S5c) — f7e674e
 
 ### Phase 2: Generate-endpoint failure contract (Risks #4 + #7, integration)
 
@@ -730,35 +730,35 @@ migration-pinned tests from rollout Phases 1 and 3 stay valid.
 
 - [x] 2.1 Integration tests pass: `npm run test:integration` — 1148db7
 - [x] 2.2 Lint passes: `npm run lint` — 1148db7
-- [x] 2.3 Deliberate-break check: returning `error.message` from `generate.ts` turns the leak assertion red — 1148db7 (3 cases red)
+- [x] 2.3 Deliberate-break check: returning `error.message` from `generate.ts` turns the leak assertion red (3 cases red) — 1148db7
 
 ### Phase 3: Remove the rendered error-detail leaks (Risk #7, code fix + unit)
 
 #### Automated
 
-- [x] 3.1 Unit tests pass: `npm run test` — 6afa244 (103 tests)
-- [x] 3.2 Integration tests unaffected: `npm run test:integration` — 6afa244 (29 tests)
-- [x] 3.3 Lint passes: `npm run lint` — 6afa244 (plus `npm run typecheck`: 0 errors)
+- [x] 3.1 Unit tests pass: `npm run test` (103 tests) — 6afa244
+- [x] 3.2 Integration tests unaffected: `npm run test:integration` (29 tests) — 6afa244
+- [x] 3.3 Lint passes: `npm run lint` (plus `npm run typecheck`: 0 errors) — 6afa244
 
 #### Manual
 
-- [x] 3.4 Wrong password shows the mapped Polish message, not the provider string — verified end-to-end against `astro dev` + the local Supabase stack: `POST /api/auth/signin` redirects to `?error=Nieprawidłowy%20e-mail%20lub%20hasło.` and the rendered page contains that text, with no "Invalid login credentials" anywhere
-- [x] 3.5 Invalid profile submit (no JS) shows a Polish message on `/training-profile` — verified end-to-end (real signup → signin → form POST): `age=5` renders "Minimalny wiek to 13 lat." and `goal=become_a_wizard` renders "Wybierz jedną z dostępnych opcji." instead of zod's enum-enumerating default
+- [x] 3.4 Wrong password shows the mapped Polish message, not the provider string — verified end-to-end against `astro dev` + the local Supabase stack: `POST /api/auth/signin` redirects to `?error=Nieprawidłowy%20e-mail%20lub%20hasło.` and the rendered page contains that text, with no "Invalid login credentials" anywhere — 6afa244
+- [x] 3.5 Invalid profile submit (no JS) shows a Polish message on `/training-profile` — verified end-to-end (real signup → signin → form POST): `age=5` renders "Minimalny wiek to 13 lat." and `goal=become_a_wizard` renders "Wybierz jedną z dostępnych opcji." instead of zod's enum-enumerating default — 6afa244
 
 ### Phase 4: Leak-direction regression tests at the route boundary (Risk #7, unit)
 
 #### Automated
 
-- [x] 4.1 Unit tests pass: `npm run test` — bdbec2e (114 tests)
+- [x] 4.1 Unit tests pass: `npm run test` (114 tests) — bdbec2e
 - [x] 4.2 Lint passes: `npm run lint` — bdbec2e
-- [x] 4.3 Deliberate-break check: reverting `signin.ts` to `error.message` turns the leak case red — bdbec2e (2 cases red)
+- [x] 4.3 Deliberate-break check: reverting `signin.ts` to `error.message` turns the leak case red (2 cases red) — bdbec2e
 
 ### Phase 5: Cookbook + rollout documentation
 
 #### Automated
 
 - [x] 5.1 `npm run lint` passes — c4f62c6
-- [x] 5.2 Full suites pass: `npm run test` and `npm run test:integration` — c4f62c6 (114 unit + 29 integration)
+- [x] 5.2 Full suites pass: `npm run test` and `npm run test:integration` (114 unit + 29 integration) — c4f62c6
 
 #### Manual
 
