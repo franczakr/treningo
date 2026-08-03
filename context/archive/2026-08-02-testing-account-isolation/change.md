@@ -1,10 +1,10 @@
 ---
 change_id: testing-account-isolation
 title: Prove account isolation holds automatically (test-plan Phase 2)
-status: impl_reviewed
+status: archived
 created: 2026-08-02
 updated: 2026-08-03
-archived_at: null
+archived_at: 2026-08-03T10:24:36Z
 ---
 
 ## Notes
