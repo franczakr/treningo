@@ -488,15 +488,15 @@ that `plans` has no CHECK constraints and none are being added here).
 
 #### Automated
 
-- [x] 2.1 Integration tests pass: `npm run test:integration`
-- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 Integration tests pass: `npm run test:integration` — 2139420
+- [x] 2.2 Lint passes: `npm run lint` — 2139420
 
 ### Phase 3: Profile boundary-value acceptance round trip (Risk #5, profiles)
 
 #### Automated
 
-- [ ] 3.1 Integration tests pass: `npm run test:integration`
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Integration tests pass: `npm run test:integration`
+- [x] 3.2 Lint passes: `npm run lint`
 
 ### Phase 4: Oversized plan rejected before persistence at the real save endpoint (Risk #6)
 
