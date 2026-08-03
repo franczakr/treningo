@@ -1,7 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { planSchema } from "@/lib/schemas/plan";
+import { EXERCISES_MAX, planSchema, SESSIONS_MAX } from "@/lib/schemas/plan";
 
 const NUL = String.fromCharCode(0);
+
+// A single structurally-valid exercise.
+function exercise(name: string) {
+  return {
+    name,
+    equipment: "barbell",
+    sets: 3,
+    reps: "8-10",
+    suggested_weight: "orientacyjnie 60 kg",
+    rest_seconds: 90,
+  };
+}
+
+// A single structurally-valid session with `exerciseCount` exercises.
+function sessionWith(exerciseCount: number) {
+  return {
+    name: "Trening A",
+    focus: "całe ciało",
+    exercises: Array.from({ length: exerciseCount }, (_, i) => exercise(`Ćwiczenie ${i + 1}`)),
+  };
+}
 
 // A structurally-valid plan matching planSchema's shape.
 function validPlanWith(exerciseName: string) {
@@ -10,16 +31,7 @@ function validPlanWith(exerciseName: string) {
       {
         name: "Trening A",
         focus: "całe ciało",
-        exercises: [
-          {
-            name: exerciseName,
-            equipment: "barbell",
-            sets: 3,
-            reps: "8-10",
-            suggested_weight: "orientacyjnie 60 kg",
-            rest_seconds: 90,
-          },
-        ],
+        exercises: [exercise(exerciseName)],
       },
     ],
   };
@@ -38,5 +50,31 @@ describe("planSchema — Defect B (NUL code point)", () => {
   it("accepts the same plan with the NUL code point removed", () => {
     const plan = validPlanWith("Przysiad ze sztangą");
     expect(planSchema.safeParse(plan).success).toBe(true);
+  });
+});
+
+describe("planSchema — array-length caps (Risk #6)", () => {
+  // The save endpoint never calls plan-validator.ts, and the database has no
+  // array-length CHECK — planSchema's .max() is the only thing that can ever
+  // reject an oversized plan before persistence (see
+  // context/changes/testing-persistence-boundaries/research.md).
+  it(`accepts exactly ${SESSIONS_MAX} sessions`, () => {
+    const plan = { sessions: Array.from({ length: SESSIONS_MAX }, () => sessionWith(1)) };
+    expect(planSchema.safeParse(plan).success).toBe(true);
+  });
+
+  it(`rejects ${SESSIONS_MAX + 1} sessions`, () => {
+    const plan = { sessions: Array.from({ length: SESSIONS_MAX + 1 }, () => sessionWith(1)) };
+    expect(planSchema.safeParse(plan).success).toBe(false);
+  });
+
+  it(`accepts exactly ${EXERCISES_MAX} exercises in a session`, () => {
+    const plan = { sessions: [sessionWith(EXERCISES_MAX)] };
+    expect(planSchema.safeParse(plan).success).toBe(true);
+  });
+
+  it(`rejects ${EXERCISES_MAX + 1} exercises in a session`, () => {
+    const plan = { sessions: [sessionWith(EXERCISES_MAX + 1)] };
+    expect(planSchema.safeParse(plan).success).toBe(false);
   });
 });

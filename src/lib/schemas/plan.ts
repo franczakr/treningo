@@ -18,6 +18,18 @@ const SETS_MAX = 20;
 const REST_MIN = 0;
 const REST_MAX = 1200; // seconds
 
+// Hard, save-blocking caps against an arbitrarily large plan (Risk #6 — see
+// context/changes/testing-persistence-boundaries/research.md). This is the
+// ONLY enforcement point for plan size: the save endpoint never calls
+// plan-validator.ts, and the database has no array-length CHECK either.
+// EXERCISES_MAX matches plan-validator.ts's MAX_EXERCISES_PER_SESSION so the
+// schema-layer cap and the soundness-layer structural-sanity check agree.
+export const EXERCISES_MAX = 15;
+// SESSIONS_MAX is double profile.ts's training_days_per_week max of 7 — no
+// legitimate plan can approach it (session count must equal the profile's
+// training_days_per_week), so this only bounds abuse.
+export const SESSIONS_MAX = 14;
+
 // Postgres jsonb cannot store the NUL code point; reject it here so a
 // structurally-valid plan can never fail at the database insert (Risk #5
 // Defect B — see context/changes/testing-plan-soundness/research.md).
@@ -41,11 +53,17 @@ export const planExerciseSchema = z.object({
 export const planSessionSchema = z.object({
   name: boundedText('Nazwa sesji treningowej po polsku, np. "Trening A — góra".'),
   focus: boundedText('Główny cel/obszar sesji po polsku, np. "klatka i triceps".'),
-  exercises: z.array(planExerciseSchema).describe("Lista ćwiczeń w tej sesji."),
+  exercises: z
+    .array(planExerciseSchema)
+    .max(EXERCISES_MAX)
+    .describe(`Lista ćwiczeń w tej sesji (maks. ${EXERCISES_MAX}).`),
 });
 
 export const planSchema = z.object({
   sessions: z
     .array(planSessionSchema)
-    .describe("Sesje treningowe — dokładnie tyle, ile wynosi liczba dni treningowych użytkownika."),
+    .max(SESSIONS_MAX)
+    .describe(
+      `Sesje treningowe — dokładnie tyle, ile wynosi liczba dni treningowych użytkownika (maks. ${SESSIONS_MAX}).`,
+    ),
 });
