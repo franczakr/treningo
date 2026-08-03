@@ -97,7 +97,13 @@ describe("POST /api/profile — validator internals never reach the user (Risk #
     expect(errorParam).not.toContain("general_fitness");
   });
 
-  it("control: a valid payload reaches the write path", async () => {
+  // Routing-only control. It asserts the validation branch was NOT taken and
+  // where the route sends the user — nothing about persistence, which a faked
+  // service cannot evidence (the real write is covered against the real
+  // database by profile-persistence.integration.test.ts). Kept narrow on
+  // purpose: an assertion here about saved data would be an implementation
+  // mirror.
+  it("control: a valid payload skips the validation branch and routes to plan generation", async () => {
     getProfile.mockResolvedValue(null);
     upsertProfile.mockResolvedValue({ error: null });
 

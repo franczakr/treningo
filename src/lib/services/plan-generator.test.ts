@@ -205,9 +205,13 @@ function scriptedClient(...calls: ScriptedCall[]): { client: GoogleGenAI; callCo
       generateContent: (_args: unknown): Promise<FakeGenerateContentResponse> => {
         if (n >= calls.length) {
           // An unscripted call means the retry budget was consumed differently
-          // than the case expected — fail loudly instead of silently degrading
-          // into an empty-response hard failure.
-          throw new Error(`Fake client called ${n + 1} time(s) but only ${calls.length} response(s) were scripted.`);
+          // than the case expected. Increment FIRST: generatePlan wraps any
+          // synchronous throw from this function into a PlanGenerationError
+          // (plan-generator.ts:91-93), so this error alone cannot fail a case —
+          // the bumped `callCount()` is what makes the case's `toBe(1)`
+          // assertion catch it.
+          n += 1;
+          throw new Error(`Fake client called ${n} time(s) but only ${calls.length} response(s) were scripted.`);
         }
         const scripted = calls[n];
         n += 1;
@@ -362,16 +366,44 @@ describe("generatePlan — hard-failure surfaces (Risk #4)", () => {
 // Same shape as the migration-text guard in test-plan.md §6.2: the external
 // artifact — here the installed SDK — is the oracle, never our own fake.
 //
-// KNOW THE LIMIT: this detects a renamed or removed field/enum member. It
-// cannot detect a semantic change in WHEN the SDK populates a field, and it
-// says nothing about what the live API returns. A field that keeps its name and
-// changes its meaning passes this guard forever.
+// It takes TWO guards, because neither alone covers the field names:
+//   - a runtime guard, for what exists at runtime (`text` is a real prototype
+//     accessor; the reason enums are real exported values). It CANNOT cover
+//     `promptFeedback.blockReason` or `candidates[].finishReason` — those are
+//     plain optional properties that exist only in the type declarations
+//     (`GenerateContentResponsePromptFeedback` is an empty class at runtime), so
+//     no runtime assertion can see them.
+//   - a compile-time guard on the real `GenerateContentResponse` type, which is
+//     the only thing that can catch those two being renamed. It is enforced by
+//     `npm run typecheck` (wired into CI alongside lint) — NOT by `npm run test`,
+//     since Vitest strips types without checking them.
+//
+// KNOW THE LIMIT: together they detect a renamed or removed field/enum member.
+// Neither detects a semantic change in WHEN the SDK populates a field, and
+// neither says anything about what the live API actually returns. A field that
+// keeps its name and changes its meaning passes both forever.
+
+// Compile-time guard. Each property is one of the exact paths
+// plan-generator.ts reads off a response (`:73`, `:78`, `:80`); if the SDK
+// renames or drops one, this type stops compiling.
+interface FieldsTheGeneratorReads {
+  text: GenerateContentResponse["text"];
+  blockReason: NonNullable<GenerateContentResponse["promptFeedback"]>["blockReason"];
+  finishReason: NonNullable<GenerateContentResponse["candidates"]>[number]["finishReason"];
+}
+
 describe("@google/genai response-shape guard", () => {
   it("still exposes the `text` accessor the generator reads off a response", () => {
     expect(Object.getOwnPropertyDescriptor(GenerateContentResponse.prototype, "text")).toBeDefined();
   });
 
-  it("still ships the promptFeedback type the blocked-prompt branch reads", () => {
+  it("still declares the promptFeedback/candidates field paths the hard-failure branches read", () => {
+    // The assertion is the type annotation: this only compiles while all three
+    // paths above resolve. The runtime check is a formality that keeps the
+    // guard visible in the suite output.
+    const declared: FieldsTheGeneratorReads = { text: undefined, blockReason: undefined, finishReason: undefined };
+
+    expect(Object.keys(declared)).toHaveLength(3);
     expect(typeof GenerateContentResponsePromptFeedback).toBe("function");
   });
 

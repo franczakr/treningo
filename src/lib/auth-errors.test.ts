@@ -1,6 +1,9 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   AUTH_ERROR_MESSAGES,
+  AUTH_MAPPED_CODES,
   authErrorMessage,
   SIGNIN_FALLBACK_MESSAGE,
   SIGNUP_FALLBACK_MESSAGE,
@@ -41,6 +44,13 @@ describe("authErrorMessage — mapped codes", () => {
     ["over_email_send_rate_limit", "Zbyt wiele wiadomości e-mail. Odczekaj chwilę i spróbuj ponownie."],
     ["signup_disabled", "Rejestracja jest tymczasowo wyłączona."],
     ["user_banned", "To konto zostało zablokowane."],
+    // Added after the Phase 4 impl review: leaving these to the generic
+    // fallback was a real UX regression — a user rejected for a bad address
+    // would retry the same address forever with no idea what was wrong.
+    ["email_address_invalid", "Podaj poprawny adres e-mail."],
+    ["email_address_not_authorized", "Ten adres e-mail nie jest dopuszczony do rejestracji."],
+    ["captcha_failed", "Weryfikacja zabezpieczenia nie powiodła się. Spróbuj ponownie."],
+    ["request_timeout", "Przekroczono czas oczekiwania. Spróbuj ponownie."],
   ];
 
   it.each(cases)("maps %s to its authored Polish message", (code, expected) => {
@@ -95,5 +105,25 @@ describe("authErrorMessage — nothing internal can pass through (Risk #7)", () 
       expect(allowed.has(result)).toBe(true);
       expect(result).not.toContain(INFRA_MESSAGE);
     }
+  });
+});
+
+// Same pattern as the migration-text guard in test-plan.md §6.2 and the
+// `@google/genai` shape guard: the EXTERNAL artifact is the oracle. Every code
+// this module maps must exist in the provider's own `ErrorCode` union, or the
+// mapping is dead and the suite above would still be green — the map and the
+// expectations would simply agree with each other.
+//
+// KNOW THE LIMIT: this proves a code is spelled the way the SDK spells it, not
+// that GoTrue actually emits it for the scenario we assume, nor that the union
+// is exhaustive of what the server can send.
+describe("mapped codes exist in @supabase/auth-js's ErrorCode union", () => {
+  const errorCodesPath = fileURLToPath(
+    new URL("../../node_modules/@supabase/auth-js/dist/module/lib/error-codes.d.ts", import.meta.url),
+  );
+  const errorCodesSource = readFileSync(errorCodesPath, "utf-8");
+
+  it.each(AUTH_MAPPED_CODES)("%s is a real provider error code", (code) => {
+    expect(errorCodesSource).toContain(`'${code}'`);
   });
 });

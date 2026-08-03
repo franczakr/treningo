@@ -69,7 +69,12 @@ export const profileSchema = z.object({
     .min(1, "Wybierz co najmniej 1 dzień treningowy.")
     .max(7, "Maksymalnie 7 dni treningowych w tygodniu."),
   equipment: z
-    .array(z.enum(Constants.public.Enums.equipment_item, MSG_REQUIRED_CHOICE))
+    // Three messages, not two: the element message, the `min` message, and the
+    // ARRAY-LEVEL type message. Without the last one a non-array (absent field,
+    // null, a bare string) yields zod's English "Invalid input: expected array,
+    // received …" — latent today because `form.getAll` always returns an array,
+    // but it is exactly what this schema's guard exists to prevent.
+    .array(z.enum(Constants.public.Enums.equipment_item, MSG_REQUIRED_CHOICE), "Wybierz dostępny sprzęt.")
     .min(1, "Wybierz co najmniej jeden element sprzętu."),
   squat_kg: optionalLiftKg,
   bench_kg: optionalLiftKg,

@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` — production SSR build
 - `npm run preview` — preview the production build locally
 - `npm run lint` / `npm run lint:fix` — ESLint (type-checked rules); `:fix` auto-fixes
-- `npm run typecheck` — `astro check` (not run in CI; run it locally before pushing)
+- `npm run typecheck` — `astro check` (also a CI gate; it is the only check that catches a renamed field in a third-party type, since Vitest strips types without checking them)
 - `npm run format` — Prettier (with `prettier-plugin-astro` + `prettier-plugin-tailwindcss`)
 
 Pre-commit: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.

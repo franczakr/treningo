@@ -196,6 +196,15 @@ describe("profileSchema — no zod default message can reach a user (Risk #7)", 
     "ohp_kg (zero)": { ohp_kg: 0 },
     "plank_seconds (above max)": { plank_seconds: 99999 },
     "plank_seconds (not an integer)": { plank_seconds: 10.5 },
+    // Wrong-TYPE and MISSING-field payloads, not just out-of-range values: zod
+    // emits a separate `invalid_type` message for these, which the per-field
+    // constraint messages above do not cover. Omitting them is how an
+    // unauthored array-level message survived the first version of this guard.
+    "equipment (not an array)": { equipment: "barbell" },
+    "equipment (null)": { equipment: null },
+    "goal (missing)": { goal: undefined },
+    "age (missing)": { age: undefined },
+    "weight_kg (null)": { weight_kg: null },
   };
 
   it.each(Object.entries(invalidPayloads))("%s produces an authored Polish message", (_label, overrides) => {

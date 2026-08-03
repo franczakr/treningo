@@ -18,6 +18,12 @@ jobs:
       - run: npm ci
       - run: npx astro sync
       - run: npm run lint
+      # `astro check` is the only gate that catches a renamed/removed field in a
+      # third-party type (e.g. the @google/genai response-shape guard in
+      # plan-generator.test.ts): Vitest strips types without checking them, so
+      # such a break leaves the test suite AND the build green. Needs no secrets
+      # — every env var in the astro:env schema is optional.
+      - run: npm run typecheck
       - run: npm run test
       - run: npm run build
         env:

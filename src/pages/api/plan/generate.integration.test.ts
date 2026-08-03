@@ -129,11 +129,17 @@ describe("POST /api/plan/generate — failure surfaces (Risks #4, #7)", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    // Reset the shared mutable fakes so a future case that forgets to assign
+    // one cannot silently inherit the previous case's client and pass for the
+    // wrong reason.
+    currentGemini = null;
+    currentClient = user.client;
   });
 
   it("an SDK-level provider failure answers 500 generation_failed with a generic message, and the raw detail reaches only the server log", async () => {
     const errorLog = vi.spyOn(console, "error").mockImplementation(() => undefined);
-    currentGemini = fakeGemini(new Error(`Gemini API error 503: ${SENTINEL}`)).client;
+    const gemini = fakeGemini(new Error(`Gemini API error 503: ${SENTINEL}`));
+    currentGemini = gemini.client;
 
     const response = await POST(fakeContext(user.userId));
     const rawBody = await response.text();
@@ -150,11 +156,17 @@ describe("POST /api/plan/generate — failure surfaces (Risks #4, #7)", () => {
     expect(errorLog).toHaveBeenCalled();
     const logged = errorLog.mock.calls.map((args) => args.map((a) => String(a)).join(" ")).join("\n");
     expect(logged).toContain(SENTINEL);
+    // A hard failure must not consume the retry budget: without this, a
+    // regression that retried three times would replay the same stale
+    // response, produce an identical 500 body, and stay green while tripling
+    // provider cost per failure.
+    expect(gemini.callCount()).toBe(1);
   });
 
   it("a blocked prompt answers the same 500 contract, and the block reason stays out of the response", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
-    currentGemini = fakeGemini([{ promptFeedback: { blockReason: BlockedReason.SAFETY } }]).client;
+    const gemini = fakeGemini([{ promptFeedback: { blockReason: BlockedReason.SAFETY } }]);
+    currentGemini = gemini.client;
 
     const response = await POST(fakeContext(user.userId));
     const rawBody = await response.text();
@@ -166,11 +178,13 @@ describe("POST /api/plan/generate — failure surfaces (Risks #4, #7)", () => {
     // PlanGenerationError.message carries the block reason for the log; the
     // response must not.
     expect(rawBody).not.toContain(BlockedReason.SAFETY);
+    expect(gemini.callCount()).toBe(1);
   });
 
   it("unparseable model output answers the same 500 contract — distinct surfaces collapse into one user-facing answer", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
-    currentGemini = fakeGemini([{ text: "Przepraszam, nie mogę wygenerować planu." }]).client;
+    const gemini = fakeGemini([{ text: "Przepraszam, nie mogę wygenerować planu." }]);
+    currentGemini = gemini.client;
 
     const response = await POST(fakeContext(user.userId));
     const rawBody = await response.text();
@@ -180,6 +194,7 @@ describe("POST /api/plan/generate — failure surfaces (Risks #4, #7)", () => {
     expect(unparseableBody.error).toBe("generation_failed");
     expect(unparseableBody.message).toBe(GENERIC_GENERATION_MESSAGE);
     expect(rawBody).not.toContain("mogę wygenerować planu.");
+    expect(gemini.callCount()).toBe(1);
   });
 
   it("an unconfigured provider answers 503 not_configured, naming no configuration internals", async () => {

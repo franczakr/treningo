@@ -22,6 +22,13 @@ export const AUTH_NOT_CONFIGURED_MESSAGE = "Uwierzytelnianie nie jest skonfiguro
 const MESSAGES_BY_CODE = new Map<string, string>([
   ["invalid_credentials", "Nieprawidłowy e-mail lub hasło."],
   ["email_not_confirmed", "Potwierdź adres e-mail — kliknij link w wiadomości, którą wysłaliśmy."],
+  // Must be mapped, not left to the fallback: GoTrue rejects addresses its own
+  // validator dislikes even when they pass the client-side format check, and a
+  // generic "try again" would send the user round the same loop forever.
+  ["email_address_invalid", "Podaj poprawny adres e-mail."],
+  ["email_address_not_authorized", "Ten adres e-mail nie jest dopuszczony do rejestracji."],
+  ["captcha_failed", "Weryfikacja zabezpieczenia nie powiodła się. Spróbuj ponownie."],
+  ["request_timeout", "Przekroczono czas oczekiwania. Spróbuj ponownie."],
   ["user_already_exists", "Konto z tym adresem e-mail już istnieje."],
   ["email_exists", "Konto z tym adresem e-mail już istnieje."],
   ["weak_password", "Hasło jest za słabe — wybierz dłuższe i trudniejsze."],
@@ -34,6 +41,12 @@ const MESSAGES_BY_CODE = new Map<string, string>([
 
 // Every string this can return, for tests that assert no other value can escape.
 export const AUTH_ERROR_MESSAGES: readonly string[] = [...MESSAGES_BY_CODE.values()];
+
+// Every code this maps, so a test can check each one against the provider's own
+// `ErrorCode` union on disk. Without that check a typo'd key (`invalid_credential`)
+// would be pinned as correct by a green suite while every wrong-password login
+// silently fell through to the generic message.
+export const AUTH_MAPPED_CODES: readonly string[] = [...MESSAGES_BY_CODE.keys()];
 
 export function authErrorMessage(error: { code?: string }, fallback: string): string {
   const code = error.code;
