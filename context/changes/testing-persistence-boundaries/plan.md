@@ -481,15 +481,15 @@ that `plans` has no CHECK constraints and none are being added here).
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm run test`
-- [x] 1.2 Lint passes: `npm run lint`
+- [x] 1.1 Unit tests pass: `npm run test` — 2553616
+- [x] 1.2 Lint passes: `npm run lint` — 2553616
 
 ### Phase 2: Persistence round-trip content-fidelity (Risk #3, folds in Risk #5 for plans)
 
 #### Automated
 
-- [ ] 2.1 Integration tests pass: `npm run test:integration`
-- [ ] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 Integration tests pass: `npm run test:integration`
+- [x] 2.2 Lint passes: `npm run lint`
 
 ### Phase 3: Profile boundary-value acceptance round trip (Risk #5, profiles)
 
