@@ -33,15 +33,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
-      - run: supabase start
+      # The Supabase CLI comes from devDependencies (version-locked in
+      # package-lock.json). supabase/setup-cli resolves releases through the
+      # GitHub API and fails the job when that API is rate-limited.
+      - run: npx supabase start
       - name: Export local Supabase connection info
         run: |
-          eval "$(supabase status -o env)"
+          eval "$(npx supabase status -o env)"
           echo "SUPABASE_URL=$API_URL" >> "$GITHUB_ENV"
           echo "SUPABASE_KEY=$ANON_KEY" >> "$GITHUB_ENV"
       - run: npm run test:integration
       - if: always()
-        run: supabase stop
+        run: npx supabase stop
