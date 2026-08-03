@@ -1,9 +1,10 @@
 ---
 change_id: guided-plan-flow
 title: Guided path forward — profile → generate → saved plans (roadmap S-05)
-status: implemented
+status: archived
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-03
+archived_at: 2026-08-03T10:17:45Z
 ---
 
 ## Notes

@@ -180,7 +180,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - ~~Should the jump into plan generation fire on every profile save, or only when the user has no plan yet?~~ — resolved at `/10x-plan` (2026-08-02): only when no profile existed before the save. `/plan` auto-generates on mount, so forwarding on every save would fire a ten-plus-second Gemini call on each profile edit. Detected by reading the profile before the upsert; a failed read degrades to the existing behaviour rather than failing the save.
 - **Risk:** The north star, and deliberately not held behind F-02 despite `main_goal: quality` — it changes two redirect targets and adds one link, so it creates almost no painted surface to repaint later, and holding it behind a blocked foundation would stall the whole phase. The real care is the Unknown above: the guided path must lead a first-time user without trapping a returning one.
-- **Status:** done — implemented `2026-08-02` (`2cab15f`, `b5e51c0`); not yet archived, see `context/changes/guided-plan-flow/`
+- **Status:** done
 
 ### S-06: Treningo entry point
 
@@ -273,3 +273,4 @@ _None open._
 - **S-02: A user with a completed profile can request a plan and immediately view one workout plan whose sessions, exercises, sets, reps, and suggested starting weights match their goal, experience, available equipment, and chosen training days.** — Archived 2026-06-28 → `context/archive/2026-06-28-personalized-plan-generation/`. Lesson: —.
 - **S-03: A user can save a generated plan so it survives between sessions.** — Archived 2026-06-29 → `context/archive/2026-06-28-save-plan/`. Lesson: —.
 - **S-04: A user can browse their saved plans and reopen any one to view it again.** — Archived 2026-07-03 → `context/archive/2026-06-29-browse-saved-plans/`. Lesson: —.
+- **S-05: A user who saves their training profile is carried straight into generating a plan, and a user who saves a generated plan is given a direct way through to their saved plans.** — Archived 2026-08-03 → `context/archive/2026-08-02-guided-plan-flow/`. Lesson: —.
