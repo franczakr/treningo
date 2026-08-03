@@ -88,6 +88,9 @@ describe("POST /api/profile — validator internals never reach the user (Risk #
     const response = await POST(fakeContext({ goal: "become_a_wizard" }));
     const errorParam = locationOf(response).searchParams.get("error");
 
+    // Positive assertion first: a negative-only case would also pass on an
+    // empty or missing message.
+    expect(errorParam).toBe("Wybierz jedną z dostępnych opcji.");
     expect(errorParam).not.toMatch(ZOD_DEFAULT_VOCABULARY);
     // The leak that mattered: the list of valid database enum values.
     expect(errorParam).not.toContain("muscle_gain");
