@@ -28,7 +28,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-kurs/
 
 # from 10x-astro-starter
 # build output
