@@ -1,6 +1,9 @@
 import type { APIRoute, APIContext } from "astro";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase";
 import { deletePlan } from "@/lib/services/plans";
+
+const planIdSchema = z.uuid();
 
 export const prerender = false;
 
@@ -24,10 +27,11 @@ export const POST: APIRoute = async (context) => {
   }
 
   const form = await context.request.formData();
-  const planId = form.get("plan_id");
-  if (typeof planId !== "string" || planId.length === 0) {
+  const parsed = planIdSchema.safeParse(form.get("plan_id"));
+  if (!parsed.success) {
     return redirectWithError(context, "Nie udało się usunąć planu.");
   }
+  const planId = parsed.data;
 
   const { error } = await deletePlan(supabase, user.id, planId);
   if (error) {
