@@ -247,7 +247,7 @@ prior-art example this project explicitly did not reuse, for that reason).
 ### 6.4 Adding a test for a new API endpoint
 
 Canonical example: `src/pages/api/plan/save.integration.test.ts` (shipped in
-§3 Phase 3, `context/changes/testing-persistence-boundaries/`).
+§3 Phase 3, `context/archive/2026-08-03-testing-persistence-boundaries/`).
 
 Pattern: drive the real exported route handler (e.g. `POST`) end-to-end
 against the real local database, substituting only the module boundary that
@@ -287,7 +287,7 @@ responses at the SDK boundary to drive each documented hard-failure surface.
 
 (Filled in by each phase as it lands.)
 
-**Phase 3 (`context/changes/testing-persistence-boundaries/`, 2026-08-03)**
+**Phase 3 (`context/archive/2026-08-03-testing-persistence-boundaries/`, 2026-08-03)**
 added three things: (1) the round-trip **content-fidelity** pattern — assert
 deep-equality of the saved `plan`/`profile_snapshot` against a hand-written
 fixture (never a value derived from the code under test), through *every*
