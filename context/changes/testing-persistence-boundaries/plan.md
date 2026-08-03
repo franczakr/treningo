@@ -502,15 +502,15 @@ that `plans` has no CHECK constraints and none are being added here).
 
 #### Automated
 
-- [x] 4.1 Integration tests pass: `npm run test:integration`
-- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 Integration tests pass: `npm run test:integration` — 4259e00
+- [x] 4.2 Lint passes: `npm run lint` — 4259e00
 
 ### Phase 5: Cookbook + rollout documentation
 
 #### Automated
 
-- [ ] 5.1 `npm run lint` passes
+- [x] 5.1 `npm run lint` passes
 
 #### Manual
 
-- [ ] 5.2 §6.4 no longer reads "TBD"; §6.6 names this phase's additions
+- [x] 5.2 §6.4 no longer reads "TBD"; §6.6 names this phase's additions

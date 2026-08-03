@@ -242,9 +242,37 @@ prior-art example this project explicitly did not reuse, for that reason).
 
 ### 6.4 Adding a test for a new API endpoint
 
-TBD — see §3 Phase 3. Will cover the pattern for asserting the request →
-response contract *and* the persisted side-effect, including the status matrix
-each endpoint already documents.
+Canonical example: `src/pages/api/plan/save.integration.test.ts` (shipped in
+§3 Phase 3, `context/changes/testing-persistence-boundaries/`).
+
+Pattern: drive the real exported route handler (e.g. `POST`) end-to-end
+against the real local database, substituting only the module boundary that
+cannot run outside the Astro/Vite runtime — this project's `@/lib/supabase`
+`createClient`, which reads `astro:env/server` (unresolvable under plain-
+`node` Vitest) and builds a cookie-based SSR session (impractical to
+fabricate without a real HTTP request/response cycle, the same reason §6.3
+avoids the SSR client). Use `vi.mock("@/lib/supabase", () => ({ createClient:
+() => currentClient }))` with a module-scope `let currentClient` assigned in
+`beforeAll` to the real, already-authenticated client from
+`createTestUser()` — the mock factory closes over the binding, so it reads
+whatever `currentClient` holds by call time, not at mock-definition time.
+Build a minimal fake `APIContext`-shaped object covering only what the
+handler actually reads (`locals.user.id`, `request`, an empty `cookies`
+stand-in), cast through `as unknown as APIContext`, and call the exported
+handler directly — no running dev server needed.
+
+Assert **both halves** of the contract: the response (status code + error
+code from the JSON body) *and* the persisted (or, for a rejection case,
+deliberately *not*-persisted) side-effect via the real service functions
+(e.g. `getPlans`) against the real database. A rejection case without a
+follow-up persistence check only proves the response looked right, not that
+nothing was written.
+
+**Anti-pattern to avoid**: mocking anything beyond the one environment
+boundary that cannot run under the test's Vitest environment. Mocking the
+service layer (`savePlan`, `getPlans`, etc.) in an endpoint test turns it
+into an implementation mirror — it would prove the route calls the mocked
+function, not that the real database ends up in the right state.
 
 ### 6.5 Adding a test for a model-side failure path
 
@@ -254,6 +282,27 @@ responses at the SDK boundary to drive each documented hard-failure surface.
 ### 6.6 Per-rollout-phase notes
 
 (Filled in by each phase as it lands.)
+
+**Phase 3 (`context/changes/testing-persistence-boundaries/`, 2026-08-03)**
+added three things: (1) the round-trip **content-fidelity** pattern — assert
+deep-equality of the saved `plan`/`profile_snapshot` against a hand-written
+fixture (never a value derived from the code under test), through *every*
+read path a page actually uses (`getPlanById` **and** `getPlans` — they can
+diverge in shape even when both wrap the same table); (2) the **schema-
+boundary acceptance** pattern — for a table whose DB CHECK constraints
+already have zod-mirrored bounds (Phase 1's rejection direction), prove the
+*acceptance* direction with two cases only (the zod-accepted max and min),
+not a full re-run of the rejection matrix, against the real database; (3)
+`planSchema` gained hard save-blocking caps (`SESSIONS_MAX = 14`,
+`EXERCISES_MAX = 15`, `src/lib/schemas/plan.ts`) to close Risk #6 — this was
+a genuine code change, not just a test, because nothing else on the save
+path (`plan-validator.ts`'s soundness check is never called from
+`save.ts`; no DB CHECK exists on the `plans` jsonb columns) could ever
+reject an oversized plan. `EXERCISES_MAX` mirrors `plan-validator.ts`'s
+`MAX_EXERCISES_PER_SESSION` so the two bounds can't quietly disagree.
+Residual, deliberately unaddressed risk: `plans` still has no schema-version
+column, so the round-trip test proves today's shape is stable, not that a
+future intentional schema change is caught.
 
 ## 7. What We Deliberately Don't Test
 
