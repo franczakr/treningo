@@ -495,15 +495,15 @@ that `plans` has no CHECK constraints and none are being added here).
 
 #### Automated
 
-- [x] 3.1 Integration tests pass: `npm run test:integration`
-- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Integration tests pass: `npm run test:integration` — 6c33813
+- [x] 3.2 Lint passes: `npm run lint` — 6c33813
 
 ### Phase 4: Oversized plan rejected before persistence at the real save endpoint (Risk #6)
 
 #### Automated
 
-- [ ] 4.1 Integration tests pass: `npm run test:integration`
-- [ ] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 Integration tests pass: `npm run test:integration`
+- [x] 4.2 Lint passes: `npm run lint`
 
 ### Phase 5: Cookbook + rollout documentation
 
