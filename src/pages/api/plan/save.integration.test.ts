@@ -22,6 +22,11 @@ import { EXERCISES_MAX, SESSIONS_MAX } from "@/lib/schemas/plan";
 // already-authenticated integration-test client — everything else (auth
 // guard, schema validation, profile lookup, savePlan, the real database)
 // runs for real.
+//
+// Relies on Vitest's default `isolate: true` (module registry reset per test
+// file) to keep this mutable module-scope binding from leaking into other
+// integration test files that might also mock "@/lib/supabase" — neither
+// vitest.config.ts nor vitest.integration.config.ts overrides that default.
 let currentClient: SupabaseClient<Database> | null = null;
 
 vi.mock("@/lib/supabase", () => ({
@@ -56,28 +61,35 @@ function sessionWith(exerciseCount: number) {
   };
 }
 
+// A fresh, signed-in test user with a saved profile (save.ts 422s without
+// one) — a self-contained fixture so each `it` below can assert on an
+// absolute row count without depending on execution order or on another
+// case's persistence outcome.
+async function createSeededUser(): Promise<TestUser> {
+  const testUser = await createTestUser();
+  const { error } = await upsertProfile(testUser.client, testUser.userId, {
+    goal: "strength",
+    experience_level: "beginner",
+    age: 30,
+    weight_kg: 80,
+    training_days_per_week: 1,
+    equipment: ["barbell"],
+    squat_kg: null,
+    bench_kg: null,
+    deadlift_kg: null,
+    ohp_kg: null,
+    plank_seconds: null,
+  });
+  if (error) throw new Error(`Failed to seed profile: ${error.message}`);
+  return testUser;
+}
+
 describe("POST /api/plan/save — array-length caps enforced before persistence (Risk #6)", () => {
   let user: TestUser;
 
   beforeAll(async () => {
-    user = await createTestUser();
+    user = await createSeededUser();
     currentClient = user.client;
-
-    // save.ts 422s without a saved profile.
-    const { error } = await upsertProfile(user.client, user.userId, {
-      goal: "strength",
-      experience_level: "beginner",
-      age: 30,
-      weight_kg: 80,
-      training_days_per_week: 1,
-      equipment: ["barbell"],
-      squat_kg: null,
-      bench_kg: null,
-      deadlift_kg: null,
-      ohp_kg: null,
-      plank_seconds: null,
-    });
-    if (error) throw new Error(`Failed to seed profile: ${error.message}`);
   });
 
   it(`rejects a plan with ${SESSIONS_MAX + 1} sessions and persists nothing`, async () => {
@@ -105,12 +117,18 @@ describe("POST /api/plan/save — array-length caps enforced before persistence 
   });
 
   it("positive control: a plan at exactly the caps is accepted and persisted", async () => {
+    // A dedicated user, not the shared `user` above — so this assertion on
+    // an absolute row count never depends on the two rejection cases above
+    // having run first (or on their persisting nothing).
+    const positiveControlUser = await createSeededUser();
+    currentClient = positiveControlUser.client;
+
     const plan = { sessions: Array.from({ length: SESSIONS_MAX }, () => sessionWith(1)) };
 
-    const response = await POST(fakeContext(user.userId, plan));
+    const response = await POST(fakeContext(positiveControlUser.userId, plan));
     expect(response.status).toBe(200);
 
-    const rows = await getPlans(user.client, user.userId);
+    const rows = await getPlans(positiveControlUser.client, positiveControlUser.userId);
     expect(rows).toHaveLength(1);
   });
 });
