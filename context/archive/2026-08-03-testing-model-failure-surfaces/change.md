@@ -1,10 +1,10 @@
 ---
 change_id: testing-model-failure-surfaces
 title: Model failure surfaces (test-plan Phase 4)
-status: impl_reviewed
+status: archived
 created: 2026-08-03
 updated: 2026-08-03
-archived_at: null
+archived_at: 2026-08-03T12:11:53Z
 ---
 
 ## Notes

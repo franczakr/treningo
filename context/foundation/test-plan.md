@@ -10,7 +10,8 @@
 > phase; implemented and impl-reviewed, APPROVED; §6.5 and §6.6 filled in; §2
 > Source for #7 and the response guidance for #4/#7 backported from Phase 4
 > research, which found both risks lived somewhere other than the cited evidence
-> suggested; §5 gained a CI typecheck gate and a corrected lint row)
+> suggested; §5 gained a CI typecheck gate and a corrected lint row; change
+> folder archived, references below updated to its archive path)
 >
 > Previously: 2026-08-03 (§3 Phase 3 marked complete — implemented and
 > impl-reviewed, APPROVED; §6.4 and §6.6 filled in; change folder archived,
@@ -98,7 +99,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Runner bootstrap + plan soundness | Stand up the test runner and prove that a plan the system reports as acceptable actually honors the user's equipment, day count, and goal; wire the suite into CI so the floor is locked from the first test | #2, #5 (schema side) | unit, CI gate | complete | `context/archive/2026-08-02-testing-plan-soundness/` |
 | 2 | Account isolation | Prove automatically — not by two manual SQL sessions — that one account can never read another's plans or body metrics | #1 | integration | complete | `context/archive/2026-08-02-testing-account-isolation/` |
 | 3 | Persistence round-trip + boundary contracts | Prove a saved plan returns unchanged, and close the gap between what the schema accepts and what the database and storage will take | #3, #5, #6 | integration | complete | `context/archive/2026-08-03-testing-persistence-boundaries/` |
-| 4 | Model failure surfaces | Prove every documented model-side failure ends in a clean retryable error, and that no error path leaks internal detail | #4, #7 | unit, integration | complete | `context/changes/testing-model-failure-surfaces/` |
+| 4 | Model failure surfaces | Prove every documented model-side failure ends in a clean retryable error, and that no error path leaks internal detail | #4, #7 | unit, integration | complete | `context/archive/2026-08-03-testing-model-failure-surfaces/` |
 
 Order rationale: the project has **no test base at all**, so Phase 1 must
 bootstrap the runner — and it does so against Risk #2, the only High × High
@@ -289,7 +290,7 @@ function, not that the real database ends up in the right state.
 
 Canonical examples: `src/lib/services/plan-generator.test.ts` (unit) and
 `src/pages/api/plan/generate.integration.test.ts` (endpoint), shipped in §3
-Phase 4, `context/changes/testing-model-failure-surfaces/`.
+Phase 4, `context/archive/2026-08-03-testing-model-failure-surfaces/`.
 
 **Unit layer — no module mocking at all.** `generatePlan` takes its
 `GoogleGenAI` client as a *parameter*, so substitute the SDK by passing a
@@ -374,7 +375,7 @@ Residual, deliberately unaddressed risk: `plans` still has no schema-version
 column, so the round-trip test proves today's shape is stable, not that a
 future intentional schema change is caught.
 
-**Phase 4 (`context/changes/testing-model-failure-surfaces/`, 2026-08-03)**
+**Phase 4 (`context/archive/2026-08-03-testing-model-failure-surfaces/`, 2026-08-03)**
 closed the rollout, and split into coverage and repair because the two risks
 needed opposite treatments.
 
