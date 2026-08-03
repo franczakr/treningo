@@ -8,11 +8,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` — production SSR build
 - `npm run preview` — preview the production build locally
 - `npm run lint` / `npm run lint:fix` — ESLint (type-checked rules); `:fix` auto-fixes
+- `npm run typecheck` — `astro check` (not run in CI; run it locally before pushing)
 - `npm run format` — Prettier (with `prettier-plugin-astro` + `prettier-plugin-tailwindcss`)
 
 Pre-commit: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.
 
-**Tests:** no test runner is configured yet — there is no `test` script and no Playwright/Vitest install. E2E tests are introduced via the `/10x-e2e` skill, which scaffolds Playwright; until then there is no single-test command to run.
+**Tests:** three suites, separated by filename — Vitest 4 for both non-browser suites, Playwright for E2E.
+
+- `npm run test` — the hermetic unit suite (`*.test.ts`, colocated in `src/`). No Docker, no network. Runs in CI.
+- `npm run test:integration` — the integration suite (`*.integration.test.ts`, also colocated in `src/`), against a **local Docker Supabase stack**: run `npx supabase start`, then put its URL + anon key in `.env.test.local` (see `.env.test.local.example`). Never point it at the hosted project. Runs in CI in its own job.
+- `npm run test:e2e` — Playwright specs in `tests/e2e/`. Requires `.dev.vars` to point at the local stack (`global-setup.ts` refuses to run otherwise). Read `tests/e2e/E2E_RULES.md` first. Not in CI yet.
+- Single file: `npx vitest run <path>`, or `npx vitest run --config vitest.integration.config.ts <path>` for an integration spec.
+
+**Before writing any new test, read `context/foundation/test-plan.md`** — §6 is the cookbook (unit, schema-boundary, account-isolation, API-endpoint, and model-failure patterns, each with a canonical example and the anti-pattern it avoids), and §7 records what this project deliberately does *not* test.
 
 ## Local setup
 

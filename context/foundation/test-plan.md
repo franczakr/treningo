@@ -6,7 +6,12 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-08-03 (§3 Phase 3 marked complete — implemented and
+> Last updated: 2026-08-03 (§3 Phase 4 marked complete — the final rollout
+> phase; §6.5 and §6.6 filled in; §2 Source for #7 and the response guidance for
+> #4/#7 backported from Phase 4 research, which found both risks lived somewhere
+> other than the cited evidence suggested)
+>
+> Previously: 2026-08-03 (§3 Phase 3 marked complete — implemented and
 > impl-reviewed, APPROVED; §6.4 and §6.6 filled in; change folder archived,
 > reference below updated to its archive path)
 >
@@ -63,7 +68,7 @@ research's job, see §1 principle #3).
 | 4 | A model-side failure ends as a 500 or a blank screen instead of a clean, retryable error — or worse, a partial plan the user believes is real | High | Medium | `context/archive/2026-06-28-gemini-plan-generation/plan.md` (five distinct hard-failure surfaces mapped); same slice's `reviews/impl-review.md` F1 (a stop reason can fire without a block reason and falls through to the empty-text guard) and F3 (thinking tokens count against the output cap, so a long plan can truncate) |
 | 5 | A payload passes server-side schema validation but is rejected by a database constraint — or the reverse, the schema accepts what the database will not | Medium | High | `context/archive/2026-06-27-training-profile/reviews/impl-review.md` F1 — **this already happened once** (a zero value passed both validation layers and failed at insert); `context/archive/2026-06-27-training-profile/plan.md` — "Keep DB nullability and the zod schema in lock-step"; interview Q3 |
 | 6 | A signed-in user persists an arbitrarily large but schema-valid plan into jsonb storage | Medium | Medium | `context/archive/2026-06-28-save-plan/reviews/impl-review.md` F3 — raised, then **SKIPPED as "low risk, authenticated-only endpoint"; the gap is live**: the plan schema has no array-length caps |
-| 7 | An unexpected server error shows the user raw internal detail (database message, provider error body) instead of a generic message | Medium | Low | `context/archive/2026-06-27-training-profile/reviews/impl-review.md` F3 — already happened once and was fixed; `context/archive/2026-06-29-browse-saved-plans/reviews/impl-review.md` F1 — read paths still have no error handling, accepted as convention |
+| 7 | An unexpected server error shows the user raw internal detail (database message, provider error body) instead of a generic message | Medium | Low | `context/archive/2026-06-27-training-profile/reviews/impl-review.md` F3 — already happened once and was fixed; `context/archive/2026-06-29-browse-saved-plans/reviews/impl-review.md` F1 — read paths still have no error handling, accepted as convention; **Phase 4 research (2026-08-03) audit of every client-visible error string** — the live, *rendered* leaks are on the auth and profile/rename endpoints (provider message verbatim, English validator text), not on the read paths the earlier evidence pointed at; in production SSR an unhandled throw yields the platform's own 500 page with no app body, so it is a reliability gap rather than a disclosure one |
 
 Abuse / security lens coverage: **#1** authorization / ownership (IDOR),
 **#5** server-side validation parity, **#6** resource abuse, **#7** internal
@@ -76,10 +81,10 @@ detail disclosure.
 | #1 | User B, holding a valid session, requests a plan id belonging to user A and receives nothing — not a 200 with A's data. Same for profile reads. | "RLS is enabled" is not "isolation holds." Policies can exist and still not be exercised on the path the app actually takes. | Which client carries the end-user session vs. a privileged one; whether the anon key + RLS is the only defense or an explicit ownership filter also runs; how a missing/foreign id is expected to surface. | Integration, against a real database with two distinct real users. | Testing isolation through a mocked database client. A mock returns whatever you told it to — it can prove nothing about a policy. |
 | #2 | For a profile stating specific equipment and a day count, no plan the system reports as acceptable contains equipment outside that list or a different number of sessions. Goal-consistency is out of scope — see the challenge cell. | "The validator returned ok" is not "the plan honors the guardrail" — and the goal check is not merely lenient, it is **absent**: the validator never reads the user's goal, so what is filed under `goal` is a goal-independent volume-sanity check. Separately, soft-failure plans being shown and savable is an *accepted decision*, so a test must characterize it, not fail on it. | The violation contract and its categories; what soft vs. hard failure means downstream; whether save accepts a plan carrying violations; whether equipment is decided by a structured tag or by parsing exercise names. | Unit — the validation logic is a pure function; table-driven cases over profile/plan pairs. Better still, drive the whole decision: the generator takes its model client as a parameter, so a fake client exercises the retry loop and the `ok` computation at the same cost. | **The oracle problem.** A test that re-derives the expected result by re-implementing the validator, then compares the validator to itself, green-lights current behavior including current bugs. The oracle must come from the input profile and the PRD guardrail, never from the code under test. |
 | #3 | A plan saved in one session, read back in a later one, is structurally identical and still parses against the current schema. | "It returned 200" is not "it comes back the same." Snapshot shape drift between write-time and read-time types is documented, and older stored rows were written under the older shape. | The stored document shape and whether it is versioned; what happens to rows written before the shape changed; how a read-time database error is surfaced today. | Integration — a real write-then-read round trip. | Asserting only on id or row count. That passes while the document silently loses or renames fields. |
-| #4 | Each documented model-side failure path ends in the defined error type plus a retryable UI — never a partial plan, never an unhandled 500. | "No block reason was set" is not "generation succeeded." A stop reason can end generation without one, and truncation produces text that fails to parse. | How provider responses map to the app's error type; the retry cap and its interaction with the platform's per-invocation subrequest limit; which failures are hard vs. soft. | Unit, with substituted responses at the provider SDK boundary. | Over-mocking internal modules instead of the SDK boundary; covering the happy path plus one error and calling it done. There are at least five distinct surfaces. |
+| #4 | Each documented model-side failure path ends in the defined error type plus a retryable UI — never a partial plan, never an unhandled 500. **Split by Phase 4 research (2026-08-03):** the error-type and status/body halves are provable server-side; the "retryable UI" clause is not provable at this rollout's layers (no DOM environment, and a browser test cannot force a *server-side* provider failure) — it is covered by reading, not by test. The residual "partial plan the user believes is real" exposure is a *persistence* one (violations are not stored, so a soft-failure plan reopens uncaveated), which needs a migration and partly reverses an accepted decision. | "No block reason was set" is not "generation succeeded." A stop reason can end generation without one, and truncation produces text that fails to parse. | How provider responses map to the app's error type; the retry cap and its interaction with the platform's per-invocation subrequest limit; which failures are hard vs. soft. | Unit, with substituted responses at the provider SDK boundary. | Over-mocking internal modules instead of the SDK boundary; covering the happy path plus one error and calling it done. There are at least five distinct surfaces. |
 | #5 | Split by direction, because only one half is provable without a database. **Rejection direction (unit, Phase 1):** every value a database constraint rejects is rejected earlier by the schema, and the suite goes red the moment the migration text changes. **Acceptance direction (integration, Phase 3):** every value the schema accepts is actually accepted by the database. | "The schema passed" is not "the database will take it." The two are maintained by hand and have drifted before. Also: a database CHECK that *looks* correct may not fire at all, so "the constraint exists" is not "the constraint holds." | The actual constraints and nullability declared in the migrations, next to what the schema permits — especially boundary values (zero, empty, absent vs. explicit null) and array non-emptiness. | Unit on the schema for boundaries, plus integration against the real database for the values where they could disagree. | Testing the schema in isolation. That is an implementation mirror — it proves the schema does what the schema does, and cannot detect drift from the database. |
 | #6 | A plan with an absurd number of sessions or exercises is rejected before anything is persisted. | "The endpoint is behind auth" is not "it cannot be abused." One authenticated account is all it takes. | Whether any length or size cap exists anywhere on that path; at what point the request body is parsed relative to validation. | Integration on the write endpoint. | Asserting on byte size rather than on collection cardinality — the schema constrains shape, not length, so cardinality is the property that is actually unbounded. |
-| #7 | A forced database or provider error produces a generic user-facing message, with the specific detail reaching only the server log. | "We fixed that one leak" is not "every error path is clean." Read paths are documented as still having no handling. | Which paths translate errors and which let them propagate; what the user-facing error surface actually renders. | Integration. | Asserting only on the status code. A 500 with a leaked message and a 500 with a generic one are the same status. |
+| #7 | A forced database or provider error produces a generic user-facing message, with the specific detail reaching only the server log. | "We fixed that one leak" is not "every error path is clean." Read paths are documented as still having no handling — but Phase 4 research found those are *not* where detail escapes; **validation** and **auth-provider** error paths are. Nor is "the endpoint returns a message" the same as "the user sees it": a message can also be dropped entirely, which reads as success. | Which paths translate errors and which let them propagate; what the user-facing error surface actually renders. | Integration on the endpoints (assert both halves: nothing internal in the response, the detail present in the server log). | Asserting only on the status code. A 500 with a leaked message and a 500 with a generic one are the same status. |
 
 ## 3. Phased Rollout
 
@@ -92,7 +97,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Runner bootstrap + plan soundness | Stand up the test runner and prove that a plan the system reports as acceptable actually honors the user's equipment, day count, and goal; wire the suite into CI so the floor is locked from the first test | #2, #5 (schema side) | unit, CI gate | complete | `context/archive/2026-08-02-testing-plan-soundness/` |
 | 2 | Account isolation | Prove automatically — not by two manual SQL sessions — that one account can never read another's plans or body metrics | #1 | integration | complete | `context/archive/2026-08-02-testing-account-isolation/` |
 | 3 | Persistence round-trip + boundary contracts | Prove a saved plan returns unchanged, and close the gap between what the schema accepts and what the database and storage will take | #3, #5, #6 | integration | complete | `context/archive/2026-08-03-testing-persistence-boundaries/` |
-| 4 | Model failure surfaces | Prove every documented model-side failure ends in a clean retryable error, and that no error path leaks internal detail | #4, #7 | unit, integration | not started | — |
+| 4 | Model failure surfaces | Prove every documented model-side failure ends in a clean retryable error, and that no error path leaks internal detail | #4, #7 | unit, integration | complete | `context/changes/testing-model-failure-surfaces/` |
 
 Order rationale: the project has **no test base at all**, so Phase 1 must
 bootstrap the runner — and it does so against Risk #2, the only High × High
@@ -280,8 +285,67 @@ function, not that the real database ends up in the right state.
 
 ### 6.5 Adding a test for a model-side failure path
 
-TBD — see §3 Phase 4. Will cover the pattern for substituting provider
-responses at the SDK boundary to drive each documented hard-failure surface.
+Canonical examples: `src/lib/services/plan-generator.test.ts` (unit) and
+`src/pages/api/plan/generate.integration.test.ts` (endpoint), shipped in §3
+Phase 4, `context/changes/testing-model-failure-surfaces/`.
+
+**Unit layer — no module mocking at all.** `generatePlan` takes its
+`GoogleGenAI` client as a *parameter*, so substitute the SDK by passing a
+hand-rolled fake (`{ models: { generateContent } } as unknown as GoogleGenAI` —
+the double cast is required, the SDK class has private internals a literal can
+never satisfy). Script one raw response per call and count calls. Take the
+expected outcome from the **archived design contract**
+(`context/archive/2026-06-28-gemini-plan-generation/plan.md:104-108`, quoted in
+the test file's header) — never from the implementation, or the test just agrees
+with today's bugs.
+
+Assert three things per surface, not one:
+
+1. the failure ends in the defined error type (`PlanGenerationError`) — and
+   *rejects*, never resolves, since a resolved hard failure is exactly the
+   "partial plan the user believes is real" scenario;
+2. the **call count**, because "a hard failure aborts immediately without
+   consuming the retry budget" is the load-bearing half of the contract and is
+   what distinguishes a hard failure from the soft/guardrail path (which
+   legitimately calls three times);
+3. `.cause` — identity with the thrown provider error where the code wraps it,
+   `undefined` where it does not. That distinction is what makes the two failure
+   classes tellable apart in a server log, and it is the seam the endpoint test
+   then relies on.
+
+Cover *every* documented surface (there are five: SDK throw, `blockReason`,
+`finishReason` without a block reason, empty `text`, unparseable output — the
+last with three variants: not JSON, truncated, and schema-mismatched). Include
+one case that deliberately contrasts hard vs. soft, so a change that made
+everything throw cannot leave the block green. Where the shipped behavior is
+odd but intentional (a parse failure reported under the generic call-failure
+message; a `MAX_TOKENS` stop arriving through the empty-text guard rather than
+its own branch), write it as a **characterization** test and say so inline.
+
+**Guard the fake's own assumptions.** A fake response shape is a claim about the
+provider, and it silently rots. Add a shape guard that imports the *real* SDK
+values at runtime (`GenerateContentResponse`, `FinishReason`, `BlockedReason`)
+and asserts the fields/enum members the generator reads still exist — the §6.2
+pattern with the installed package as the oracle instead of a `.sql` file. Same
+limit applies, and state it inline: it catches a rename or removal, not a
+semantic change in *when* a field is populated, and it says nothing about what
+the live API returns.
+
+**Endpoint layer.** Follow §6.4, substituting **both** environment-bound modules
+(`@/lib/supabase` → a real authenticated integration client, so the profile load
+and database are real; `@/lib/gemini` → the scripted fake, so no network call,
+no quota, no non-determinism). Assert **both halves** of the containment
+contract, using a sentinel string planted in the fake provider error: it must be
+absent from the serialized response body *and* present in what
+`vi.spyOn(console, "error")` captured. Asserting only the status code, or only
+the absence, lets a leak or a lost log through. Prove the distinct hard-failure
+surfaces collapse into one user-facing answer, and keep one positive control
+(the soft-failure 200 with `ok: false`) so the suite cannot pass by having made
+everything fail.
+
+**Not tested at the browser layer, deliberately**: plan generation calls Gemini
+*server-side*, so `page.route()` cannot intercept it (`tests/e2e/E2E_RULES.md`)
+— a browser test cannot force a model failure at all.
 
 ### 6.6 Per-rollout-phase notes
 
@@ -307,6 +371,53 @@ reject an oversized plan. `EXERCISES_MAX` mirrors `plan-validator.ts`'s
 Residual, deliberately unaddressed risk: `plans` still has no schema-version
 column, so the round-trip test proves today's shape is stable, not that a
 future intentional schema change is caught.
+
+**Phase 4 (`context/changes/testing-model-failure-surfaces/`, 2026-08-03)**
+closed the rollout, and split into coverage and repair because the two risks
+needed opposite treatments.
+
+*Coverage (Risk #4).* `generatePlan`'s hard-failure handling turned out to be
+correct and completely untested — `generate.ts` and `gemini.ts` had **no test
+file at all**, and every failure-UX claim in the archive had been verified by
+human eyeball only. Added the full five-surface matrix (see §6.5), the
+provider-shape guard that discharges the obligation Phase 1 explicitly handed
+here (`context/archive/2026-08-02-testing-plan-soundness/plan.md:592-597`), and
+the first-ever test of the generate endpoint.
+
+*Repair (Risk #7).* The audit found the read paths §2 cited are **not** where
+detail escapes — in production SSR an unhandled throw yields the platform's own
+500 page, no app body, no stack. Three live, *rendered* leaks were elsewhere and
+were fixed as genuine code changes (not just tests): GoTrue's `error.message`
+echoed verbatim on signin/signup, now mapped from the stable `error.code` via
+`src/lib/auth-errors.ts` (which reads **only** `code`, so a pass-through is
+impossible by construction, while wrong-password/unconfirmed-email feedback is
+preserved); zod's **English default** issue text rendered on
+`/training-profile`, now authored Polish on every constraint in
+`src/lib/schemas/profile.ts` — fixed at the schema rather than the route, which
+removes the leak for the client mirror too, since `TrainingProfileForm` renders
+the same messages; and five English `"Supabase is not configured"` literals.
+Bounds were left byte-identical so Phases 1 and 3's migration-pinned tests stay
+valid. The regression tests for these live in the **unit** suite, not the Docker
+one — the failing dependency is the auth provider or the schema, so no database
+is involved.
+
+Residual risks, each deliberate:
+
+- **Violations are not persisted** (`plans` has no `ok`/`violations` column), so
+  a soft-failure plan reopens on `/plan/[id]` with no banner — the one genuinely
+  uncaveated "partial plan" surface left. Closing it needs a migration plus a UI
+  decision and partly reverses the accepted decision that soft-failure plans are
+  savable.
+- **`?error=` is silently dropped on `/dashboard`**: neither `dashboard.astro`
+  nor `plan/[id].astro` reads `searchParams`, so a failed rename or delete looks
+  like a success. A real user-facing defect, but both its fix and its test live
+  in `.astro` frontmatter, which no layer this rollout uses can reach — worth its
+  own change.
+- **Read-path throws remain unhandled** (`dashboard.astro`, `plan.astro`,
+  `plan/[id].astro`, and a `getUser()` rejection in `middleware.ts`): a broken
+  page rather than a disclosure, consistent with the accepted convention.
+- **The retry UI is covered by reading, not by test** — no DOM environment
+  exists, and a browser test cannot force a server-side model failure.
 
 ## 7. What We Deliberately Don't Test
 
@@ -335,7 +446,7 @@ contributors should respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-08-02
+- Strategy (§1–§5) last reviewed: 2026-08-03 (§2 #7 Source + #4/#7 response guidance corrected by Phase 4 research)
 - Stack versions last verified: 2026-08-02
 - AI-native tool references last verified: 2026-08-02 (none adopted)
 
