@@ -317,8 +317,11 @@ describe("generatePlan — hard-failure surfaces (Risk #4)", () => {
 
     const error = await expectHardFailure(client);
 
-    // No `.cause`: this is the schema branch, not the wrapped-exception one —
-    // the distinction is what tells the two apart in a server log.
+    // Two things distinguish the schema branch in a server log: it carries no
+    // `.cause` (unlike the wrapped parse/call failures) AND it names the
+    // response structure rather than the call. Asserting only the absent
+    // `.cause` would not discriminate it from S2/S3/S4, which also have none.
+    expect(error.message).toContain("struktury odpowiedzi modelu");
     expect(error.cause).toBeUndefined();
     expect(callCount()).toBe(1);
   });

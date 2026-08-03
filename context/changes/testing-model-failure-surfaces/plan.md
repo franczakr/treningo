@@ -757,9 +757,9 @@ migration-pinned tests from rollout Phases 1 and 3 stay valid.
 
 #### Automated
 
-- [ ] 5.1 `npm run lint` passes
-- [ ] 5.2 Full suites pass: `npm run test` and `npm run test:integration`
+- [x] 5.1 `npm run lint` passes — c4f62c6
+- [x] 5.2 Full suites pass: `npm run test` and `npm run test:integration` — c4f62c6 (114 unit + 29 integration)
 
 #### Manual
 
-- [ ] 5.3 §6.5 no longer reads "TBD"; §6.6 names additions + residual risks; §3 fully `complete`; `CLAUDE.md` testing line corrected
+- [x] 5.3 §6.5 no longer reads "TBD"; §6.6 names additions + residual risks; §3 fully `complete`; `CLAUDE.md` testing line corrected — c4f62c6

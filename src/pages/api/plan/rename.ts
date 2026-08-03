@@ -9,8 +9,11 @@ const renameSchema = z.object({
   plan_id: z.uuid("Nieprawidłowy identyfikator planu."),
   // Empty/whitespace-only input clears the custom name (falls back to the
   // goal label in the UI) rather than being rejected as invalid.
+  // Authored type-failure message too: `form.get("name")` can be a File, and
+  // zod's default for that ("Invalid input: expected string, received File") is
+  // English internal detail on a user-facing path (Risk #7).
   name: z
-    .string()
+    .string("Nieprawidłowa nazwa planu.")
     .trim()
     .max(100, "Nazwa jest za długa (maks. 100 znaków).")
     .transform((value) => (value.length === 0 ? null : value))

@@ -136,7 +136,8 @@ phase lands; before that, the gate is planned.
 
 | Gate | Where | Required? | Catches |
 |---|---|---|---|
-| lint + typecheck | local (pre-commit) + CI | required — already wired | syntactic / type drift |
+| lint | local (pre-commit) + CI | required — already wired | syntactic drift, type-aware lint rules |
+| typecheck (`astro check`) | local only — **not** in CI | optional; run before pushing | type drift the type-aware lint rules don't reject (corrected 2026-08-03: pre-commit runs `eslint --fix` + `prettier`, and CI runs lint/test/build — neither runs `astro check`) |
 | build | CI | required — already wired | broken SSR build, missing env schema |
 | unit | local + CI | required after §3 Phase 1 | plan-soundness and schema-boundary regressions |
 | integration (isolation) | CI | required after §3 Phase 2 | cross-account data exposure |

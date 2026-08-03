@@ -68,6 +68,11 @@ function fakeGemini(scripted: Error | FakeGenerateContentResponse[]): {
         if (scripted instanceof Error) {
           return Promise.reject(scripted);
         }
+        // Deliberately repeats the last scripted response once exhausted, so a
+        // single fixture can drive all three retry attempts (the soft-failure
+        // case below relies on that). Per-surface call counts are pinned in the
+        // unit suite (plan-generator.test.ts), whose fake instead throws on an
+        // unscripted call.
         const response = scripted[Math.min(n - 1, scripted.length - 1)];
         return Promise.resolve(response);
       },
@@ -155,7 +160,9 @@ describe("POST /api/plan/generate — failure surfaces (Risks #4, #7)", () => {
     const rawBody = await response.text();
 
     expect(response.status).toBe(500);
-    expect((JSON.parse(rawBody) as { message: string }).message).toBe(GENERIC_GENERATION_MESSAGE);
+    const blockedBody = JSON.parse(rawBody) as { error: string; message: string };
+    expect(blockedBody.error).toBe("generation_failed");
+    expect(blockedBody.message).toBe(GENERIC_GENERATION_MESSAGE);
     // PlanGenerationError.message carries the block reason for the log; the
     // response must not.
     expect(rawBody).not.toContain(BlockedReason.SAFETY);
@@ -169,7 +176,9 @@ describe("POST /api/plan/generate — failure surfaces (Risks #4, #7)", () => {
     const rawBody = await response.text();
 
     expect(response.status).toBe(500);
-    expect((JSON.parse(rawBody) as { message: string }).message).toBe(GENERIC_GENERATION_MESSAGE);
+    const unparseableBody = JSON.parse(rawBody) as { error: string; message: string };
+    expect(unparseableBody.error).toBe("generation_failed");
+    expect(unparseableBody.message).toBe(GENERIC_GENERATION_MESSAGE);
     expect(rawBody).not.toContain("mogę wygenerować planu.");
   });
 
@@ -211,7 +220,10 @@ describe("POST /api/plan/generate — failure surfaces (Risks #4, #7)", () => {
     const response = await POST(fakeContext(null));
 
     expect(response.status).toBe(401);
-    expect((await response.json()) as { error: string }).toMatchObject({ error: "unauthorized" });
+    // Exact shape, not a subset match: the route deliberately answers with an
+    // error code and NO `message` here (unlike every other branch), and
+    // `toMatchObject` would not notice one being added later.
+    expect(await response.json()).toEqual({ error: "unauthorized" });
     // The auth guard must run before any provider work is done.
     expect(gemini.callCount()).toBe(0);
   });
