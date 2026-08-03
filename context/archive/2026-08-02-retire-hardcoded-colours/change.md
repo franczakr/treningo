@@ -1,9 +1,10 @@
 ---
 change_id: retire-hardcoded-colours
 title: Retire starter hardcoded colours across remaining pages (roadmap S-08)
-status: impl_reviewed
+status: archived
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-03
+archived_at: 2026-08-03T10:20:33Z
 ---
 
 ## Notes

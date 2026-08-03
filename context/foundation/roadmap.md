@@ -217,7 +217,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** The largest surface in the phase (~192 colour classes across 19 files) but the lowest conceptual risk, so it is sequenced last, where it sweeps a settled shape rather than chasing a moving one. One thing to watch: `src/components/plan/PlanView.tsx` alone holds 22 colour hits and some of them carry meaning — a validation warning that is currently legible only because it is red must stay distinguishable once the palette is greyscale.
-- **Status:** done — implemented `2026-08-02` across 4 phases (`0a9770f`, `b33c82b`, `ddf2d02`, `1c3ffd9`); impl-reviewed (APPROVED, 1 observation, no action needed); not yet archived, see `context/changes/retire-hardcoded-colours/`. The semantic-colour risk noted above held: error/warning/success were re-tuned for the light palette (not dropped), staying exactly as distinguishable as before.
+- **Status:** done
 
 ### S-09: Delete a saved plan
 
@@ -277,3 +277,4 @@ _None open._
 - **F-02: (foundation) One silver / grey / white colour system — system font stack, no dark theme, one steel-blue accent for calls-to-action — exists as tokens in `src/styles/global.css`, and a shared page shell with a slot for navigation is available for pages to adopt. From this point on no page invents its own colour.** — Archived 2026-08-03 → `context/archive/2026-08-02-gym-visual-identity/`. Lesson: —.
 - **S-06: A visitor arrives on a Treningo home page that offers signing in and registering, and after signing in lands on the dashboard instead of being returned to the starter page.** — Archived 2026-08-03 → `context/archive/2026-08-02-treningo-entry-point/`. Lesson: —.
 - **S-07: Once signed in, a user reaches their profile, plan generation, saved plans and sign-out from any page — not only from the home page.** — Archived 2026-08-03 → `context/archive/2026-08-02-app-header-nav/`. Lesson: —.
+- **S-08: Every remaining page renders in the Treningo palette; no page carries stock starter colours or invents its own.** — Archived 2026-08-03 → `context/archive/2026-08-02-retire-hardcoded-colours/`. Lesson: —.
