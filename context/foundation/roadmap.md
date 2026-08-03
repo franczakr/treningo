@@ -60,7 +60,7 @@ Why this one and not the visual work: the PRD's Business Logic describes this ex
 | S-06  | treningo-entry-point           | arrive on a Treningo home page offering sign-in and registration, and land on the dashboard after signing in | F-02          | FR-001, US-01, Access Control, NFR (visual identity) | done     |
 | S-07  | app-header-nav                 | reach their profile, plan generation, saved plans and sign-out from any page once signed in | F-02          | FR-002, FR-003, FR-006, US-01 | done     |
 | S-08  | retire-hardcoded-colours       | see every remaining page in the Treningo palette instead of stock starter colours | F-02, S-06, S-07 | US-01, NFR (visual identity) | done     |
-| S-09  | delete-plan                    | delete a saved plan they no longer want                         | S-04          | FR-007, US-01             | ready    |
+| S-09  | delete-plan                    | delete a saved plan they no longer want                         | S-04          | FR-007, US-01             | done     |
 
 ## Streams
 
@@ -229,7 +229,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Low — the `plans_delete_own` RLS policy already exists (`supabase/migrations/20260628105841_create_plans.sql:41`) and is already exercised as a negative-control probe in `plans.integration.test.ts` (user B's delete of user A's plan is rejected), so the isolation guardrail is proven; this slice only needs to add the application-level path (service method, API route, UI control) that a real owner uses to trigger it.
-- **Status:** ready
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -278,3 +278,4 @@ _None open._
 - **S-06: A visitor arrives on a Treningo home page that offers signing in and registering, and after signing in lands on the dashboard instead of being returned to the starter page.** — Archived 2026-08-03 → `context/archive/2026-08-02-treningo-entry-point/`. Lesson: —.
 - **S-07: Once signed in, a user reaches their profile, plan generation, saved plans and sign-out from any page — not only from the home page.** — Archived 2026-08-03 → `context/archive/2026-08-02-app-header-nav/`. Lesson: —.
 - **S-08: Every remaining page renders in the Treningo palette; no page carries stock starter colours or invents its own.** — Archived 2026-08-03 → `context/archive/2026-08-02-retire-hardcoded-colours/`. Lesson: —.
+- **S-09: A user can delete a saved plan they no longer want; it stops appearing in their saved-plans list and can no longer be reopened.** — Archived 2026-08-03 → `context/archive/2026-08-03-delete-plan/`. Lesson: —.
