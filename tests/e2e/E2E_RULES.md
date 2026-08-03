@@ -51,3 +51,22 @@ Read this before writing or regenerating any spec under `tests/e2e/`.
   fresh navigation after first save', ...)`, not `test('test 1', ...)`.
 - **Control question for every assertion**: would this fail if the
   `test-plan.md` risk came true? If not, it's decorative.
+- **`astro dev`'s Vite SSR dep-optimizer crashes the first render of any
+  route whose dependency graph hasn't been discovered yet** (React "Invalid
+  hook call" / "Cannot read properties of null", torn-out island markup —
+  see the `optimizeDeps` comment in `astro.config.mjs`). This hits *every*
+  route on its first-ever hit in a freshly started dev server, including
+  protected ones — a plain warm-up GET can't reach those past middleware's
+  auth redirect. `tests/e2e/global-setup.ts` handles this already (signs up
+  a throwaway user, renders every route once before the real test runs). If
+  a new spec exercises a route not yet in that warm-up list, add it there
+  rather than debugging a flaky first run.
+- **A `fill()` can land in the gap before an island hydrates**, and hydration
+  then resets the controlled input back to its initial (empty) state — this
+  can happen to one field but not another filled moments later, so a form
+  can end up partially filled with no error thrown. Always
+  `await page.waitForLoadState("networkidle")` right after navigating to a
+  page with a form, before interacting with it, and prefer a fill-and-verify
+  retry helper (see `fillStable` in `seed.spec.ts`) over a bare `.fill()` for
+  any field whose value feeds a later assertion or a submit that must
+  succeed.
