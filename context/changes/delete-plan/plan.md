@@ -176,12 +176,12 @@ None — no schema or RLS changes; `plans_delete_own` already exists.
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes on both changed files
-- [x] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes on both changed files — 20aeffb
+- [x] 2.2 `npm run build` succeeds — 20aeffb
 
 #### Manual
 
-- [x] 2.3 Dashboard delete: confirm dialog fires, confirming removes the plan and lands on `/dashboard`
-- [x] 2.4 Cancelling the confirm dialog leaves the plan untouched
-- [x] 2.5 Detail-page delete redirects to `/dashboard` and the plan is gone
-- [x] 2.6 Opening a deleted plan's URL directly redirects to `/dashboard`
+- [x] 2.3 Dashboard delete: confirm dialog fires, confirming removes the plan and lands on `/dashboard` — 20aeffb
+- [x] 2.4 Cancelling the confirm dialog leaves the plan untouched — 20aeffb
+- [x] 2.5 Detail-page delete redirects to `/dashboard` and the plan is gone — 20aeffb
+- [x] 2.6 Opening a deleted plan's URL directly redirects to `/dashboard` — 20aeffb

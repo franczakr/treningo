@@ -1,7 +1,7 @@
 ---
 change_id: delete-plan
 title: Delete a saved plan
-status: implementing
+status: implemented
 created: 2026-08-03
 updated: 2026-08-03
 archived_at: null
