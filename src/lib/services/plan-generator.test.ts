@@ -1,6 +1,12 @@
-import type { GoogleGenAI } from "@google/genai";
+import {
+  BlockedReason,
+  FinishReason,
+  GenerateContentResponse,
+  GenerateContentResponsePromptFeedback,
+  type GoogleGenAI,
+} from "@google/genai";
 import { describe, expect, it } from "vitest";
-import { generatePlan } from "@/lib/services/plan-generator";
+import { generatePlan, PlanGenerationError } from "@/lib/services/plan-generator";
 import type { PlanExercise, PlanSession, TrainingProfile, WorkoutPlan } from "@/types";
 
 // Literal profile fixture, same conventions as plan-validator.test.ts.
@@ -167,5 +173,207 @@ describe("generatePlan", () => {
     expect(result.ok).toBe(false);
     expect(Array.isArray(result.plan.sessions)).toBe(true);
     expect(result.plan.sessions.length).toBeGreaterThan(0);
+  });
+});
+
+// ── Hard-failure surfaces (Risk #4) ──────────────────────────────────────────
+//
+// The oracle for this block is the design contract written BEFORE the code, in
+// context/archive/2026-06-28-gemini-plan-generation/plan.md:104-108 — not the
+// current implementation:
+//
+//   "treat as PlanGenerationError (no silent bad result) when the SDK call
+//    throws, when response.promptFeedback?.blockReason is set, when the
+//    candidate finishReason indicates a safety/blocked stop, or when
+//    response.text is empty/undefined or not parseable into planSchema. Only
+//    guardrail violations on an otherwise-parsed plan go through the retry
+//    loop."
+//
+// Every case therefore asserts two things: the failure ends in the defined
+// error type (never a partial plan, never a silent result), and the retry
+// budget is NOT consumed — a hard failure aborts on the first attempt, which is
+// what separates it from the soft/guardrail path that legitimately calls three
+// times.
+
+// A scripted response, or an Error the fake should reject with (surface S1).
+type ScriptedCall = FakeGenerateContentResponse | Error;
+
+function scriptedClient(...calls: ScriptedCall[]): { client: GoogleGenAI; callCount: () => number } {
+  let n = 0;
+  const fake = {
+    models: {
+      generateContent: (_args: unknown): Promise<FakeGenerateContentResponse> => {
+        if (n >= calls.length) {
+          // An unscripted call means the retry budget was consumed differently
+          // than the case expected — fail loudly instead of silently degrading
+          // into an empty-response hard failure.
+          throw new Error(`Fake client called ${n + 1} time(s) but only ${calls.length} response(s) were scripted.`);
+        }
+        const scripted = calls[n];
+        n += 1;
+        if (scripted instanceof Error) {
+          return Promise.reject(scripted);
+        }
+        return Promise.resolve(scripted);
+      },
+    },
+  };
+  return { client: fake as unknown as GoogleGenAI, callCount: () => n };
+}
+
+// Asserts the call rejects with PlanGenerationError and hands the error back
+// for per-surface assertions. Fails loudly on a resolved value — a hard failure
+// that resolves would be exactly the "partial plan the user believes is real"
+// scenario Risk #4 is about.
+async function expectHardFailure(client: GoogleGenAI): Promise<PlanGenerationError> {
+  try {
+    const resolved = await generatePlan(client, profile);
+    throw new Error(`Expected a hard failure, but generatePlan resolved with: ${JSON.stringify(resolved)}`);
+  } catch (error) {
+    if (error instanceof PlanGenerationError) {
+      return error;
+    }
+    throw error;
+  }
+}
+
+describe("generatePlan — hard-failure surfaces (Risk #4)", () => {
+  it("S1: an SDK-level throw becomes PlanGenerationError with the raw error kept on .cause, without consuming a retry", async () => {
+    const sdkError = new Error("Gemini API error 503: SENTINEL-PROVIDER-DETAIL");
+    const { client, callCount } = scriptedClient(sdkError);
+
+    const error = await expectHardFailure(client);
+
+    // The raw provider error must survive for the server-side log
+    // (api/plan/generate.ts logs `error.cause ?? error`) …
+    expect(error.cause).toBe(sdkError);
+    // … but must not be concatenated into the error message itself.
+    expect(error.message).not.toContain("SENTINEL-PROVIDER-DETAIL");
+    expect(callCount()).toBe(1);
+  });
+
+  it("S2: a blocked prompt becomes PlanGenerationError naming the block reason, without consuming a retry", async () => {
+    const { client, callCount } = scriptedClient({ promptFeedback: { blockReason: BlockedReason.SAFETY } });
+
+    const error = await expectHardFailure(client);
+
+    // The block reason belongs in the (server-side-logged) message — this is
+    // the diagnostic guarantee from gemini-plan-generation impl-review F1.
+    expect(error.message).toContain(BlockedReason.SAFETY);
+    expect(error.cause).toBeUndefined();
+    expect(callCount()).toBe(1);
+  });
+
+  it("S3: a stop reason firing WITHOUT a block reason still becomes PlanGenerationError, naming the finish reason", async () => {
+    // Characterization of shipped design, not a defect: impl-review F1 was
+    // fixed diagnostically only ("UX unchanged"), so a MAX_TOKENS stop has no
+    // branch of its own — it deliberately arrives through the empty-text guard
+    // (src/lib/services/plan-generator.ts:78-84). This test pins that route so
+    // a future refactor cannot quietly drop the reason from the log.
+    const { client, callCount } = scriptedClient({ candidates: [{ finishReason: FinishReason.MAX_TOKENS }] });
+
+    const error = await expectHardFailure(client);
+
+    expect(error.message).toContain(FinishReason.MAX_TOKENS);
+    expect(callCount()).toBe(1);
+  });
+
+  it("S4: empty output with no reason at all becomes PlanGenerationError, and the message omits the optional reason", async () => {
+    const { client, callCount } = scriptedClient({});
+
+    const error = await expectHardFailure(client);
+
+    // The finishReason interpolation is conditional — with nothing to report,
+    // the message must not advertise an empty one.
+    expect(error.message).not.toContain("finishReason");
+    expect(callCount()).toBe(1);
+  });
+
+  it("S5a: output that is not JSON becomes PlanGenerationError with the parse error on .cause", async () => {
+    const { client, callCount } = scriptedClient({ text: "Przepraszam, nie mogę wygenerować takiego planu." });
+
+    const error = await expectHardFailure(client);
+
+    // Note: this surface is wrapped by the generic call-failure branch, so its
+    // message says "call" rather than "parse" — shipped behavior, log-only,
+    // characterized rather than failed. `.cause` is what makes it diagnosable.
+    expect(error.cause).toBeInstanceOf(SyntaxError);
+    expect(callCount()).toBe(1);
+  });
+
+  it("S5b: truncated output (the maxOutputTokens/thinking-token route) becomes PlanGenerationError with the parse error on .cause", async () => {
+    // Reproduces impl-review F3's truncation consequence without needing a
+    // real token cap: a cut-off JSON document.
+    const { client, callCount } = scriptedClient({ text: JSON.stringify(soundPlan).slice(0, 40) });
+
+    const error = await expectHardFailure(client);
+
+    expect(error.cause).toBeInstanceOf(SyntaxError);
+    expect(callCount()).toBe(1);
+  });
+
+  it("S5c: valid JSON that does not match planSchema becomes PlanGenerationError, distinctly from a call failure", async () => {
+    const { client, callCount } = scriptedClient({ text: JSON.stringify({ sessions: [{ name: "A" }] }) });
+
+    const error = await expectHardFailure(client);
+
+    // No `.cause`: this is the schema branch, not the wrapped-exception one —
+    // the distinction is what tells the two apart in a server log.
+    expect(error.cause).toBeUndefined();
+    expect(callCount()).toBe(1);
+  });
+
+  it("discriminates hard from soft: the same fixture count that throws on a hard failure retries three times and resolves on a soft one", async () => {
+    // Control for the whole block: without it, a change that made every
+    // outcome throw would leave every case above green.
+    const violating: WorkoutPlan = {
+      sessions: [session({ exercises: [exercise({ equipment: "barbell" })] })],
+    };
+    const soft = scriptedClient(
+      { text: JSON.stringify(violating) },
+      { text: JSON.stringify(violating) },
+      {
+        text: JSON.stringify(violating),
+      },
+    );
+
+    const result = await generatePlan(soft.client, profile);
+
+    expect(result.ok).toBe(false);
+    expect(soft.callCount()).toBe(3);
+
+    const hard = scriptedClient({}, { text: JSON.stringify(soundPlan) });
+    await expectHardFailure(hard.client);
+    expect(hard.callCount()).toBe(1);
+  });
+});
+
+// ── Provider response-shape guard ────────────────────────────────────────────
+//
+// Discharges the obligation rollout Phase 1 explicitly handed to Phase 4
+// (context/archive/2026-08-02-testing-plan-soundness/plan.md:592-597): the fake
+// above returns `{ text: … }` / `{ promptFeedback: … }` / `{ candidates: … }`,
+// so "if the real @google/genai response shape changes, these tests would keep
+// passing while production breaks."
+//
+// Same shape as the migration-text guard in test-plan.md §6.2: the external
+// artifact — here the installed SDK — is the oracle, never our own fake.
+//
+// KNOW THE LIMIT: this detects a renamed or removed field/enum member. It
+// cannot detect a semantic change in WHEN the SDK populates a field, and it
+// says nothing about what the live API returns. A field that keeps its name and
+// changes its meaning passes this guard forever.
+describe("@google/genai response-shape guard", () => {
+  it("still exposes the `text` accessor the generator reads off a response", () => {
+    expect(Object.getOwnPropertyDescriptor(GenerateContentResponse.prototype, "text")).toBeDefined();
+  });
+
+  it("still ships the promptFeedback type the blocked-prompt branch reads", () => {
+    expect(typeof GenerateContentResponsePromptFeedback).toBe("function");
+  });
+
+  it("still exports the finish/block reason members these fixtures depend on", () => {
+    expect(FinishReason.MAX_TOKENS).toBe("MAX_TOKENS");
+    expect(BlockedReason.SAFETY).toBe("SAFETY");
   });
 });
