@@ -763,3 +763,43 @@ migration-pinned tests from rollout Phases 1 and 3 stay valid.
 #### Manual
 
 - [x] 5.3 §6.5 no longer reads "TBD"; §6.6 names additions + residual risks; §3 fully `complete`; `CLAUDE.md` testing line corrected — c4f62c6
+
+---
+
+## Addendum — impl review (2026-08-03)
+
+Full-plan review: `reviews/impl-review.md` — **APPROVED**, 0 critical, 6 warnings,
+7 observations. Ten findings fixed, four accepted/skipped with reasons.
+
+What the review changed beyond the plan as written:
+
+1. **A leak the plan's own fix missed** (F1): `rename.ts`'s `name: z.string()` had
+   no authored type-failure message, so a posted `File` surfaced zod's English
+   default. Fixed, with a new `src/pages/api/plan/rename.test.ts` (5 cases) — a
+   file this plan did not foresee, since Phase 4 scoped route leak tests to
+   signin/signup/profile only.
+2. **Two of this phase's own guards were weaker than their comments claimed**
+   (F2, F3): the unit fake's overflow guard could not fail a case (the code under
+   test wraps synchronous throws), which meant S4 would have missed a retry-budget
+   regression; and the SDK shape guard could not see the two field names it claimed
+   to protect, because they exist only in type declarations. Both fixed, both
+   verified by mutation.
+3. **A gate was added, contradicting research Open Question #3** (F4): CI now runs
+   `npm run typecheck`. The research answered "not needed — the shape guard is a
+   runtime assertion"; F3 proved the field-name half *cannot* be, so the guard
+   needed a type gate to mean anything. Evidence-driven scope addition, recorded
+   in `test-plan.md` §5.
+4. **`profileSchema` gained one more authored message and the property guard five
+   more payloads** (F5): the array-level type message was unauthored, and the
+   guard's wrong-type/missing-field blind spot was exactly why that slipped
+   through.
+5. **Four more auth codes mapped** (F6) — `email_address_invalid` chief among
+   them, whose absence was a genuine UX regression (retry the same rejected
+   address forever) — plus a guard asserting every mapped code exists in the
+   provider's own `ErrorCode` union (F7).
+
+Accepted without change, with reasons in the report: violation messages carrying
+enum identifiers (they double as LLM retry input — F11, recorded as residual risk
+in §6.6), email addresses reachable in auth failure logs (F12), account
+enumeration as a now-explicit contract (F13), and the integration suite's default
+timeout against its signup count (F14).

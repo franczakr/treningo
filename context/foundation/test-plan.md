@@ -7,9 +7,10 @@
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
 > Last updated: 2026-08-03 (§3 Phase 4 marked complete — the final rollout
-> phase; §6.5 and §6.6 filled in; §2 Source for #7 and the response guidance for
-> #4/#7 backported from Phase 4 research, which found both risks lived somewhere
-> other than the cited evidence suggested)
+> phase; implemented and impl-reviewed, APPROVED; §6.5 and §6.6 filled in; §2
+> Source for #7 and the response guidance for #4/#7 backported from Phase 4
+> research, which found both risks lived somewhere other than the cited evidence
+> suggested; §5 gained a CI typecheck gate and a corrected lint row)
 >
 > Previously: 2026-08-03 (§3 Phase 3 marked complete — implemented and
 > impl-reviewed, APPROVED; §6.4 and §6.6 filled in; change folder archived,
@@ -419,6 +420,19 @@ Residual risks, each deliberate:
   page rather than a disclosure, consistent with the accepted convention.
 - **The retry UI is covered by reading, not by test** — no DOM environment
   exists, and a browser test cannot force a server-side model failure.
+- **Violation messages still interpolate raw database enum identifiers** into
+  user-visible text ("Plan używa sprzętu spoza listy…: `barbell`") — the same
+  class this phase fixed in the schemas. Deliberately left: `Violation.message`
+  doubles as the corrective feedback fed back to the LLM on retry, where the
+  enum identifier is the token that makes the correction work, so translating it
+  to a display label would weaken the retry loop Risk #2 depends on. The real
+  fix is splitting the message into an LLM-facing and a user-facing form — a
+  change to a guardrail path, not a test-phase change.
+
+The impl review (`reviews/impl-review.md`, APPROVED) also added a gate: **CI now
+runs `npm run typecheck`**. It found that the response-shape guard's field-name
+half cannot be a runtime assertion — a renamed SDK field left the test suite and
+the build green — so without that gate the guard was decorative.
 
 ## 7. What We Deliberately Don't Test
 
